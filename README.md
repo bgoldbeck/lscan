@@ -9,6 +9,7 @@ Copyright (C) 2018 "Brandon Goldbeck" <code>&lt;bpg@pdx.edu&gt;</code>,
 ## Contact Us ##
 Brandon Goldbeck: bpg@pdx.edu <br />
 Brandon Le: lebran@pdx.edu <br />
+Ann Peake: peakean@pdx.edu <br />
 Sohan Tamang: sohan@pdx.edu 
 
 ## Bug Tracker ##
