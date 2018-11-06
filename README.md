@@ -11,6 +11,7 @@ Brandon Goldbeck: bpg@pdx.edu <br />
 Anthony Namba: anamba@pdx.edu <br />
 Brandon Le: lebran@pdx.edu <br />
 Ann Peake: peakean@pdx.edu <br />
+An Huynh: anvanphuchuynh@gmail.com <br />
 Sohan Tamang: sohan@pdx.edu 
 
 ## Bug Tracker ##
