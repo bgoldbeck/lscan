@@ -1,21 +1,22 @@
 # Lego Scan
 
 
-Travis CI [![Build Status](https://travis-ci.org/bgoldbeck/lego-scan.svg?branch=master)](https://travis-ci.org/bgoldbeck/lego-scan)
+Travis CI [![Build Status](https://travis-ci.org/bgoldbeck/lscan.svg?branch=master)](https://travis-ci.org/bgoldbeck/lscan)
 
 ## Copyright ##
-Copyright (C) 2018 "Brandon Goldbeck" <code>&lt;bpg@pdx.edu&gt;</code>,
+Copyright (C) 2018 
+"Brandon Goldbeck", "Anthony Namba", "Brandon Le", "Ann Peake", "Sohan Tamang", "Brandon Le"
   
 ## Contact Us ##
 Brandon Goldbeck: bpg@pdx.edu <br />
 Anthony Namba: anamba@pdx.edu <br />
 Brandon Le: lebran@pdx.edu <br />
 Ann Peake: peakean@pdx.edu <br />
+Sohan Tamang: sohan@pdx.edu <br />
 An Huynh: anvanphuchuynh@gmail.com <br />
-Sohan Tamang: sohan@pdx.edu 
 
 ## Bug Tracker ##
-https://github.com/bgoldbeck/lego-scan/issues
+https://github.com/bgoldbeck/lscan/issues
 
 ## What is this repository for? ##
 
