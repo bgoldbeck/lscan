@@ -20,7 +20,7 @@ class MainPanel(wx.Panel):
     big_button = (100, 30)
     text_size = (100, 30)
     text_ctrl_size = (400, 20)
-    output_log_size = (800, 200)
+    output_log_size = (800, 120)
 
     """The child of the MainFrame. This panel will hold the main applications
     remaining controls.
@@ -53,7 +53,10 @@ class MainPanel(wx.Panel):
         hbox_license = wx.BoxSizer(wx.HORIZONTAL)
         # process control
         hbox_procctrl = wx.BoxSizer(wx.HORIZONTAL)
-        
+
+        # opengl viewport
+        hbox_opengl = wx.BoxSizer(wx.HORIZONTAL)
+        hbox_opengl.Add(self.canvas, 0, wx.ALIGN_CENTER)
 
         # input
         path_name_static_text = wx.StaticText(self, label="Path to Input STL File")
@@ -121,8 +124,6 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.save, save_button)
         save_button.Disable()
 
-
-        # Output log code by Mike from http://www.blog.pythonlibrary.org/2009/01/01/wxpython-redirecting-stdout-stderr/
         save_log_button = wx.Button(self, label="Save Log", pos=(750, 150), size=self.big_button)
         self.Bind(wx.EVT_BUTTON, self.save_log, save_log_button)
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
@@ -137,6 +138,9 @@ class MainPanel(wx.Panel):
         vbox.Add(hbox_author, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_license, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
+
+        vbox.Add(hbox_opengl, 0, wx.ALIGN_CENTER)
+
         vbox.Add(save_log_button, 0, wx.ALIGN_RIGHT)
         vbox.Add(self.log, 0, wx.ALIGN_CENTER)
         self.SetSizer(vbox)
