@@ -129,18 +129,12 @@ class MainPanel(wx.Panel):
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
         self.log = wx.TextCtrl(self, wx.ID_ANY, size=self.output_log_size, style=style)
 
-        # redirect text here
-        #sys.stdout = log
-        #log = wx.PyOnDemandOutputWindow().CreateOutputWindow()
-
         vbox.Add(hbox_input, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_output, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_author, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_license, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
-
         vbox.Add(hbox_opengl, 0, wx.ALIGN_CENTER)
-
         vbox.Add(save_log_button, 0, wx.ALIGN_RIGHT)
         vbox.Add(self.log, 0, wx.ALIGN_CENTER)
         self.SetSizer(vbox)
@@ -165,7 +159,8 @@ class MainPanel(wx.Panel):
         :param event:
         :return:
         """
-        wx.MessageBox("""LScan
+        wx.MessageBox("""
+            LScan
             Version 1.0
             Copyright Information
             TEXT
@@ -237,9 +232,7 @@ class MainPanel(wx.Panel):
         :param event:
         :return:
         """
-        #print("Saved Log")
-        #wx.CallAfter(self.log.WriteText, "Saved Log")
-        wx.CallAfter(self.log.AppendText, "Saved Log\n") #("Saved Log\n")
+        wx.CallAfter(self.log.AppendText, "Saved Log\n")
 
     def browse_output(self, event):
         """
@@ -261,6 +254,4 @@ class MainPanel(wx.Panel):
         
         dialog.Destroy()
 
-    def quit(self, event):
-        self.Close()
 
