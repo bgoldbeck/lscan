@@ -20,11 +20,12 @@ class MainPanel(wx.Panel):
     big_button = (100, 30)
     text_size = (100, 30)
     text_ctrl_size = (400, 20)
-    output_log_size = (800, 200)
+    output_log_size = (800, 120)
 
     """The child of the MainFrame. This panel will hold the main applications
     remaining controls.
     """
+
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
@@ -53,7 +54,10 @@ class MainPanel(wx.Panel):
         hbox_license = wx.BoxSizer(wx.HORIZONTAL)
         # process control
         hbox_procctrl = wx.BoxSizer(wx.HORIZONTAL)
-        
+
+        # opengl viewport
+        hbox_opengl = wx.BoxSizer(wx.HORIZONTAL)
+        hbox_opengl.Add(self.canvas, 0, wx.ALIGN_CENTER)
 
         # input
         path_name_static_text = wx.StaticText(self, label="Path to Input STL File")
@@ -104,7 +108,7 @@ class MainPanel(wx.Panel):
         convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button)
         hbox_procctrl.Add(convert_button, 0, wx.ALIGN_CENTER)
         self.Bind(wx.EVT_BUTTON, self.convert, convert_button)
-        convert_button.Disable()
+        # convert_button.Disable()
 
         pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button)
         hbox_procctrl.Add(pause_button, 0, wx.ALIGN_CENTER)
@@ -121,29 +125,25 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.save, save_button)
         save_button.Disable()
 
-
-        # Output log code by Mike from http://www.blog.pythonlibrary.org/2009/01/01/wxpython-redirecting-stdout-stderr/
         save_log_button = wx.Button(self, label="Save Log", pos=(750, 150), size=self.big_button)
         self.Bind(wx.EVT_BUTTON, self.save_log, save_log_button)
-        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
+        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
         self.log = wx.TextCtrl(self, wx.ID_ANY, size=self.output_log_size, style=style)
-
-        # redirect text here
-        #sys.stdout = log
-        #log = wx.PyOnDemandOutputWindow().CreateOutputWindow()
 
         vbox.Add(hbox_input, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_output, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_author, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_license, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
+        vbox.Add(hbox_opengl, 0, wx.ALIGN_CENTER)
+        # vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
+
         vbox.Add(save_log_button, 0, wx.ALIGN_RIGHT)
         vbox.Add(self.log, 0, wx.ALIGN_CENTER)
         self.SetSizer(vbox)
 
     def help(self, event):
         """
-
         :param event:
         :return:
         """
@@ -157,11 +157,11 @@ class MainPanel(wx.Panel):
 
     def about(self, event):
         """
-
         :param event:
         :return:
         """
-        wx.MessageBox("""LScan
+        wx.MessageBox("""
+            LScan
             Version 1.0
             Copyright Information
             TEXT
@@ -177,13 +177,13 @@ class MainPanel(wx.Panel):
         """
         stl_wildcard = "*.stl"
         dialog = wx.FileDialog(self, "Choose a STL file", os.getcwd(), "", stl_wildcard, wx.FD_OPEN)
-        
+
         if dialog.ShowModal() == wx.ID_OK:
             file = open(dialog.GetPath(), "r")
             with file:
                 data = file.read()
                 # self.txt.SetValue(data)
-        
+
         dialog.Destroy()
 
     def convert(self, event):
@@ -233,13 +233,13 @@ class MainPanel(wx.Panel):
         :param event:
         :return:
         """
-        #print("Saved Log")
-        #wx.CallAfter(self.log.WriteText, "Saved Log")
-        wx.CallAfter(self.log.AppendText, "Saved Log\n") #("Saved Log\n")
+        text = "Saved Log\n"
+        # self.log.SetForegroundColour(wx.RED)
+        self.log.SetForegroundColour(wx.BLUE)  # Sets the whole log to BLUE not just one line
+        wx.CallAfter(self.log.AppendText, text)
 
     def browse_output(self, event):
         """
-
         :param event:
         :return:
         """
@@ -254,9 +254,5 @@ class MainPanel(wx.Panel):
                     file.write(temp_data)
             except IOError:
                 wx.LogError("Cannot save current data in file '%s'." % pathname)
-        
+
         dialog.Destroy()
-
-    def quit(self, event):
-        self.Close()
-
