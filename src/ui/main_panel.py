@@ -22,13 +22,11 @@ class MainPanel(wx.Panel):
     text_ctrl_size = (400, 20)
     output_log_size = (800, 120)
 
-    """The child of the MainFrame. This panel will hold the main applications
-    remaining controls.
+    """The child of the MainFrame. This panel will hold the main applications remaining controls.
     """
 
     def __init__(self, parent):
-        """Default constructor for MainPanel class.
-        """
+        """Default constructor for MainPanel class."""
         wx.Panel.__init__(self, parent)
         self.parent = parent
         self.SetBackgroundColour("#777777")
@@ -39,8 +37,7 @@ class MainPanel(wx.Panel):
         self.parent.Layout()
 
     def gui(self):
-        """
-        Initializing input, output, process control, and log panel elements
+        """Initializing input, output, process control, and log panel elements
         :return:
         """
 
@@ -140,7 +137,7 @@ class MainPanel(wx.Panel):
         self.SetSizer(vbox)
 
     def help(self, event):
-        """
+        """Presents program limitations, common troubleshooting steps, and steps to update LDraw parts library.
         :param event:
         :return:
         """
@@ -153,7 +150,7 @@ class MainPanel(wx.Panel):
             TEXT""", "Help info", wx.OK | wx.ICON_QUESTION)
 
     def about(self, event):
-        """
+        """Presents program name, program version, copyright information, licensing information, and authors to user.
         :param event:
         :return:
         """
@@ -161,62 +158,55 @@ class MainPanel(wx.Panel):
             LScan
             Version 1.0
             Copyright (C) 2018 - This notice is to be included in all relevant source files.
+            
+            This software is licensed under the MIT License. See LICENSE file for the full text.
+
+            Authors
             "Brandon Goldbeck" <bpg@pdx.edu>
             “Anthony Namba” <anamba@pdx.edu>
             “Brandon Le” <lebran@pdx.edu>
             “Ann Peake” <peakean@pdx.edu>
             “Sohan Tamang” <sohan@pdx.edu>
             “An Huynh” <an35@pdx.edu>
-            “Theron Anderson” <atheron@pdx.edu>
-            This software is licensed under the MIT License. See LICENSE file for the full text.
-            TEXT
-            Licensing Information
-            TEXT
-            Authors""", "About LScan", wx.OK | wx.ICON_INFORMATION)
+            “Theron Anderson” <atheron@pdx.edu>""", "About LScan", wx.OK | wx.ICON_INFORMATION)
 
     def browse_file(self, event):
-        """
-        Browse for a valid STL input file.
+        """Browse for a valid STL input file.
         :param event:
         :return:
         """
         pass
 
     def convert(self, event):
-        """
-        Convert the selected STL file into an LDraw file.
+        """Convert the selected STL file into an LDraw file.
         :param event:
         :return:
         """
         pass
 
     def pause(self, e):
-        """
-        Pause the conversion process.
+        """Pause the conversion process.
         :param e:
         :return:
         """
         pass
 
     def resume(self, event):
-        """
-        Continue/resume the conversion process again.
+        """Continue/resume the conversion process again.
         :param event:
         :return:
         """
         pass
 
     def cancel(self, event):
-        """
-        Cancel the conversion operation.
+        """Cancel the conversion operation.
         :param event:
         :return:
         """
         pass
 
     def save(self, event):
-        """
-        Save the finalized conversion of the input file. Hide main window options and replace them with metadata
+        """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
         options. Once the user finalizes their metadata options (back or save), they return to the original options.
         :param event:
         :return:
@@ -224,8 +214,8 @@ class MainPanel(wx.Panel):
         pass
 
     def save_log(self, event):
-        """
-        Save the message log.
+        """Save the feedback log to a file.
+
         :param event:
         :return:
         """
@@ -233,8 +223,8 @@ class MainPanel(wx.Panel):
 
     def browse_output(self, event):
         """
+
         :param event:
         :return:
         """
         pass
-
