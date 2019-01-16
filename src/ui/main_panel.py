@@ -213,6 +213,7 @@ class MainPanel(wx.Panel):
         """
         pass
 
+
     def save_log(self, event):
         """Save the feedback log to a file.
 
