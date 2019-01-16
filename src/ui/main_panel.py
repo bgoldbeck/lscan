@@ -107,7 +107,7 @@ class MainPanel(wx.Panel):
         convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button)
         hbox_procctrl.Add(convert_button, 0, wx.ALIGN_CENTER)
         self.Bind(wx.EVT_BUTTON, self.convert, convert_button)
-        convert_button.Disable()
+        #convert_button.Disable()
 
         pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button)
         hbox_procctrl.Add(pause_button, 0, wx.ALIGN_CENTER)
@@ -126,7 +126,7 @@ class MainPanel(wx.Panel):
 
         save_log_button = wx.Button(self, label="Save Log", pos=(750, 150), size=self.big_button)
         self.Bind(wx.EVT_BUTTON, self.save_log, save_log_button)
-        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
+        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
         self.log = wx.TextCtrl(self, wx.ID_ANY, size=self.output_log_size, style=style)
 
         vbox.Add(hbox_input, 0, wx.ALIGN_CENTER)
@@ -135,6 +135,8 @@ class MainPanel(wx.Panel):
         vbox.Add(hbox_license, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_opengl, 0, wx.ALIGN_CENTER)
+        #vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
+
         vbox.Add(save_log_button, 0, wx.ALIGN_RIGHT)
         vbox.Add(self.log, 0, wx.ALIGN_CENTER)
         self.SetSizer(vbox)
@@ -232,7 +234,10 @@ class MainPanel(wx.Panel):
         :param event:
         :return:
         """
-        wx.CallAfter(self.log.AppendText, "Saved Log\n")
+        text = "Saved Log\n"
+        #self.log.SetForegroundColour(wx.RED)
+        self.log.SetForegroundColour(wx.BLUE) # Sets the whole log to BLUE not just one line
+        wx.CallAfter(self.log.AppendText, text)
 
     def browse_output(self, event):
         """
@@ -253,5 +258,3 @@ class MainPanel(wx.Panel):
                 wx.LogError("Cannot save current data in file '%s'." % pathname)
         
         dialog.Destroy()
-
-
