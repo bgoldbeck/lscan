@@ -135,7 +135,6 @@ class MainPanel(wx.Panel):
         vbox.Add(hbox_license, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_opengl, 0, wx.ALIGN_CENTER)
-
         vbox.Add(save_log_button, 0, wx.ALIGN_RIGHT)
         vbox.Add(self.log, 0, wx.ALIGN_CENTER)
         self.SetSizer(vbox)
@@ -161,7 +160,15 @@ class MainPanel(wx.Panel):
         wx.MessageBox("""
             LScan
             Version 1.0
-            Copyright Information
+            Copyright (C) 2018 - This notice is to be included in all relevant source files.
+            "Brandon Goldbeck" <bpg@pdx.edu>
+            “Anthony Namba” <anamba@pdx.edu>
+            “Brandon Le” <lebran@pdx.edu>
+            “Ann Peake” <peakean@pdx.edu>
+            “Sohan Tamang” <sohan@pdx.edu>
+            “An Huynh” <an35@pdx.edu>
+            “Theron Anderson” <atheron@pdx.edu>
+            This software is licensed under the MIT License. See LICENSE file for the full text.
             TEXT
             Licensing Information
             TEXT
@@ -173,16 +180,7 @@ class MainPanel(wx.Panel):
         :param event:
         :return:
         """
-        stl_wildcard = "*.stl"
-        dialog = wx.FileDialog(self, "Choose a STL file", os.getcwd(), "", stl_wildcard, wx.FD_OPEN)
-
-        if dialog.ShowModal() == wx.ID_OK:
-            file = open(dialog.GetPath(), "r")
-            with file:
-                data = file.read()
-                # self.txt.SetValue(data)
-
-        dialog.Destroy()
+        pass
 
     def convert(self, event):
         """
@@ -231,26 +229,12 @@ class MainPanel(wx.Panel):
         :param event:
         :return:
         """
-        text = "Saved Log\n"
-        # self.log.SetForegroundColour(wx.RED)
-        self.log.SetForegroundColour(wx.BLUE)  # Sets the whole log to BLUE not just one line
-        wx.CallAfter(self.log.AppendText, text)
+        pass
 
     def browse_output(self, event):
         """
         :param event:
         :return:
         """
-        temp_data = "this is temporary data remove this line when functional"
-        ldraw_wildcard = "*.dat"
-        dialog = wx.FileDialog(self, "Choose a location for the LDraw file", os.getcwd(), "", wildcard=ldraw_wildcard,
-                               style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
-        if dialog.ShowModal() == wx.ID_OK:
-            pathname = dialog.GetPath()
-            try:
-                with open(pathname, "w") as file:
-                    file.write(temp_data)
-            except IOError:
-                wx.LogError("Cannot save current data in file '%s'." % pathname)
-        dialog.Destroy()
+        pass
 
