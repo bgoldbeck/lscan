@@ -61,3 +61,24 @@ class LogPanel(wx.Panel):
         :return: None
         """
         pass
+
+    def display_log(self, event, message):
+        """Print a message to the log.
+
+        :param event:
+        :param message:
+        :return:
+        """
+
+        # Check message!!!
+        # Color message appropriately!!!
+        self.log.AppendText(message)
+
+    def clear_log(self, event):
+        """Clears the log.
+
+        :param event:
+        :return:
+        """
+        #self.log.Clear()
+        pass

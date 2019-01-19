@@ -8,7 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
-
+from pathlib import Path
 
 class MetadataPanel(wx.Panel):
     """This class contains the wx widgets for control over metadata information in the
@@ -135,21 +135,17 @@ class MetadataPanel(wx.Panel):
         :param event:
         :return:
         """
-        wx.MessageBox("""
-            LScan
-            Version 1.0
-            Copyright (C) 2018 - This notice is to be included in all relevant source files.
+        enc = "utf-8"
+        filename = Path.cwd() / "ABOUT.txt"
+        try:
+            with open(filename, "r", encoding=enc) as file:
+                about = file.read()
+                #print(about)
+        except FileNotFoundError:
+            # Print to Log !!!!
+            print("File Not Found!")
 
-            This software is licensed under the MIT License. See LICENSE file for the full text.
-
-            Authors
-            "Brandon Goldbeck" <bpg@pdx.edu>
-            “Anthony Namba” <anamba@pdx.edu>
-            “Brandon Le” <lebran@pdx.edu>
-            “Ann Peake” <peakean@pdx.edu>
-            “Sohan Tamang” <sohan@pdx.edu>
-            “An Huynh” <an35@pdx.edu>
-            “Theron Anderson” <atheron@pdx.edu>""", "About LScan", wx.OK | wx.ICON_INFORMATION)
+        wx.MessageBox(about, "About LScan", wx.OK | wx.ICON_INFORMATION)
 
     def browse_file(self, event):
         """Browse for a valid STL input file.
