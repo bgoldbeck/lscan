@@ -141,16 +141,18 @@ class MetadataPanel(wx.Panel):
         """
         enc = "utf-8"
         filename = Path.cwd() / "ABOUT.txt"
-        print(filename)
         try:
-            with open(filename, "r", encoding=enc) as file:
+            with open(str(filename), "r", encoding=enc) as file:
                 about = file.read()
-                #print(about)
-        except FileNotFoundError:
+                wx.MessageBox(about, "About LScan", wx.OK | wx.ICON_INFORMATION)
+        except PermissionError as perr:
             # Print to Log !!!!
-            print("File Not Found!")
-
-        wx.MessageBox(about, "About LScan", wx.OK | wx.ICON_INFORMATION)
+            print(perr)
+            raise
+        except FileNotFoundError as ferr:
+            # Print to Log !!!!
+            print(ferr)
+            raise
 
     def browse_file(self, event):
         """Browse for a valid STL input file.
