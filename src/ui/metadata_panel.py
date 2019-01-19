@@ -124,11 +124,15 @@ class MetadataPanel(wx.Panel):
         """
         wx.MessageBox("""
             Program Limitations
-            TEXT
+            TEXT!!!
             Troubleshooting
-            TEXT
+            TEXT!!!
             How to update LDraw Parts Library
-            TEXT""", "Help info", wx.OK | wx.ICON_QUESTION)
+            Manually: Download the update provided at 
+                http://www.ldraw.org/library/update/lcad<year><release>.zip
+            Additional/automatic instructions avialable at: http://www.ldraw.org/article/13.html
+            Unofficial library instructions available at: http://www.melkert.net/LDCad/faq#faq_unoflib
+            """, "Help", wx.OK | wx.ICON_QUESTION)
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
@@ -137,6 +141,7 @@ class MetadataPanel(wx.Panel):
         """
         enc = "utf-8"
         filename = Path.cwd() / "ABOUT.txt"
+        print(filename)
         try:
             with open(filename, "r", encoding=enc) as file:
                 about = file.read()
@@ -155,7 +160,7 @@ class MetadataPanel(wx.Panel):
         pass
 
     def browse_output(self, event):
-        """
+        """Browse for a valid DAT output file location.
 
         :param event:
         :return:
