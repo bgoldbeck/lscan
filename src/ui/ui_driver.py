@@ -31,7 +31,7 @@ class UIDriver:
         if not UIDriver.instance:
             UIDriver.instance = self
 
-            self.root_frame = root
+            UIDriver.root_frame = root
 
             # Set application to STARTUP state.
             UIDriver.change_application_state(ApplicationState.STARTUP)
