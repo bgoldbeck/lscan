@@ -71,7 +71,8 @@ class LogPanel(wx.Panel, IUIBehavior):
         :param new_state: The recorded ApplicationState.
         :return: None
         """
-        pass
+        if new_state == ApplicationState.STARTUP:
+            self.save_log_button.Disable()
 
     def on_event(self, event: UserEvent):
         """A user event was passed to the LogPanel.

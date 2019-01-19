@@ -115,7 +115,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             self.convert_button.Disable()
         elif new_state == ApplicationState.WAITING_GO:
             self.convert_button.Enable()
-        pass
 
     def on_event(self, event: UserEvent):
         """A user event was passed to the ConversionPanel.

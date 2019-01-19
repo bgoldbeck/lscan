@@ -32,8 +32,10 @@ class UIDriver:
             UIDriver.instance = self
             UIDriver.root_frame = MainFrame()
             UIDriver.root_frame.Show()
+
             # Set application to STARTUP state.
             UIDriver.change_application_state(ApplicationState.STARTUP)
+
             # Automatically go right into WAITING_INPUT state.
             UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
 
