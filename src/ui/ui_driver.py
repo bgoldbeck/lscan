@@ -24,14 +24,14 @@ class UIDriver:
     application_state = None
     root_frame = None
 
-    def __init__(self):
+    def __init__(self, root):
         """Default constructor for the UIDriver object.
 
         """
         if not UIDriver.instance:
             UIDriver.instance = self
-            UIDriver.root_frame = MainFrame()
-            UIDriver.root_frame.Show()
+
+            self.root_frame = root
 
             # Set application to STARTUP state.
             UIDriver.change_application_state(ApplicationState.STARTUP)

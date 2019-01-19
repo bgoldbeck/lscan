@@ -9,6 +9,7 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
 from src.ui.ui_driver import UIDriver
+from src.ui.main_frame import MainFrame
 
 
 class LScan(wx.App):
@@ -20,7 +21,11 @@ class LScan(wx.App):
         """Default constructor for LScan class.
         """
         wx.App.__init__(self)
-        self.ui_driver = UIDriver()
+
+        root_frame = MainFrame()
+        root_frame.Show()
+
+        self.ui_driver = UIDriver(root_frame)
 
     def OnInit(self):
         """Called by WxPython on startup.
