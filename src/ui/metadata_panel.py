@@ -170,17 +170,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         pass
 
     def on_state_changed(self, new_state: ApplicationState):
-        """
+        """A state change was passed to the MetadataPanel.
 
-        :param new_state:
-        :return:
+        :param new_state: The recorded ApplicationState.
+        :return: None
         """
         pass
 
     def on_event(self, event: UserEvent):
-        """
+        """A user event was passed to the MetadataPanel.
 
-        :param event:
-        :return:
+        :param event: The recorded UserEvent.
+        :return: None
         """
         pass

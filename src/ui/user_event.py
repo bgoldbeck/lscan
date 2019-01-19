@@ -11,6 +11,8 @@ from enum import Enum
 
 
 class UserEvent(Enum):
+    """The enumerated class the stores the possible user events.
+    """
     INPUT_MODEL_READY = 0
     SELECTED_OUTPUT_FILE = 1
     CONVERSION_COMPLETE = 2

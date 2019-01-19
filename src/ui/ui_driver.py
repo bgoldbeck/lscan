@@ -15,8 +15,9 @@ from src.ui.iui_behavior import IUIBehavior
 
 
 class UIDriver:
-    """
-
+    """This class is responsible for driving the UI. It holds the root frame wx widget as well as
+    keeping track of the application state. It will send user events and application state changes
+    to the child IUIBehavior objects.
     """
 
     instance = None
@@ -24,29 +25,26 @@ class UIDriver:
     root_frame = None
 
     def __init__(self):
+        """Default constructor for the UIDriver object.
+
+        """
         if not UIDriver.instance:
             UIDriver.instance = self
             UIDriver.root_frame = MainFrame()
             UIDriver.root_frame.Show()
+            # Set application to STARTUP state.
             UIDriver.change_application_state(ApplicationState.STARTUP)
-
-    @staticmethod
-    def get_instance():
-        """
-
-        :return:
-        """
-        if not UIDriver.instance:
-            UIDriver.instance = UIDriver()
-        return UIDriver.instance
+            # Automatically go right into WAITING_INPUT state.
+            UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
 
     @staticmethod
     def get_all_ui_behaviors(root, behaviors):
-        """
+        """Traverse the child-parent relationship between wx widgets. Return all the children objects that
+        are instances of the IUIBehavior.
 
-        :param root:
-        :param behaviors:
-        :return:
+        :param root: The root wx widget.
+        :param behaviors: The IUIBehavior objects to return by reference.
+        :return: None
         """
         if root is None:
             return
@@ -60,7 +58,7 @@ class UIDriver:
 
     @staticmethod
     def fire_event(event: UserEvent):
-        """
+        """Send an event down the wx widget tree to all IUIBehavior objects.
 
         :param event:
         :return:
@@ -74,10 +72,10 @@ class UIDriver:
 
     @staticmethod
     def change_application_state(new_state: ApplicationState):
-        """
+        """Send a state change down the wx widget tree to all IUIBehavior objects.
 
-        :param new_state:
-        :return:
+        :param new_state: The state the application was changed to.
+        :return: None
         """
         # Set the new state.
         UIDriver.application_state = new_state

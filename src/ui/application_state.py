@@ -11,6 +11,8 @@ from enum import Enum
 
 
 class ApplicationState(Enum):
+    """The enumerated class the stores the possible application states.
+    """
     STARTUP = 0
     WAITING_INPUT = 1
     WAITING_GO = 2
