@@ -8,27 +8,25 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
-from src.ui.main_frame import MainFrame
+from src.ui.ui_driver import UIDriver
 
 
 class LScan(wx.App):
     """The main application driver class module.
     """
-    frame = None
+    ui_driver = None
 
     def __init__(self):
         """Default constructor for LScan class.
         """
         wx.App.__init__(self)
+        self.ui_driver = UIDriver()
 
     def OnInit(self):
         """Called by WxPython on startup.
 
         :return: bool -- true, if the initializing was successful.
         """
-        # Create a MainFrame instance and store/show it.
-        self.frame = MainFrame()
-        self.frame.Show()
         return True
 
 

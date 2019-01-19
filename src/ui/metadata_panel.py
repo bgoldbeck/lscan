@@ -8,9 +8,12 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
+from src.ui.iui_behavior import IUIBehavior
+from src.ui.application_state import ApplicationState
+from src.ui.user_event import UserEvent
 
 
-class MetadataPanel(wx.Panel):
+class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over metadata information in the
     program. These widgets may include, but not limited to author, license, stl file input,
     and ldraw file output.
@@ -159,6 +162,22 @@ class MetadataPanel(wx.Panel):
         pass
 
     def browse_output(self, event):
+        """
+
+        :param event:
+        :return:
+        """
+        pass
+
+    def on_state_changed(self, new_state: ApplicationState):
+        """
+
+        :param new_state:
+        :return:
+        """
+        pass
+
+    def on_event(self, event: UserEvent):
         """
 
         :param event:

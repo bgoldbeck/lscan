@@ -27,6 +27,7 @@ class MainFrame(wx.Frame):
                           | wx.FULL_REPAINT_ON_RESIZE)
         self._build_gui()
 
+
     def _build_gui(self):
         """Create all the sub-panels and their layout on this main panel.
         :return: None
