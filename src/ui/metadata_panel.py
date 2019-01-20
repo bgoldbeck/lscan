@@ -11,7 +11,7 @@ import wx
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
-
+from pathlib import Path
 
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over metadata information in the
@@ -124,7 +124,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.Bind(wx.EVT_BUTTON, self.about, self.about_button)
         self.Bind(wx.EVT_BUTTON, self.browse_output, self.browse_output_button)
         self.Bind(wx.EVT_BUTTON, self.help, self.help_button)
-        self.Bind(wx.EVT_BUTTON, self.browse_file, self.browse_stl_button)
+        self.Bind(wx.EVT_BUTTON, self.browse_input, self.browse_stl_button)
 
     def help(self, event):
         """Presents program limitations, common troubleshooting steps, and steps to update LDraw parts library.
@@ -160,16 +160,50 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             “An Huynh” <an35@pdx.edu>
             “Theron Anderson” <atheron@pdx.edu>""", "About LScan", wx.OK | wx.ICON_INFORMATION)
 
-    def browse_file(self, event):
+    def browse_input(self, event):
         """Browse for a valid STL input file.
         :param event:
         :return:
         """
-        pass
+        stl_wildcard = "*.stl"
+        print(Path.cwd())
+        dialog = wx.FileDialog(self, "Choose a STL file", defaultDir="", wildcard=stl_wildcard, style=wx.FD_OPEN
+                               | wx.FD_FILE_MUST_EXIST)
+
+        if dialog.ShowModal() == wx.ID_OK:
+            filename = dialog.GetPath()
+            # Check for file existing
+            # If valid, pass to worker thread who will check data
+            print(filename)
+            #try:
+            #    with open(filename, "r", encoding="utf-8") as file:
+            #        stl_data = file.read()
+            #        print(stl_data)
+            #except IOError:
+            #    print("IO ERROR!")
+            #stl_data = self.get_file_text(dialog.GetCurrentlySelectedFilename)
+            #print(stl_data)
+        dialog.Destroy()
+
+    def get_file_text(self, filepath):
+        enc = "utf-8"
+        try:
+            with open(str(filepath), "r", encoding=enc) as file:
+                text = file.read()
+
+        except PermissionError as perr:
+            # Print to Log !!!!
+            print(perr)
+            raise
+        except FileNotFoundError as ferr:
+            # Print to Log !!!!
+            print(ferr)
+            raise
+        else:
+            return text
 
     def browse_output(self, event):
-        """
-
+        """Browse for a valid DAT output file
         :param event:
         :return:
         """
@@ -189,4 +223,24 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
+        pass
+
+    def create_settings(self):
+        """Generate inital settings file based on current working directory.
+        """
+        pass
+
+    def save_settings(self):
+        """Save changes to user settings file.
+        """
+        # Determine changes to settings file
+        # Write out changes to
+        pass
+
+    def read_settings(self):
+        """Read the settings file."""
+        pass
+
+    def write_settings(self):
+        """Write to the settings file."""
         pass
