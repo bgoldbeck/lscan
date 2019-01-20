@@ -12,8 +12,7 @@ from src.ui.user_event import UserEvent
 
 
 class IUIBehavior:
-    """
-
+    """The psuedo interface for some wx controls to also inherit method properties from.
     """
 
     def on_state_changed(self, new_state: ApplicationState):

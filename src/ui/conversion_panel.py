@@ -14,8 +14,8 @@ from src.ui.user_event import UserEvent
 
 
 class ConversionPanel(wx.Panel, IUIBehavior):
-    """
-
+    """Holds wx controls relevant to controlling the program behavior for starting, stopping,
+    pausing, and canceling the conversion process.
     """
     big_button_size = (120, 30)
 
