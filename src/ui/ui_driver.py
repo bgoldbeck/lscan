@@ -8,6 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx, os
+from sys import platform
 from pathlib import Path
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
@@ -97,7 +98,7 @@ class UIDriver:
         :return: The text that was read from the file or None
         """
         enc = "utf-8"
-        if os.name == "nt":
+        if platform == "win32" or os.name == "nt":
             file_path = str(Path.cwd()) + "\\assets\\info\\" + file_name
         else:
             file_path = str(Path.cwd()) + "/assets/info/" + file_name
