@@ -122,12 +122,13 @@ class MetadataPanel(wx.Panel):
         :param event:
         :return:
         """
+        """
         enc = "utf-8"
         filename = Path.cwd() / "assets/info/HELP.txt"
         try:
             with open(str(filename), "r", encoding=enc) as file:
-                about = file.read()
-                wx.MessageBox(about, "Help", wx.OK | wx.ICON_QUESTION)
+                help = file.read()
+                wx.MessageBox(help, "Help", wx.OK | wx.ICON_QUESTION)
         except PermissionError as perr:
             # Print to Log !!!!
             print(perr)
@@ -136,11 +137,16 @@ class MetadataPanel(wx.Panel):
             # Print to Log !!!!
             print(ferr)
             raise
+        """
+        filepath = Path.cwd() / "assets/info/HELP.txt"
+        help = self.get_file_text(filepath)
+        wx.MessageBox(help, "Help", wx.OK | wx.ICON_QUESTION)
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
         :param event:
         :return:
+        """
         """
         enc = "utf-8"
         filename = Path.cwd() / "assets/info/ABOUT.txt"
@@ -156,6 +162,27 @@ class MetadataPanel(wx.Panel):
             # Print to Log !!!!
             print(ferr)
             raise
+        """
+        filepath = Path.cwd() / "assets/info/ABOUT.txt"
+        about = self.get_file_text(filepath)
+        wx.MessageBox(about, "About LScan", wx.OK | wx.ICON_INFORMATION)
+
+    def get_file_text(self, filepath):
+        enc = "utf-8"
+        try:
+            with open(str(filepath), "r", encoding=enc) as file:
+                text = file.read()
+
+        except PermissionError as perr:
+            # Print to Log !!!!
+            print(perr)
+            raise
+        except FileNotFoundError as ferr:
+            # Print to Log !!!!
+            print(ferr)
+            raise
+        else:
+            return text
 
     def browse_file(self, event):
         """Browse for a valid STL input file.
