@@ -12,9 +12,12 @@ from src.ui.opengl_canvas import OpenGLCanvas
 from src.ui.log_panel import LogPanel
 from src.ui.conversion_panel import ConversionPanel
 from src.ui.metadata_panel import MetadataPanel
+from src.ui.iui_behavior import IUIBehavior
+from src.ui.application_state import ApplicationState
+from src.ui.user_event import UserEvent
 
 
-class MainPanel(wx.Panel):
+class MainPanel(wx.Panel, IUIBehavior):
     """The child of the MainFrame. This panel will hold the main applications sub-panels.
     """
 
@@ -53,3 +56,18 @@ class MainPanel(wx.Panel):
 
         self.SetSizer(vertical_layout)
 
+    def on_state_changed(self, new_state: ApplicationState):
+        """A state change was passed to the MainPanel.
+
+        :param new_state: The recorded ApplicationState.
+        :return: None
+        """
+        pass
+
+    def on_event(self, event: UserEvent):
+        """A user event was passed to the MainPanel.
+
+        :param event: The recorded UserEvent.
+        :return: None
+        """
+        pass
