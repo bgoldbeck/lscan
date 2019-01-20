@@ -53,8 +53,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             style=wx.ALIGN_RIGHT)
 
         # Stl input.
-        stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        stl_path_name_text.SetMaxLength(self.max_path_length)
+        self.stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.stl_path_name_text.SetMaxLength(self.max_path_length)
 
         self.browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
 
@@ -64,8 +64,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Output path selection.
         path_part_static_text = wx.StaticText(self, label="Part Name", size=self.label_size, style=wx.ALIGN_RIGHT)
-        ldraw_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        ldraw_name_text.SetMaxLength(self.max_path_length)
+        self.ldraw_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.ldraw_name_text.SetMaxLength(self.max_path_length)
 
         self.browse_output_button = wx.Button(self, label="Browse Output", size=self.big_button)
 
@@ -86,7 +86,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         horizontal_license = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_input.Add(path_name_static_text, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
-        horizontal_input.Add(stl_path_name_text, 0, wx.ALIGN_CENTER)
+        horizontal_input.Add(self.stl_path_name_text, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
         horizontal_input.Add(self.browse_stl_button, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
@@ -96,7 +96,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         horizontal_output.Add(path_part_static_text, 0, wx.ALIGN_LEFT)
         horizontal_output.AddSpacer(5)
-        horizontal_output.Add(ldraw_name_text, 0, wx.ALIGN_LEFT)
+        horizontal_output.Add(self.ldraw_name_text, 0, wx.ALIGN_LEFT)
         horizontal_output.AddSpacer(5)
         horizontal_output.Add(self.browse_output_button, 0, wx.ALIGN_LEFT)
 
@@ -166,7 +166,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         stl_wildcard = "*.stl"
-        print(Path.cwd())
+        #print(Path.cwd())
         dialog = wx.FileDialog(self, "Choose a STL file", defaultDir="", wildcard=stl_wildcard, style=wx.FD_OPEN
                                | wx.FD_FILE_MUST_EXIST)
 
@@ -185,11 +185,45 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             #print(stl_data)
         dialog.Destroy()
 
+    def get_paste_input(self, event):
+        """Get the path for STL input file from user typing into TextCtrl element.
+        :param event:
+        :return:
+        """
+        filepath = self.stl_path_name_text.GetValue()
+        # Check file path validity
+        print(filepath)
+
     def browse_output(self, event):
         """Browse for a valid DAT output file
         :param event:
         :return:
         """
+        #temp_data = "this is temporary data remove this line when functional"
+        ldraw_wildcard = "*.dat"
+        dialog = wx.FileDialog(self, "Choose a location for the LDraw file", defaultDir="", wildcard=ldraw_wildcard,
+                               style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        if dialog.ShowModal() == wx.ID_OK:
+            pathname = dialog.GetPath()
+            print(pathname)
+            """
+            try:
+                with open(pathname, "w") as file:
+                    file.write(temp_data)
+            except IOError:
+                wx.LogError("Cannot save current data in file '%s'." % pathname)
+            """
+        dialog.Destroy()
+
+    def get_file_output(self, event):
+        """Get file output path from user in TextCtrl element.
+        :param event:
+        :return:
+        """
+        # Detect if you need to use:
+        # default directory and default part name
+        # current default directory and new part name
+        # new part directory and new part name
         pass
 
     def on_state_changed(self, new_state: ApplicationState):
@@ -208,9 +242,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         pass
 
-    def create_settings(self):
-        """Generate inital settings file based on current working directory.
+    def create_default_settings(self):
+        """Generate initial settings file based on current working directory.
         """
+        # default stl directory
+        default_stl_dir = Path.cwd() / "assets/models/"
+        # default part name
+        default_part_name = "untitled.dat"
+        # default part name directory
+        default_part_dir = Path.cwd() / "assets/parts/"
+        # default author
+        default_author = "First Last "
+        # default license
+        default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
         pass
 
     def save_settings(self):
