@@ -8,10 +8,10 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
-from pathlib import Path
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
+from src.ui.ui_driver import UIDriver
 
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -132,35 +132,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        filepath = Path.cwd() / "assets/info/HELP.txt"
-        help = self.get_file_text(filepath)
-        wx.MessageBox(help, "Help", wx.OK | wx.ICON_QUESTION)
+        help_text = UIDriver.get_assets_file_text("HELP.txt")
+        if help_text is not None:
+            wx.MessageBox(help_text, "Help", wx.OK | wx.ICON_QUESTION)
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
         :param event:
         :return:
         """
-        filepath = Path.cwd() / "assets/info/ABOUT.txt"
-        about = self.get_file_text(filepath)
-        wx.MessageBox(about, "About LScan", wx.OK | wx.ICON_INFORMATION)
-
-    def get_file_text(self, filepath):
-        enc = "utf-8"
-        try:
-            with open(str(filepath), "r", encoding=enc) as file:
-                text = file.read()
-
-        except PermissionError as perr:
-            # Print to Log!
-            print(perr)
-            raise
-        except FileNotFoundError as ferr:
-            # Print to Log!
-            print(ferr)
-            raise
-        else:
-            return text
+        about_text = UIDriver.get_assets_file_text("ABOUT.txt")
+        if about_text is not None:
+            wx.MessageBox(about_text, "About LScan", wx.OK | wx.ICON_INFORMATION)
 
     def browse_file(self, event):
         """Browse for a valid STL input file.

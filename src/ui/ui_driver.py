@@ -7,8 +7,8 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import wx
-from src.ui.main_frame import MainFrame
+import wx, os
+from pathlib import Path
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
@@ -88,3 +88,28 @@ class UIDriver:
 
         for ui_behavior in ui_behaviors:
             ui_behavior.on_state_changed(new_state)
+
+    @staticmethod
+    def get_assets_file_text(file_name: str):
+        """Return the contents of the file in the folder CWD/assets/info/
+
+        :param file_name: The name of the file contained in the assets/info folder.
+        :return: The text that was read from the file or None
+        """
+        enc = "utf-8"
+        if os.name == "nt":
+            file_path = str(Path.cwd()) + "\\assets\\info\\" + file_name
+        else:
+            file_path = str(Path.cwd()) + "/assets/info/" + file_name
+
+        text = None
+        # Try to open the complete file path and record the text.
+        try:
+            with open(str(file_path), "r", encoding=enc) as file:
+                text = file.read()
+        except PermissionError as perr:
+            print(perr)
+        except FileNotFoundError as ferr:
+            print(ferr)
+
+        return text
