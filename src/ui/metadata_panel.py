@@ -8,9 +8,12 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
+from src.ui.iui_behavior import IUIBehavior
+from src.ui.application_state import ApplicationState
+from src.ui.user_event import UserEvent
 
 
-class MetadataPanel(wx.Panel):
+class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over metadata information in the
     program. These widgets may include, but not limited to author, license, stl file input,
     and ldraw file output.
@@ -27,6 +30,12 @@ class MetadataPanel(wx.Panel):
         """
         wx.Panel.__init__(self, parent, size=self.panel_size, style=wx.BORDER_SUNKEN)
         self.parent = parent
+        self.browse_stl_button = None
+        self.help_button = None
+        self.about_button = None
+        self.browse_stl_button = None
+        self.author_text = None
+        self.license_text = None
         self._build_gui()
         self.parent.Layout()
 
@@ -43,41 +52,34 @@ class MetadataPanel(wx.Panel):
             size=self.label_size,
             style=wx.ALIGN_RIGHT)
 
+        # Stl input.
         stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         stl_path_name_text.SetMaxLength(self.max_path_length)
 
-        browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
-        self.Bind(wx.EVT_BUTTON, self.browse_file, browse_stl_button)
+        self.browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
 
-        help_button = wx.Button(self, label="?", size=self.small_button_size)
-        self.Bind(wx.EVT_BUTTON, self.help, help_button)
+        # Help / About.
+        self.help_button = wx.Button(self, label="?", size=self.small_button_size)
+        self.about_button = wx.Button(self, label="i", size=self.small_button_size)
 
-        about_button = wx.Button(self, label="i", size=self.small_button_size)
-        self.Bind(wx.EVT_BUTTON, self.about, about_button)
-
-        # Output path/selection
+        # Output path selection.
         path_part_static_text = wx.StaticText(self, label="Part Name", size=self.label_size, style=wx.ALIGN_RIGHT)
         ldraw_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         ldraw_name_text.SetMaxLength(self.max_path_length)
 
-        browse_output_button = wx.Button(self, label="Browse Output", size=self.big_button)
-        self.Bind(wx.EVT_BUTTON, self.browse_output, browse_output_button)
+        self.browse_output_button = wx.Button(self, label="Browse Output", size=self.big_button)
 
         # Author
         author_static_text = wx.StaticText(self, label="Author", size=self.label_size, style=wx.ALIGN_RIGHT)
-        author_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        author_text.SetMaxLength(self.max_path_length)
+        self.author_text = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.author_text.SetMaxLength(self.max_path_length)
 
         # License information.
         license_static_text = wx.StaticText(self, label="License", size=self.label_size, style=wx.ALIGN_RIGHT)
-        license_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        license_text.SetMaxLength(self.max_path_length)
+        self.license_text = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.license_text.SetMaxLength(self.max_path_length)
 
-        vertical_layout = wx.BoxSizer(wx.VERTICAL)
-
-        horizontal_split = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Input stl file and help and about
+        # Create the layout.
         horizontal_input = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_output = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_author = wx.BoxSizer(wx.HORIZONTAL)
@@ -86,36 +88,43 @@ class MetadataPanel(wx.Panel):
         horizontal_input.AddSpacer(5)
         horizontal_input.Add(stl_path_name_text, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
-        horizontal_input.Add(browse_stl_button, 0, wx.ALIGN_CENTER)
+        horizontal_input.Add(self.browse_stl_button, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
-        horizontal_input.Add(help_button, 0, wx.ALIGN_CENTER)
+        horizontal_input.Add(self.help_button, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
-        horizontal_input.Add(about_button, 0, wx.ALIGN_CENTER)
+        horizontal_input.Add(self.about_button, 0, wx.ALIGN_CENTER)
 
         horizontal_output.Add(path_part_static_text, 0, wx.ALIGN_LEFT)
         horizontal_output.AddSpacer(5)
         horizontal_output.Add(ldraw_name_text, 0, wx.ALIGN_LEFT)
         horizontal_output.AddSpacer(5)
-        horizontal_output.Add(browse_output_button, 0, wx.ALIGN_LEFT)
+        horizontal_output.Add(self.browse_output_button, 0, wx.ALIGN_LEFT)
 
         horizontal_author.Add(author_static_text, 0, wx.ALIGN_LEFT)
         horizontal_author.AddSpacer(5)
-        horizontal_author.Add(author_text, 0, wx.ALIGN_LEFT)
+        horizontal_author.Add(self.author_text, 0, wx.ALIGN_LEFT)
 
         horizontal_license.Add(license_static_text, 0, wx.ALIGN_LEFT)
         horizontal_license.AddSpacer(5)
-        horizontal_license.Add(license_text, 0, wx.ALIGN_LEFT)
+        horizontal_license.Add(self.license_text, 0, wx.ALIGN_LEFT)
 
+        vertical_layout = wx.BoxSizer(wx.VERTICAL)
         vertical_layout.Add(horizontal_input, 0, wx.ALIGN_LEFT)
         vertical_layout.Add(horizontal_output, 0, wx.ALIGN_LEFT)
         vertical_layout.Add(horizontal_author, 0, wx.ALIGN_LEFT)
         vertical_layout.Add(horizontal_license, 0, wx.ALIGN_LEFT)
 
-        #horizontal_split.Add(dummy_panel, 0, wx.ALIGN_LEFT)
+        horizontal_split = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_split.AddSpacer(150)
         horizontal_split.Add(vertical_layout, 0, wx.ALIGN_LEFT)
 
         self.SetSizer(horizontal_split)
+
+        # Register events.
+        self.Bind(wx.EVT_BUTTON, self.about, self.about_button)
+        self.Bind(wx.EVT_BUTTON, self.browse_output, self.browse_output_button)
+        self.Bind(wx.EVT_BUTTON, self.help, self.help_button)
+        self.Bind(wx.EVT_BUTTON, self.browse_file, self.browse_stl_button)
 
     def help(self, event):
         """Presents program limitations, common troubleshooting steps, and steps to update LDraw parts library.
@@ -163,5 +172,21 @@ class MetadataPanel(wx.Panel):
 
         :param event:
         :return:
+        """
+        pass
+
+    def on_state_changed(self, new_state: ApplicationState):
+        """A state change was passed to the MetadataPanel.
+
+        :param new_state: The recorded ApplicationState.
+        :return: None
+        """
+        pass
+
+    def on_event(self, event: UserEvent):
+        """A user event was passed to the MetadataPanel.
+
+        :param event: The recorded UserEvent.
+        :return: None
         """
         pass

@@ -8,9 +8,12 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
+from src.ui.application_state import ApplicationState
+from src.ui.user_event import UserEvent
+from src.ui.iui_behavior import IUIBehavior
 
 
-class LogPanel(wx.Panel):
+class LogPanel(wx.Panel, IUIBehavior):
     """This panel controls the behavior for the output log panel that will display
     running information to the user about the programs progress while running
     various algorithms.
@@ -58,6 +61,23 @@ class LogPanel(wx.Panel):
         """Save the feedback log to a file.
 
         :param event: The event that was called.
+        :return: None
+        """
+        pass
+
+    def on_state_changed(self, new_state: ApplicationState):
+        """A state change was passed to the LogPanel.
+
+        :param new_state: The recorded ApplicationState.
+        :return: None
+        """
+        if new_state == ApplicationState.STARTUP:
+            self.save_log_button.Disable()
+
+    def on_event(self, event: UserEvent):
+        """A user event was passed to the LogPanel.
+
+        :param event: The recorded UserEvent.
         :return: None
         """
         pass

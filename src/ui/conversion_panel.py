@@ -8,10 +8,16 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
+from src.ui.iui_behavior import IUIBehavior
+from src.ui.application_state import ApplicationState
+from src.ui.user_event import UserEvent
 
 
-class ConversionPanel(wx.Panel):
-    big_button_size = (100, 30)
+class ConversionPanel(wx.Panel, IUIBehavior):
+    """Holds wx controls relevant to controlling the program behavior for starting, stopping,
+    pausing, and canceling the conversion process.
+    """
+    big_button_size = (120, 30)
 
     def __init__(self, parent):
         """Default constructor for ConversionPanel class.
@@ -20,6 +26,10 @@ class ConversionPanel(wx.Panel):
         """
         wx.Panel.__init__(self, parent, size=(1024, 30), style=wx.SIMPLE_BORDER)
         self.parent = parent
+        self.convert_button = None
+        self.pause_button = None
+        self.cancel_button = None
+        self.save_button = None
         self._build_gui()
 
     def _build_gui(self):
@@ -30,26 +40,20 @@ class ConversionPanel(wx.Panel):
         self.SetBackgroundColour("#456eab")
 
         # Create the wx controls for this conversion panel.
-        convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button_size)
-
-        pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button_size)
-        pause_button.Disable()
-
-        cancel_button = wx.Button(self, label="Cancel", size=self.big_button_size)
-        cancel_button.Disable()
-
-        save_button = wx.Button(self, label="Save Conversion", size=self.big_button_size)
-        save_button.Disable()
+        self.convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button_size)
+        self.pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button_size)
+        self.cancel_button = wx.Button(self, label="Cancel", size=self.big_button_size)
+        self.save_button = wx.Button(self, label="Save Conversion", size=self.big_button_size)
 
         # Create the layout.
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
-        horizontal_layout.Add(save_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(self.save_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
         horizontal_layout.AddSpacer(5)
-        horizontal_layout.Add(cancel_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(self.cancel_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
         horizontal_layout.AddSpacer(5)
-        horizontal_layout.Add(pause_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(self.pause_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
         horizontal_layout.AddSpacer(5)
-        horizontal_layout.Add(convert_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(self.convert_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         vertical_layout = wx.BoxSizer(wx.VERTICAL)
         vertical_layout.Add(horizontal_layout, 0, wx.ALIGN_CENTER)
@@ -57,10 +61,10 @@ class ConversionPanel(wx.Panel):
         self.SetSizer(vertical_layout)
 
         # Bind the events for each wx control.
-        self.Bind(wx.EVT_BUTTON, self.convert, convert_button)
-        self.Bind(wx.EVT_BUTTON, self.pause, pause_button)
-        self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
-        self.Bind(wx.EVT_BUTTON, self.save, save_button)
+        self.Bind(wx.EVT_BUTTON, self.convert, self.convert_button)
+        self.Bind(wx.EVT_BUTTON, self.pause, self.pause_button)
+        self.Bind(wx.EVT_BUTTON, self.cancel, self.cancel_button)
+        self.Bind(wx.EVT_BUTTON, self.save, self.save_button)
 
     def convert(self, event):
         """Convert the selected STL file into an LDraw file.
@@ -95,5 +99,27 @@ class ConversionPanel(wx.Panel):
         options. Once the user finalizes their metadata options (back or save), they return to the original options.
         :param event:
         :return:
+        """
+        pass
+
+    def on_state_changed(self, new_state: ApplicationState):
+        """A state change was passed to the ConversionPanel.
+
+        :param new_state: The recorded ApplicationState.
+        :return: None
+        """
+        if new_state == ApplicationState.STARTUP:
+            self.save_button.Disable()
+            self.cancel_button.Disable()
+            self.pause_button.Disable()
+            self.convert_button.Disable()
+        elif new_state == ApplicationState.WAITING_GO:
+            self.convert_button.Enable()
+
+    def on_event(self, event: UserEvent):
+        """A user event was passed to the ConversionPanel.
+
+        :param event: The recorded UserEvent.
+        :return: None
         """
         pass

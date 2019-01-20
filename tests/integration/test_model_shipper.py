@@ -35,7 +35,7 @@ class ModelShipperTest(unittest.TestCase):
         model = LDrawModel(
             "plane",  # Model name
             "Rando",  # Author
-            "!LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt",  #  License info
+            "!LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt",  # License info
             mesh_data  # Mesh
         )
 
