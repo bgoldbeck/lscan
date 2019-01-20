@@ -108,8 +108,8 @@ class UIDriver:
             with open(str(file_path), "r", encoding=enc) as file:
                 text = file.read()
         except PermissionError as perr:
-            print(perr)
+            pass
         except FileNotFoundError as ferr:
-            print(ferr)
+            pass
 
         return text

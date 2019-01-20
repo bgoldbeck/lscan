@@ -17,3 +17,7 @@ class TextUIDriverIO(unittest.TestCase):
         # The help text file probably will always contain the LDraw word.
         # This way we can make sure the help text contains the information we expect.
         self.assertTrue(help_text.find("LDraw") != -1)
+
+    def testReadAssetsFileNotExist(self):
+        no_text = UIDriver.get_assets_file_text("THIS_FILE_SERIOUSLY_SHOULD_NOT_EXISTS.txt")
+        self.assertIsNone(no_text)

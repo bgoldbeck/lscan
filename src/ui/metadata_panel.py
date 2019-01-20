@@ -135,6 +135,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         help_text = UIDriver.get_assets_file_text("HELP.txt")
         if help_text is not None:
             wx.MessageBox(help_text, "Help", wx.OK | wx.ICON_QUESTION)
+        else:
+            wx.MessageBox("Could not read help text file, sorry.", "Error", wx.OK | wx.ICON_INFORMATION)
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
@@ -144,6 +146,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         about_text = UIDriver.get_assets_file_text("ABOUT.txt")
         if about_text is not None:
             wx.MessageBox(about_text, "About LScan", wx.OK | wx.ICON_INFORMATION)
+        else:
+            wx.MessageBox("Could not read about text file, sorry.", "Error", wx.OK | wx.ICON_INFORMATION)
 
     def browse_file(self, event):
         """Browse for a valid STL input file.
