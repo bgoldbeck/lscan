@@ -122,22 +122,6 @@ class MetadataPanel(wx.Panel):
         :param event:
         :return:
         """
-        """
-        enc = "utf-8"
-        filename = Path.cwd() / "assets/info/HELP.txt"
-        try:
-            with open(str(filename), "r", encoding=enc) as file:
-                help = file.read()
-                wx.MessageBox(help, "Help", wx.OK | wx.ICON_QUESTION)
-        except PermissionError as perr:
-            # Print to Log !!!!
-            print(perr)
-            raise
-        except FileNotFoundError as ferr:
-            # Print to Log !!!!
-            print(ferr)
-            raise
-        """
         filepath = Path.cwd() / "assets/info/HELP.txt"
         help = self.get_file_text(filepath)
         wx.MessageBox(help, "Help", wx.OK | wx.ICON_QUESTION)
@@ -146,22 +130,6 @@ class MetadataPanel(wx.Panel):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
         :param event:
         :return:
-        """
-        """
-        enc = "utf-8"
-        filename = Path.cwd() / "assets/info/ABOUT.txt"
-        try:
-            with open(str(filename), "r", encoding=enc) as file:
-                about = file.read()
-                wx.MessageBox(about, "About LScan", wx.OK | wx.ICON_INFORMATION)
-        except PermissionError as perr:
-            # Print to Log !!!!
-            print(perr)
-            raise
-        except FileNotFoundError as ferr:
-            # Print to Log !!!!
-            print(ferr)
-            raise
         """
         filepath = Path.cwd() / "assets/info/ABOUT.txt"
         about = self.get_file_text(filepath)
