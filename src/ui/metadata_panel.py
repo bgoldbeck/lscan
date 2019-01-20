@@ -185,23 +185,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             #print(stl_data)
         dialog.Destroy()
 
-    def get_file_text(self, filepath):
-        enc = "utf-8"
-        try:
-            with open(str(filepath), "r", encoding=enc) as file:
-                text = file.read()
-
-        except PermissionError as perr:
-            # Print to Log !!!!
-            print(perr)
-            raise
-        except FileNotFoundError as ferr:
-            # Print to Log !!!!
-            print(ferr)
-            raise
-        else:
-            return text
-
     def browse_output(self, event):
         """Browse for a valid DAT output file
         :param event:
