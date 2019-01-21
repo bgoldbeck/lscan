@@ -39,6 +39,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self._build_gui()
         self.parent.Layout()
 
+        # Settings
+        self.stl_dir = None
+        self.part_name = None
+        self.part_dir = None
+        self.author = None
+        self.license = None
+
     def _build_gui(self):
         """Initializing input, output, process control, and log panel elements
         :return:
@@ -224,7 +231,34 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default directory and default part name
         # current default directory and new part name
         # new part directory and new part name
-        pass
+        filepath = self.ldraw_name_text.GetValue()
+
+        # File path is just a part name
+        if not filepath.is_file():
+            # Update settings file?
+
+            # Append the default parts directory to the path
+                # Read from settings file
+            full_filepath = "DEFAULT PARTS DIRECTORY PATH" + filepath
+            print(full_filepath)
+        elif filepath.is_file():
+            print(filepath)
+
+    def get_author(self, event):
+        """Get the author value from the user and update the settings file as needed."""
+        author = self.author_text.GetValue()
+
+        # Update settings file author info
+
+        print(author)
+
+    def get_license(self, event):
+        """Get the license value from the user and update the settings file as needed."""
+        license = self.license_text.GetVlaue()
+
+        # Update settings file license info
+
+        print(license)
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the MetadataPanel.
@@ -255,7 +289,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         default_author = "First Last "
         # default license
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
-        pass
+
+        settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
+        filepath = Path.cwd() / "assets/setting/user_settings.txt"
+
+        if not filepath.is_file():
+            with open(str(filepath), "a") as file:
+                for setting in settings:
+                    print(setting, file=file)
 
     def save_settings(self):
         """Save changes to user settings file.
@@ -266,8 +307,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def read_settings(self):
         """Read the settings file."""
-        pass
+        filepath = Path.cwd() / "assets/setting/user_settings.txt"
+        try:
+            with open(str(filepath), "r") as file:
+                settings = file.read()
+                return settings
+        except FileNotFoundError as ferr:
+            print(ferr)
 
     def write_settings(self):
         """Write to the settings file."""
+        pass
+
+    def load_settings(self):
+        """Load settings values into memory on startup."""
         pass
