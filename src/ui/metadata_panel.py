@@ -11,6 +11,7 @@ import wx
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
+from src.ui.ui_driver import UIDriver
 
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -131,34 +132,22 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        wx.MessageBox("""
-            Program Limitations
-            TEXT
-            Troubleshooting
-            TEXT
-            How to update LDraw Parts Library
-            TEXT""", "Help info", wx.OK | wx.ICON_QUESTION)
+        help_text = UIDriver.get_assets_file_text("HELP.txt")
+        if help_text is not None:
+            wx.MessageBox(help_text, "Help", wx.OK | wx.ICON_QUESTION)
+        else:
+            wx.MessageBox("Could not read help text file, sorry.", "Error", wx.OK | wx.ICON_INFORMATION)
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
         :param event:
         :return:
         """
-        wx.MessageBox("""
-            LScan
-            Version 1.0
-            Copyright (C) 2018 - This notice is to be included in all relevant source files.
-
-            This software is licensed under the MIT License. See LICENSE file for the full text.
-
-            Authors
-            "Brandon Goldbeck" <bpg@pdx.edu>
-            “Anthony Namba” <anamba@pdx.edu>
-            “Brandon Le” <lebran@pdx.edu>
-            “Ann Peake” <peakean@pdx.edu>
-            “Sohan Tamang” <sohan@pdx.edu>
-            “An Huynh” <an35@pdx.edu>
-            “Theron Anderson” <atheron@pdx.edu>""", "About LScan", wx.OK | wx.ICON_INFORMATION)
+        about_text = UIDriver.get_assets_file_text("ABOUT.txt")
+        if about_text is not None:
+            wx.MessageBox(about_text, "About LScan", wx.OK | wx.ICON_INFORMATION)
+        else:
+            wx.MessageBox("Could not read about text file, sorry.", "Error", wx.OK | wx.ICON_INFORMATION)
 
     def browse_file(self, event):
         """Browse for a valid STL input file.
@@ -168,7 +157,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         pass
 
     def browse_output(self, event):
-        """
+        """Browse for a valid DAT output file location.
 
         :param event:
         :return:

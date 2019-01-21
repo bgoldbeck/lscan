@@ -17,5 +17,3 @@ class UIDriverTest(unittest.TestCase):
         self.assertIsNone(self.ui_driver.root_frame)
         self.assertEqual(self.ui_driver.application_state, ApplicationState.WAITING_INPUT)
         self.assertEqual(self.ui_driver.instance, self.ui_driver)
-
-

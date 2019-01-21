@@ -65,6 +65,24 @@ class LogPanel(wx.Panel, IUIBehavior):
         """
         pass
 
+    def display_log(self, event, message):
+        """Print a message to the log.
+
+        :param event:
+        :param message:
+        :return:
+        """
+        # Check message!
+        # Color message appropriately!
+        self.log.AppendText(message)
+
+    def clear_log(self, event):
+        """Clears the log.
+
+        :param event:
+        :return:
+        """
+
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the LogPanel.
 
