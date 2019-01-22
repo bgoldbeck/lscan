@@ -46,6 +46,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.author = None
         self.license = None
 
+        self.load_settings()
+
     def _build_gui(self):
         """Initializing input, output, process control, and log panel elements
         :return:
@@ -290,35 +292,38 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default license
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
 
-        settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
+        default_settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
         filepath = Path.cwd() / "assets/setting/user_settings.txt"
 
-        if not filepath.is_file():
-            with open(str(filepath), "a") as file:
-                for setting in settings:
-                    print(setting, file=file)
+        #if not filepath.is_file():
+        with open(str(filepath), "w") as file:
+            for setting in default_settings:
+                print(setting, file=file)
 
     def save_settings(self):
         """Save changes to user settings file.
         """
         # Determine changes to settings file
-        # Write out changes to
-        pass
+        # Write out changes to stl_dir, part_dir, author, license
+        # default_part_name is always "untitled.dat"
 
-    def read_settings(self):
-        """Read the settings file."""
+        settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         filepath = Path.cwd() / "assets/setting/user_settings.txt"
         try:
-            with open(str(filepath), "r") as file:
-                settings = file.read()
-                return settings
+            with open(str(filepath), "w") as file:
+                for setting in settings:
+                    print(setting, file=file)
         except FileNotFoundError as ferr:
             print(ferr)
 
-    def write_settings(self):
-        """Write to the settings file."""
-        pass
-
     def load_settings(self):
         """Load settings values into memory on startup."""
-        pass
+        filepath = Path.cwd() / "assets/setting/user_settings.txt"
+
+        if not filepath.is_file():
+            self.create_default_settings();
+
+        settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
+        with open(str(filepath), "r") as file:
+            for setting in settings:
+                setting = file.read()
