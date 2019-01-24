@@ -293,12 +293,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
 
         default_settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
-        filepath = Path.cwd() / "assets/setting/user_settings.txt"
+        filepath = Path.cwd() / "assets/settings/user_settings.txt"
 
+        #print(filepath)
         #if not filepath.is_file():
-        with open(str(filepath), "w") as file:
-            for setting in default_settings:
-                print(setting, file=file)
+
+
+        try:
+            with open(str(filepath), "w") as file:
+                for setting in default_settings:
+                    print(setting, file=file)
+        except FileNotFoundError as ferr:
+            print(ferr)
 
     def save_settings(self):
         """Save changes to user settings file.
@@ -318,12 +324,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def load_settings(self):
         """Load settings values into memory on startup."""
-        filepath = Path.cwd() / "assets/setting/user_settings.txt"
+        filepath = Path.cwd() / "assets/settings/user_settings.txt"
 
         if not filepath.is_file():
-            self.create_default_settings();
+            self.create_default_settings()
 
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         with open(str(filepath), "r") as file:
             for setting in settings:
                 setting = file.read()
+
