@@ -27,4 +27,5 @@ class TestInputModelMessage(unittest.TestCase):
 
         self.assertEqual(model_message.get_message(), test_message)
         self.assertEqual(model_message.get_message_type(), LogType.INFORMATION)
+        self.assertIsNotNone(model_message.get_timestamp())
         self.assertIsNotNone(model_message.get_model())

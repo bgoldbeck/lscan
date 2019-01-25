@@ -20,7 +20,7 @@ class LogMessage:
     def __init__(self, message_type: LogType, message: str):
         """Constructor for the LogMessage class.
         """
-        self.timestamp = datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%S %p")
+        self.timestamp = datetime.datetime.now().strftime("%m-%d-%Y %I:%M:%S %p")
         self.message = message
         self.message_type = message_type
 
@@ -39,9 +39,9 @@ class LogMessage:
         return self.message_type
 
     def get_timestamp(self):
-        """Get the timestamp this message was created.
+        """Get the timestamp this message was created. See http://strftime.org/ for details.
 
-        :return: The time stamp from the datetime python module with the format as (%A, %d. %B %Y %I:%M%S %p)
+        :return: The time stamp from the datetime python module.
         """
         return self.timestamp
 
