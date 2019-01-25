@@ -10,6 +10,7 @@
 import unittest
 from src.log_messages.input_model_message import InputModelMessage
 from src.log_messages.log_type import LogType
+from src.model_conversion.model_shipper import ModelShipper
 from stl import Mesh
 
 
@@ -18,11 +19,12 @@ class TestInputModelMessage(unittest.TestCase):
     """
 
     def test_(self):
-        test_message = "test message"
-        model = None
+        test_message = "test input model message"
 
-        model_message = InputModelMessage(LogType.INFORMATION, test_message, model)
+        input_model = ModelShipper.load_stl_model("assets/models/plane.stl")
+
+        model_message = InputModelMessage(LogType.INFORMATION, test_message, input_model)
 
         self.assertEqual(model_message.get_message(), test_message)
         self.assertEqual(model_message.get_message_type(), LogType.INFORMATION)
-        self.assertEqual(model_message.get_model(), model)
+        self.assertIsNotNone(model_message.get_model())
