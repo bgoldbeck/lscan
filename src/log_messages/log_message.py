@@ -15,11 +15,10 @@ from src.log_messages.log_type import LogType
 
 class LogMessage:
     """Data class representation of an LDraw parts file
-
     """
+
     def __init__(self, message_type: LogType, message: str):
         """Constructor for the LogMessage class.
-
         """
         self.timestamp = datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%S %p")
         self.message = message

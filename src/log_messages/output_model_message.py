@@ -11,14 +11,14 @@
 # See LICENSE file for the full text.
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
-from stl import Mesh
+from src.model_conversion.ldraw_model import LDrawModel
 
 
-class InputModelMessage(LogMessage):
-    """Log message for storing an STL file.
+class OutputModelMessage(LogMessage):
+    """Log message for storing LDraw model data.
     """
-    def __init__(self, message_type: LogType, message: str, model: Mesh):
-        """Constructor for the InputModelMessage class.
+    def __init__(self, message_type: LogType, message: str, model: LDrawModel):
+        """Constructor for the OutputModelMessage class.
         """
         LogMessage.__init__(self, message_type, message)
         self.model = model
