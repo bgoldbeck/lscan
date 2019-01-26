@@ -194,7 +194,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             #print(stl_data)
         dialog.Destroy()
 
-    def get_paste_input(self, event):
+    def text_ctrl_input(self, event):
         """Get the path for STL input file from user typing into TextCtrl element.
         :param event:
         :return:
@@ -224,7 +224,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             """
         dialog.Destroy()
 
-    def get_file_output(self, event):
+    def text_ctrl_output(self, event):
         """Get file output path from user in TextCtrl element.
         :param event:
         :return:
@@ -278,6 +278,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         pass
 
+    # Settings
+
     def create_default_settings(self):
         """Generate initial settings file based on current working directory.
         """
@@ -294,10 +296,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         default_settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
-
-        #print(filepath)
-        #if not filepath.is_file():
-
 
         try:
             with open(str(filepath), "w") as file:
