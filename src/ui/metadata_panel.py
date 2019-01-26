@@ -67,7 +67,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Stl input.
         self.stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.stl_path_name_text.SetMaxLength(self.max_path_length)
-        self.stl_path_name_text.Bind(wx.EVT_TEXT)
+        self.stl_path_name_text.Bind(wx.EVT_TEXT, self.text_ctrl_input)
 
         self.browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
 
@@ -86,11 +86,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         author_static_text = wx.StaticText(self, label="Author", size=self.label_size, style=wx.ALIGN_RIGHT)
         self.author_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.author_text.SetMaxLength(self.max_path_length)
+        self.author_text.Bind(wx.EVT_TEXT, self.text_ctrl_author)
 
         # License information.
         license_static_text = wx.StaticText(self, label="License", size=self.label_size, style=wx.ALIGN_RIGHT)
         self.license_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.license_text.SetMaxLength(self.max_path_length)
+        self.license_text.Bind(wx.EVT_TEXT, self.text_ctrl_license)
+        self.license_text.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
         # Create the layout.
         horizontal_input = wx.BoxSizer(wx.HORIZONTAL)
@@ -189,7 +192,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             print(filename)
         dialog.Destroy()
 
-    def text_ctrl_input(self):
+    def text_ctrl_input(self, event):
         """Get the path for STL input file from user typing into TextCtrl element.
         :param event:
         :return:
@@ -212,7 +215,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
             self.part_name = pathname
-
         dialog.Destroy()
 
     def text_ctrl_output(self, event):
@@ -258,11 +260,12 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
-        license = self.license_text.GetVlaue()
+        license = self.license_text.GetValue()
 
         # Update settings file license info
         if license != self.license:
             self.license = license
+            self.save_settings()
 
     # States and events
 
@@ -331,7 +334,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default_part_name is always "untitled.dat"
 
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
-        filepath = Path.cwd() / "assets/setting/user_settings.txt"
+        filepath = Path.cwd() / "assets/settings/user_settings.txt"
         try:
             with open(str(filepath), "w") as file:
                 for setting in settings:
