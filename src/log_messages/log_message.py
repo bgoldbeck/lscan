@@ -14,7 +14,8 @@ from src.log_messages.log_type import LogType
 
 
 class LogMessage:
-    """Data class representation of an LDraw parts file
+    """Data class for a LogMessage. A log message contains a message, message type, and timestamp
+    for the message.
     """
 
     def __init__(self, message_type: LogType, message: str):
