@@ -39,6 +39,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self._build_gui()
         self.parent.Layout()
 
+        self.stl_file = None
         # Settings
         self.stl_dir = None
         self.part_name = None
@@ -175,7 +176,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         stl_wildcard = "*.stl"
-        #print(Path.cwd())
         dialog = wx.FileDialog(self, "Choose a STL file", defaultDir="", wildcard=stl_wildcard, style=wx.FD_OPEN
                                | wx.FD_FILE_MUST_EXIST)
 
@@ -184,14 +184,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # Check for file existing
             # If valid, pass to worker thread who will check data
             print(filename)
-            #try:
-            #    with open(filename, "r", encoding="utf-8") as file:
-            #        stl_data = file.read()
-            #        print(stl_data)
-            #except IOError:
-            #    print("IO ERROR!")
-            #stl_data = self.get_file_text(dialog.GetCurrentlySelectedFilename)
-            #print(stl_data)
         dialog.Destroy()
 
     def text_ctrl_input(self, event):
@@ -214,14 +206,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
+
+
+            # If the pathname is the name of just the file, append it to the part directory to form a valid path
+            if not pathname.is_dir():
+                self.part_name = self.part_dir + pathname
+            # Otherwise, the pathname is a valid full path
+            else:
+                self.part_name = pathname
+
+
             print(pathname)
-            """
-            try:
-                with open(pathname, "w") as file:
-                    file.write(temp_data)
-            except IOError:
-                wx.LogError("Cannot save current data in file '%s'." % pathname)
-            """
         dialog.Destroy()
 
     def text_ctrl_output(self, event):
@@ -246,22 +241,25 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         elif filepath.is_file():
             print(filepath)
 
-    def get_author(self, event):
+    def text_ctrl_author(self, event):
         """Get the author value from the user and update the settings file as needed."""
         author = self.author_text.GetValue()
 
         # Update settings file author info
+        if author != self.author:
+            self.author = author
+            self.save_settings()
 
-        print(author)
-
-    def get_license(self, event):
+    def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
         license = self.license_text.GetVlaue()
 
         # Update settings file license info
+        if license != self.license:
+            self.license = license
 
-        print(license)
 
+    # States and events
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the MetadataPanel.
 
@@ -278,9 +276,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         pass
 
+    # Checks
+
     # Settings
 
-    def create_default_settings(self):
+    def create_settings(self, name):
         """Generate initial settings file based on current working directory.
         """
         # default stl directory
@@ -295,7 +295,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
 
         default_settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
-        filepath = Path.cwd() / "assets/settings/user_settings.txt"
+        name = "assets/settings/" + name + ".txt"
+        filepath = Path.cwd() / name
 
         try:
             with open(str(filepath), "w") as file:
@@ -322,13 +323,42 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def load_settings(self):
         """Load settings values into memory on startup."""
+        default_filepath = Path.cwd() / "assets/settings/default_user_settings.txt"
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
 
-        if not filepath.is_file():
-            self.create_default_settings()
+        # If there isn't a default user settings file, create one and create a user settings file. The default is
+        # is to remain the same. The user settings file will change.
+        if not default_filepath.is_file():
+            self.create_settings("default_user_settings")
+            self.create_settings("user_settings")
 
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         with open(str(filepath), "r") as file:
             for setting in settings:
                 setting = file.read()
 
+    # Getters
+
+    def get_stl_file(self):
+        """Return the string of the path to the input stl file."""
+        return self.stl_file
+
+    def get_stl_dir(self):
+        """Return the string of the stl directory."""
+        return self.stl_dir
+
+    def get_dat_file(self):
+        """Return the string of the path to the output dat file."""
+        return self.part_name
+
+    def get_part_dir(self):
+        """Return the string of to the parts directory."""
+        return self.part_dir
+
+    def get_author(self):
+        """Return the string of the author."""
+        return self.author
+
+    def get_license(self):
+        """Return the string of the license."""
+        return self.license
