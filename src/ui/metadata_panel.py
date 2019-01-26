@@ -12,6 +12,8 @@ from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from pathlib import Path
+from sys import platform
+import re
 
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over metadata information in the
@@ -65,6 +67,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Stl input.
         self.stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.stl_path_name_text.SetMaxLength(self.max_path_length)
+        self.stl_path_name_text.Bind(wx.EVT_TEXT)
 
         self.browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
 
@@ -76,7 +79,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         path_part_static_text = wx.StaticText(self, label="Part Name", size=self.label_size, style=wx.ALIGN_RIGHT)
         self.ldraw_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.ldraw_name_text.SetMaxLength(self.max_path_length)
-
+        self.ldraw_name_text.Bind(wx.EVT_TEXT, self.text_ctrl_output)
         self.browse_output_button = wx.Button(self, label="Browse Output", size=self.big_button)
 
         # Author
@@ -186,7 +189,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             print(filename)
         dialog.Destroy()
 
-    def text_ctrl_input(self, event):
+    def text_ctrl_input(self):
         """Get the path for STL input file from user typing into TextCtrl element.
         :param event:
         :return:
@@ -201,22 +204,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         #temp_data = "this is temporary data remove this line when functional"
-        ldraw_wildcard = "*.dat"
-        dialog = wx.FileDialog(self, "Choose a location for the LDraw file", defaultDir="", wildcard=ldraw_wildcard,
+        #ldraw_wildcard = "*.dat"
+        #dialog = wx.FileDialog(self, "Choose a location for the LDraw file", defaultDir="", wildcard=ldraw_wildcard,
+        #                       style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        dialog = wx.FileDialog(self, "Choose a location for the LDraw file", defaultDir="",
                                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
+            self.part_name = pathname
 
-
-            # If the pathname is the name of just the file, append it to the part directory to form a valid path
-            if not pathname.is_dir():
-                self.part_name = self.part_dir + pathname
-            # Otherwise, the pathname is a valid full path
-            else:
-                self.part_name = pathname
-
-
-            print(pathname)
         dialog.Destroy()
 
     def text_ctrl_output(self, event):
@@ -228,18 +224,28 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default directory and default part name
         # current default directory and new part name
         # new part directory and new part name
-        filepath = self.ldraw_name_text.GetValue()
+        output_file = self.ldraw_name_text.GetValue()
 
-        # File path is just a part name
-        if not filepath.is_file():
-            # Update settings file?
-
+        # If there isn't an existing file with this name
+        if not output_file.is_file():
             # Append the default parts directory to the path
-                # Read from settings file
-            full_filepath = "DEFAULT PARTS DIRECTORY PATH" + filepath
-            print(full_filepath)
-        elif filepath.is_file():
-            print(filepath)
+            full_output_path = self.part_dir + output_file
+            self.part_name = full_output_path
+            self.save_settings()
+
+            print(full_output_path)
+
+        # There exists a file in that path
+        elif output_file.is_file():
+            confirm = wx.MessageDialog(None, "A file already exists with that name. Overwrite?", wx.YES_NO)
+            confirm_choice = confirm.ShowModal()
+
+            # The user wants to overwrite the existing file
+            if confirm_choice == wx.ID_YES:
+                full_output_path = self.part_dir + output_file
+                self.part_name = full_output_path
+                self.save_settings()
+            #elif confirm_choice == wx.ID_NO:
 
     def text_ctrl_author(self, event):
         """Get the author value from the user and update the settings file as needed."""
@@ -258,8 +264,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if license != self.license:
             self.license = license
 
-
     # States and events
+
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the MetadataPanel.
 
@@ -277,6 +283,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         pass
 
     # Checks
+
+    def check_good_path(self, str):
+        """Returns True if the string doesn't contain invalid values."""
+        # Windows
+        #if platform == "win32":
+
+        # Mac
+        #if platform == "darwin":
+
+        # Linux
+        #if platform == "linux":
+        pass
 
     # Settings
 
