@@ -228,10 +228,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default directory and default part name
         # current default directory and new part name
         # new part directory and new part name
-        """
+
         output_path = self.ldraw_name_text.GetValue()
+
         if output_path is not None:
-            full_output_path = self.part_dir + output_path
+            full_output_path = Path(self.part_dir + output_path)
 
             # Only needs to be a filename like part.dat. Cannot be an entire filepath.
 
@@ -254,12 +255,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         
         self.display_settings()
         event.Skip()
-        """
-        pass
 
     def text_ctrl_author(self, event):
         """Get the author value from the user and update the settings file as needed."""
-        """
         author = self.author_text.GetValue()
 
         # Update settings file author info
@@ -268,9 +266,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             #self.save_settings()
 
         self.display_settings()
-        event.Skip()
-        """
-        pass
 
     def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
