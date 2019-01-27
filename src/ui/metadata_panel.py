@@ -67,7 +67,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Stl input.
         self.stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.stl_path_name_text.SetMaxLength(self.max_path_length)
-        self.stl_path_name_text.Bind(wx.EVT_TEXT, self.text_ctrl_input)
+        self.stl_path_name_text.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input)
 
         self.browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
 
@@ -79,20 +79,20 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         path_part_static_text = wx.StaticText(self, label="Part Name", size=self.label_size, style=wx.ALIGN_RIGHT)
         self.ldraw_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.ldraw_name_text.SetMaxLength(self.max_path_length)
-        self.ldraw_name_text.Bind(wx.EVT_TEXT, self.text_ctrl_output)
+        self.ldraw_name_text.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output)
         self.browse_output_button = wx.Button(self, label="Browse Output", size=self.big_button)
 
         # Author
         author_static_text = wx.StaticText(self, label="Author", size=self.label_size, style=wx.ALIGN_RIGHT)
         self.author_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.author_text.SetMaxLength(self.max_path_length)
-        self.author_text.Bind(wx.EVT_TEXT, self.text_ctrl_author)
+        self.author_text.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author)
 
         # License information.
         license_static_text = wx.StaticText(self, label="License", size=self.label_size, style=wx.ALIGN_RIGHT)
         self.license_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.license_text.SetMaxLength(self.max_path_length)
-        self.license_text.Bind(wx.EVT_TEXT, self.text_ctrl_license)
+        #self.license_text.Bind(wx.EVT_TEXT, self.text_ctrl_license)
         self.license_text.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
         # Create the layout.
@@ -222,30 +222,28 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default directory and default part name
         # current default directory and new part name
         # new part directory and new part name
-        output_file = self.ldraw_name_text.GetValue()
+        full_output_path = self.part_dir + self.ldraw_name_text.GetValue()
 
         # Only needs to be a filename like part.dat. Cannot be an entire filepath.
 
         # If there isn't an existing file with this name
-        if not output_file.is_file():
+        if not full_output_path.is_file():
             # Append the default parts directory to the path
-            full_output_path = self.part_dir + output_file
             self.part_name = full_output_path
             self.save_settings()
 
-            print(full_output_path)
-
         # There exists a file in that path
-        elif output_file.is_file():
+        elif full_output_path.is_file():
             confirm = wx.MessageDialog(None, "A file already exists with that name. Overwrite?", wx.YES_NO)
             confirm_choice = confirm.ShowModal()
 
             # The user wants to overwrite the existing file
             if confirm_choice == wx.ID_YES:
-                full_output_path = self.part_dir + output_file
                 self.part_name = full_output_path
                 self.save_settings()
             #elif confirm_choice == wx.ID_NO:
+
+        print(full_output_path)
 
     def text_ctrl_author(self, event):
         """Get the author value from the user and update the settings file as needed."""
@@ -256,6 +254,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.author = author
             self.save_settings()
 
+        print(self.author)
+
     def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
         license = self.license_text.GetValue()
@@ -264,6 +264,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if license != self.license:
             self.license = license
             self.save_settings()
+
+        print(self.license)
 
     # States and events
 
@@ -336,7 +338,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         try:
             with open(str(filepath), "w") as file:
                 for setting in settings:
-                    print(setting, file=file)
+                    file.write(setting)
+                    file.write("\n")
+                    print(setting)
         except FileNotFoundError as ferr:
             print(ferr)
 
@@ -355,6 +359,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         with open(str(filepath), "r") as file:
             for setting in settings:
                 setting = file.read()
+                print(setting)
 
     # Getters
 
