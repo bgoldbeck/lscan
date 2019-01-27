@@ -92,7 +92,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         license_static_text = wx.StaticText(self, label="License", size=self.label_size, style=wx.ALIGN_RIGHT)
         self.license_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.license_text.SetMaxLength(self.max_path_length)
-        #self.license_text.Bind(wx.EVT_TEXT, self.text_ctrl_license)
         self.license_text.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
         # Create the layout.
@@ -197,9 +196,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
+        """
         filepath = self.stl_path_name_text.GetValue()
         # Check file path validity
-        print(filepath)
+
+        if filepath != self.stl_file and filepath is not None:
+            self.stl_file = filepath
+            #self.save_settings()
+
+        self.display_settings()
+        """
+        pass
 
     def browse_output(self, event):
         """Browse for a valid output file path
@@ -222,51 +229,61 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default directory and default part name
         # current default directory and new part name
         # new part directory and new part name
-        full_output_path = self.part_dir + self.ldraw_name_text.GetValue()
+        """
+        output_path = self.ldraw_name_text.GetValue()
+        if output_path is not None:
+            full_output_path = self.part_dir + output_path
 
-        # Only needs to be a filename like part.dat. Cannot be an entire filepath.
+            # Only needs to be a filename like part.dat. Cannot be an entire filepath.
 
-        # If there isn't an existing file with this name
-        if not full_output_path.is_file():
-            # Append the default parts directory to the path
-            self.part_name = full_output_path
-            self.save_settings()
-
-        # There exists a file in that path
-        elif full_output_path.is_file():
-            confirm = wx.MessageDialog(None, "A file already exists with that name. Overwrite?", wx.YES_NO)
-            confirm_choice = confirm.ShowModal()
-
-            # The user wants to overwrite the existing file
-            if confirm_choice == wx.ID_YES:
+            # If there isn't an existing file with this name
+            if not full_output_path.is_file():
+                # Append the default parts directory to the path
                 self.part_name = full_output_path
                 self.save_settings()
-            #elif confirm_choice == wx.ID_NO:
 
-        print(full_output_path)
+            # There exists a file in that path
+            elif full_output_path.is_file():
+                confirm = wx.MessageDialog(None, "A file already exists with that name. Overwrite?", wx.YES_NO)
+                confirm_choice = confirm.ShowModal()
+
+                # The user wants to overwrite the existing file
+                if confirm_choice == wx.ID_YES:
+                    self.part_name = full_output_path
+                    self.save_settings()
+                #elif confirm_choice == wx.ID_NO:
+        
+        self.display_settings()
+        """
+        pass
 
     def text_ctrl_author(self, event):
         """Get the author value from the user and update the settings file as needed."""
+        """
         author = self.author_text.GetValue()
 
         # Update settings file author info
-        if author != self.author:
+        if author != self.author and author is not None:
             self.author = author
-            self.save_settings()
+            #self.save_settings()
 
-        print(self.author)
+        self.display_settings()
+        """
+        pass
 
     def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
+        """
         license = self.license_text.GetValue()
 
         # Update settings file license info
-        if license != self.license:
+        if license != self.license and license is not None:
             self.license = license
-            self.save_settings()
+            #self.save_settings()
 
-        print(self.license)
-
+        self.display_settings()
+        """
+        pass
     # States and events
 
     def on_state_changed(self, new_state: ApplicationState):
@@ -333,13 +350,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Write out changes to stl_dir, part_dir, author, license
         # default_part_name is always "untitled.dat"
 
+        print("\n\nSave settings function\n\n")
+
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
         try:
             with open(str(filepath), "w") as file:
                 for setting in settings:
-                    file.write(setting)
-                    file.write("\n")
+                    if setting is not None:
+                        print(setting, file=file)
                     print(setting)
         except FileNotFoundError as ferr:
             print(ferr)
@@ -357,9 +376,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         with open(str(filepath), "r") as file:
-            for setting in settings:
-                setting = file.read()
-                print(setting)
+            file_settings = file.readlines()
+            for index in range(len(file_settings)):
+                settings[index] = file_settings[index]
+                print("file settings" + file_settings[index])
+                print("settings" + settings[index])
+
+        self.display_settings()
+
+    def display_settings(self):
+        """Display settings to standard out."""
+        settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
+        for setting in settings:
+            print(setting)
 
     # Getters
 
