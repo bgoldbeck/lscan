@@ -203,7 +203,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if filepath != self.stl_file and filepath is not None:
             self.stl_file = filepath
             #self.save_settings()
-
+        
         self.display_settings()
         """
         pass
@@ -377,15 +377,23 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         with open(str(filepath), "r") as file:
             file_settings = file.readlines()
+            """
             for index in range(len(file_settings)):
                 settings[index] = file_settings[index]
-                print("file settings" + file_settings[index])
-                print("settings" + settings[index])
+                print("file " + file_settings[index])
+                print("settings " + settings[index])
+            """
+            self.stl_dir = file_settings[0]
+            self.part_name = file_settings[1]
+            self.part_dir = file_settings[2]
+            self.author = file_settings[3]
+            self.license = file_settings[4]
 
         self.display_settings()
 
     def display_settings(self):
         """Display settings to standard out."""
+        print("\n\nDisplay settings\n")
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         for setting in settings:
             print(setting)
