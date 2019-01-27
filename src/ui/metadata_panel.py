@@ -196,17 +196,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        """
-        filepath = self.stl_path_name_text.GetValue()
+        filepath = Path(self.stl_path_name_text.GetValue())
         # Check file path validity
 
-        if filepath != self.stl_file and filepath is not None:
-            self.stl_file = filepath
-            #self.save_settings()
+        if filepath.is_file():
+            if filepath != self.stl_file and filepath is not None:
+                self.stl_file = filepath
+                self.save_settings()
         
         self.display_settings()
-        """
-        pass
+        event.Skip()
 
     def browse_output(self, event):
         """Browse for a valid output file path
@@ -254,6 +253,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 #elif confirm_choice == wx.ID_NO:
         
         self.display_settings()
+        event.Skip()
         """
         pass
 
@@ -268,22 +268,22 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             #self.save_settings()
 
         self.display_settings()
+        event.Skip()
         """
         pass
 
     def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
-        """
         license = self.license_text.GetValue()
 
         # Update settings file license info
         if license != self.license and license is not None:
             self.license = license
-            #self.save_settings()
+            self.save_settings()
 
         self.display_settings()
-        """
-        pass
+        event.Skip()
+
     # States and events
 
     def on_state_changed(self, new_state: ApplicationState):
@@ -356,12 +356,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
         try:
             with open(str(filepath), "w") as file:
+                print(settings)
                 for setting in settings:
+                    print(setting)
                     if setting is not None:
                         print(setting, file=file)
-                    print(setting)
+                        #file.write(setting)
+
         except FileNotFoundError as ferr:
             print(ferr)
+
+        self.display_settings()
 
     def load_settings(self):
         """Load settings values into memory on startup."""
@@ -383,19 +388,20 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 print("file " + file_settings[index])
                 print("settings " + settings[index])
             """
-            self.stl_dir = file_settings[0]
-            self.part_name = file_settings[1]
-            self.part_dir = file_settings[2]
-            self.author = file_settings[3]
-            self.license = file_settings[4]
+            self.stl_dir = file_settings[0].rstrip()
+            self.part_name = file_settings[1].rstrip()
+            self.part_dir = file_settings[2].rstrip()
+            self.author = file_settings[3].rstrip()
+            self.license = file_settings[4].rstrip()
 
         self.display_settings()
 
     def display_settings(self):
-        """Display settings to standard out."""
+        """Display all settings and stl file path to standard out."""
         print("\n\nDisplay settings\n")
-        settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
-        for setting in settings:
+        all_settings = [self.stl_file, self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
+        print(all_settings)
+        for setting in all_settings:
             print(setting)
 
     # Getters
