@@ -202,7 +202,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         print(filepath)
 
     def browse_output(self, event):
-        """Browse for a valid DAT output file
+        """Browse for a valid output file path
         :param event:
         :return:
         """
