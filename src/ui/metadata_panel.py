@@ -206,10 +206,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        #temp_data = "this is temporary data remove this line when functional"
-        #ldraw_wildcard = "*.dat"
-        #dialog = wx.FileDialog(self, "Choose a location for the LDraw file", defaultDir="", wildcard=ldraw_wildcard,
-        #                       style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         dialog = wx.FileDialog(self, "Choose a location for the LDraw file", defaultDir="",
                                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if dialog.ShowModal() == wx.ID_OK:
@@ -227,6 +223,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # current default directory and new part name
         # new part directory and new part name
         output_file = self.ldraw_name_text.GetValue()
+
+        # Only needs to be a filename like part.dat. Cannot be an entire filepath.
 
         # If there isn't an existing file with this name
         if not output_file.is_file():
