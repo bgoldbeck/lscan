@@ -42,6 +42,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.parent.Layout()
 
         self.stl_file = None
+        self.out_file = None
         # Settings
         self.stl_dir = None
         self.part_name = None
@@ -201,7 +202,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         if filepath.is_file():
             if filepath != self.stl_file and filepath is not None:
-                self.stl_file = filepath
+                self.stl_file = str(filepath)
                 self.save_settings()
         
         self.display_settings()
@@ -239,7 +240,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # If there isn't an existing file with this name
             if not full_output_path.is_file():
                 # Append the default parts directory to the path
-                self.part_name = full_output_path
+                self.part_name = output_path
+                self.out_file = full_output_path
                 self.save_settings()
 
             # There exists a file in that path
@@ -249,7 +251,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
                 # The user wants to overwrite the existing file
                 if confirm_choice == wx.ID_YES:
-                    self.part_name = full_output_path
+                    self.part_name = output_path
+                    self.out_file = full_output_path
                     self.save_settings()
                 #elif confirm_choice == wx.ID_NO:
         
@@ -261,18 +264,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         author = self.author_text.GetValue()
 
         # Update settings file author info
-        if author != self.author and author is not None:
+        if author != self.author and author != "":
             self.author = author
-            #self.save_settings()
+            self.save_settings()
 
         self.display_settings()
+        event.Skip()
 
     def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
         license = self.license_text.GetValue()
 
         # Update settings file license info
-        if license != self.license and license is not None:
+        if license != self.license and license != "":
             self.license = license
             self.save_settings()
 
@@ -347,7 +351,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         print("\n\nSave settings function\n\n")
 
-        settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
+        settings = [self.stl_dir, "untitled.dat", self.part_dir, self.author, self.license]
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
         try:
             with open(str(filepath), "w") as file:
@@ -356,7 +360,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     print(setting)
                     if setting is not None:
                         print(setting, file=file)
-                        #file.write(setting)
 
         except FileNotFoundError as ferr:
             print(ferr)
