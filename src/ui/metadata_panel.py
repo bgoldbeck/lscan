@@ -57,7 +57,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.part_dir = None
         self.author = None
         self.license = None
-
         self.load_settings()
 
     def _build_gui(self):
@@ -443,12 +442,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         with open(str(filepath), "r") as file:
             file_settings = file.readlines()
-            """
-            for index in range(len(file_settings)):
-                settings[index] = file_settings[index]
-                print(index)
-                print("file " + file_settings[index])
-                print("settings " + settings[index])
+            """"
+            for s, f in zip(settings, file_settings):
+                s = f.rstrip()
+                print("file " + f)
+                print("settings " + s)
             """
             self.stl_dir = file_settings[0].rstrip()
             self.part_name = file_settings[1].rstrip()
