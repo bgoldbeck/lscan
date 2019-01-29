@@ -242,7 +242,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        filepath = Path(self.stl_path_name_text.GetValue())
+        filepath = Path(self.stl_path_input.GetValue())
         # Check file path validity
 
         if filepath.is_file():
@@ -275,7 +275,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # current default directory and new part name
         # new part directory and new part name
 
-        output_path = self.ldraw_name_text.GetValue()
+        output_path = self.ldraw_name_input.GetValue()
 
         if output_path is not None:
             full_output_path = Path(self.part_dir + output_path)
@@ -306,7 +306,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def text_ctrl_author(self, event):
         """Get the author value from the user and update the settings file as needed."""
-        author = self.author_text.GetValue()
+        author = self.author_input.GetValue()
 
         # Update settings file author info
         if author != self.author and author != "":
@@ -318,7 +318,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def text_ctrl_license(self, event):
         """Get the license value from the user and update the settings file as needed."""
-        license = self.license_text.GetValue()
+        license = self.license_input.GetValue()
 
         # Update settings file license info
         if license != self.license and license != "":
