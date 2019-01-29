@@ -234,7 +234,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             filename = dialog.GetPath()
             # Check for file existing
             # If valid, pass to worker thread who will check data
-            print(filename)
+            self.stl_file = filename
         dialog.Destroy()
 
     def text_ctrl_input(self, event):
@@ -263,6 +263,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
             self.part_name = pathname
+            self.save_settings()
         dialog.Destroy()
 
     def text_ctrl_output(self, event):
