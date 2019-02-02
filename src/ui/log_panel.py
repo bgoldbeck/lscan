@@ -95,9 +95,8 @@ class LogPanel(wx.Panel, IUIBehavior):
         if new_state == ApplicationState.STARTUP:
             self.save_log_button.Disable()
 
-        if __debug__:
-            self.handle_log_message(
-                LogMessage(LogType.DEBUG, "State changed to: " + str(new_state)))
+        self.handle_log_message(
+            LogMessage(LogType.DEBUG, "State changed to: " + str(new_state)))
 
     def on_event(self, event: UserEvent):
         """A user event was passed to the LogPanel.
@@ -105,10 +104,9 @@ class LogPanel(wx.Panel, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        log_message = event.get_log_message()
-        if log_message is not None:
-            self.handle_log_message(log_message)
-        pass
+        if event is not None:
+            if event.get_log_message() is not None:
+                self.handle_log_message(event.get_log_message())
 
     def handle_log_message(self, log_message: LogMessage):
         """Take apart the log message and display it to the log. Different types of messages
@@ -121,18 +119,19 @@ class LogPanel(wx.Panel, IUIBehavior):
         :param log_message: The LogMessage that will be displayed on the log.
         :return: None
         """
-        message = log_message.get_message()
-        timestamp = log_message.get_timestamp()
-        color = log_message.get_log_message_color()
+        if log_message is not None:
+            message = log_message.get_message()
+            timestamp = log_message.get_timestamp()
+            color = log_message.get_log_message_color()
+            log_type = log_message.get_message_type()
 
-        self.log_text_ctrl.BeginFontSize(self._log_font_size)
-        self.log_text_ctrl.BeginTextColour('white')
-        self.log_text_ctrl.WriteText(timestamp + ": ")
-        self.log_text_ctrl.BeginTextColour(wx.Colour(color))
-        self.log_text_ctrl.WriteText(message + "\n")
+            if log_type == LogType.DEBUG and __debug__ or log_type != LogType.DEBUG:
+                self.log_text_ctrl.BeginFontSize(self._log_font_size)
+                self.log_text_ctrl.BeginTextColour('white')
+                self.log_text_ctrl.WriteText(timestamp + ": ")
+                self.log_text_ctrl.BeginTextColour(wx.Colour(color))
+                self.log_text_ctrl.WriteText(message + "\n")
+                self.log_text_ctrl.EndFontSize()
 
-        self.log_text_ctrl.EndFontSize()
-
-        # Scrolls down to show last line added
-        self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
-        self.save_log()
+                # Scrolls down to show last line added
+                self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
