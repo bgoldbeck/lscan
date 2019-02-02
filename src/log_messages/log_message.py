@@ -59,7 +59,7 @@ class LogMessage:
         elif self.message_type == LogType.ERROR:
             return [255, 0, 0]
         elif self.message_type == LogType.DEBUG:
-            return [0, 0, 255]
+            return [0, 150, 250]
         else:
             return [255, 255, 255]
 
