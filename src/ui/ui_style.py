@@ -23,7 +23,8 @@ class UI_style():
     metadata_background_color = ""
     metadata_context_text_color = ""
     metadata_input_text_color = ""
-    metadata_input_background = ""
+    metadata_input_valid_background = ""
+    metadata_input_invalid_background = ""
 
     # Conversion Panel
     conversion_background_color = ""
