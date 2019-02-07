@@ -15,6 +15,7 @@ from src.ui.user_event_type import UserEventType
 from src.ui.iui_behavior import IUIBehavior
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
+from src.ui.ui_style import *
 
 
 class LogPanel(wx.Panel, IUIBehavior):
@@ -22,19 +23,14 @@ class LogPanel(wx.Panel, IUIBehavior):
     running information to the user about the programs progress while running
     various algorithms.
     """
-    _big_button = (70, 25)
-    _output_log_size = (920, 165)
-    _panel_size = (1022, 500)
-    log_background_color = [25, 25, 25]
     _log_file_path = "log.txt"
-    _log_font_size = 9
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=self._panel_size, style=wx.BORDER_SUNKEN)
+        wx.Panel.__init__(self, parent, size=UI_style.log_panel_size, style=wx.BORDER_SUNKEN)
         self.parent = parent
         self.save_log_button = None
         self.log_text_ctrl = None
@@ -47,12 +43,12 @@ class LogPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         # Build the wx control objects.
-        self.SetBackgroundColour("#eee111")
+        self.SetBackgroundColour(UI_style.log_background_color)
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
 
-        self.save_log_button = wx.Button(self, label="Save Log", size=self._big_button)
-        self.log_text_ctrl = rt.RichTextCtrl(self, size=self._output_log_size, style=style)
-        self.log_text_ctrl.SetBackgroundColour(wx.Colour(self.log_background_color))
+        self.save_log_button = wx.Button(self, label="Save Log", size=UI_style.log_big_button)
+        self.log_text_ctrl = rt.RichTextCtrl(self, size=UI_style.log_output_size, style=style)
+        self.log_text_ctrl.SetBackgroundColour(wx.Colour(UI_style.log_text_background_color))
 
         self.Bind(wx.EVT_BUTTON, self.save_log, self.save_log_button)
 
@@ -126,7 +122,7 @@ class LogPanel(wx.Panel, IUIBehavior):
             log_type = log_message.get_message_type()
 
             if log_type == LogType.DEBUG and __debug__ or log_type != LogType.DEBUG:
-                self.log_text_ctrl.BeginFontSize(self._log_font_size)
+                self.log_text_ctrl.BeginFontSize(UI_style.log_font_size)
                 self.log_text_ctrl.BeginTextColour('white')
                 self.log_text_ctrl.WriteText(timestamp + ": ")
                 self.log_text_ctrl.BeginTextColour(wx.Colour(color))

@@ -18,6 +18,7 @@ from src.model_conversion.model_shipper import ModelShipper
 from sys import platform
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
+from src.ui.ui_style import *
 import re
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -26,17 +27,12 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     but not limited to author, license, stl file input,
     and ldraw file output.
     """
-    text_ctrl_size = (400, 20)
     max_path_length = 256
-    big_button = (120, 25)
-    small_button_size = (30, 25)
-    panel_size = (1024, 100)
-    label_size = (200, 25)
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
-        wx.Panel.__init__(self, parent, size=self.panel_size,
+        wx.Panel.__init__(self, parent, size=UI_style.metadata_panel_size,
                           style=wx.BORDER_SUNKEN)
         self.parent = parent
         self.browse_stl_button = None
@@ -69,50 +65,50 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Initializing input, output, process control, and log panel elements
         :return:
         """
-        self.SetBackgroundColour("#777fea")
+        self.SetBackgroundColour(UI_style.metadata_background_color)
 
         # Input
         path_name_static_text = wx.StaticText(
             self,
             label="Step 1: Choose Input STL File",
-            size=self.label_size,
+            size=UI_style.metadata_label_size,
             style=wx.ALIGN_RIGHT)
 
         # Stl input.
-        self.stl_path_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.stl_path_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size)
         self.stl_path_input.SetMaxLength(self.max_path_length)
 
         self.browse_stl_button = wx.Button(self, label="Browse Input",
-                                           size=self.big_button)
+                                           size=UI_style.metadata_big_button)
 
         # Help / About.
         self.help_button = wx.Button(self, label="?",
-                                     size=self.small_button_size)
+                                     size=UI_style.metadata_small_button_size)
         self.about_button = wx.Button(self, label="i",
-                                      size=self.small_button_size)
+                                      size=UI_style.metadata_small_button_size)
 
         # Output path selection.
         path_part_static_text = wx.StaticText(self, label="Step 2: Choose Output Name",
-                                              size=self.label_size,
+                                              size=UI_style.metadata_label_size,
                                               style=wx.ALIGN_RIGHT)
-        self.ldraw_name_input = wx.TextCtrl(self, size=self.text_ctrl_size,
+        self.ldraw_name_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size,
                                             style= wx.TE_READONLY)
         self.ldraw_name_input.SetMaxLength(self.max_path_length)
         self.ldraw_name_input.SetValue("Browse output -->")
 
         self.browse_output_button = wx.Button(self, label="Browse Output",
-                                              size=self.big_button)
+                                              size=UI_style.metadata_big_button)
 
         # Author
         author_static_text = wx.StaticText(self, label="Optional: Set Author",
-                                           size=self.label_size, style=wx.ALIGN_RIGHT)
-        self.author_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+                                           size=UI_style.metadata_label_size, style=wx.ALIGN_RIGHT)
+        self.author_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size)
         self.author_input.SetMaxLength(self.max_path_length)
 
         # License information.
         license_static_text = wx.StaticText(self, label="Optional: Set License",
-                                            size=self.label_size, style=wx.ALIGN_RIGHT)
-        self.license_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+                                            size=UI_style.metadata_label_size, style=wx.ALIGN_RIGHT)
+        self.license_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size)
         self.license_input.SetMaxLength(self.max_path_length)
 
         # Create the layout.

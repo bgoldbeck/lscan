@@ -16,6 +16,7 @@ from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
+from src.ui.ui_style import *
 
 
 class MainPanel(wx.Panel, IUIBehavior):
@@ -33,14 +34,14 @@ class MainPanel(wx.Panel, IUIBehavior):
         self.log_panel = None
         self.metadata_panel = None
         self.conversion_panel = None
-
+        #self.setup_theme()
         self._build_gui()
 
     def _build_gui(self):
         """Create all the sub-panels and their layout on this main panel.
         :return: None
         """
-        self.SetBackgroundColour("#ffffaa")
+        self.SetBackgroundColour(UI_style.main_panel_background_color)
 
         # Create the sub-panels
         self.metadata_panel = MetadataPanel(self)
@@ -72,3 +73,10 @@ class MainPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         pass
+
+    def setup_theme(self):
+        """Set up theme for program
+
+        """
+
+        UI_style.log_debug_text_color = [150, 150, 250]
