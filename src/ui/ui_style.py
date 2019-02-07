@@ -9,8 +9,11 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
 
+
 class UI_style():
-    """The enumerated class the stores the possible application states.
+    """The UI style class holds all information about size, background color,
+    border and text color.
+    The color scheme in this class is the default color (for debug).
     """
     # Utility
     button_background = ""

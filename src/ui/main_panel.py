@@ -34,7 +34,7 @@ class MainPanel(wx.Panel, IUIBehavior):
         self.log_panel = None
         self.metadata_panel = None
         self.conversion_panel = None
-        self.setup_theme()
+        self.setup_dark_theme()  # Overwrite the default color
         self._build_gui()
 
     def _build_gui(self):
@@ -74,9 +74,8 @@ class MainPanel(wx.Panel, IUIBehavior):
         """
         pass
 
-    def setup_theme(self):
-        """Set up theme for program
-
+    def setup_dark_theme(self):
+        """Set up dark color theme for program.
         """
         # Utility
         # UI_style.button_background = "#2B2B2B"
