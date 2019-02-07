@@ -28,7 +28,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 30), style=wx.SIMPLE_BORDER)
+        wx.Panel.__init__(self, parent, size=(1024, 30), style=UI_style.conversion_border)
         self.parent = parent
         self.convert_button = None
         self.pause_button = None
@@ -46,9 +46,17 @@ class ConversionPanel(wx.Panel, IUIBehavior):
 
         # Create the wx controls for this conversion panel.
         self.convert_button = wx.Button(self, label="Convert to LDraw", size=UI_style.conversion_big_button_size)
+        self.convert_button.SetBackgroundColour(UI_style.button_background)
+        self.convert_button.SetForegroundColour(UI_style.button_text)
         self.pause_button = wx.Button(self, label="Pause/Continue", size=UI_style.conversion_big_button_size)
+        self.pause_button.SetBackgroundColour(UI_style.button_background)
+        self.pause_button.SetForegroundColour(UI_style.button_text)
         self.cancel_button = wx.Button(self, label="Cancel", size=UI_style.conversion_big_button_size)
+        self.cancel_button.SetBackgroundColour(UI_style.button_background)
+        self.cancel_button.SetForegroundColour(UI_style.button_text)
         self.save_button = wx.Button(self, label="Save Conversion", size=UI_style.conversion_big_button_size)
+        self.save_button.SetBackgroundColour(UI_style.button_background)
+        self.save_button.SetForegroundColour(UI_style.button_text)
 
         # Create the layout.
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)

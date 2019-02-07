@@ -34,7 +34,7 @@ class MainPanel(wx.Panel, IUIBehavior):
         self.log_panel = None
         self.metadata_panel = None
         self.conversion_panel = None
-        #self.setup_theme()
+        self.setup_theme()
         self._build_gui()
 
     def _build_gui(self):
@@ -78,5 +78,49 @@ class MainPanel(wx.Panel, IUIBehavior):
         """Set up theme for program
 
         """
+        # Utility
+        # UI_style.button_background = "#2B2B2B"
+        # UI_style.button_text = "#A9B7C6"
 
-        UI_style.log_debug_text_color = [150, 150, 250]
+        # Main Frame
+        UI_style.main_frame_border = wx.DEFAULT_FRAME_STYLE
+        UI_style.main_frame_min_size = (1024, 640)
+        UI_style.main_frame_max_size = (1024, 900)
+        UI_style.main_frame_current_size = UI_style.main_frame_min_size
+
+        # Main Panel
+        UI_style.main_panel_background_color = "#2B2B2B"
+
+        # Metadata Panel
+        UI_style.metadata_border = wx.BORDER_NONE
+        UI_style.metadata_background_color = "#2B2B2B"
+        UI_style.metadata_label_color = "#808080"
+        UI_style.metadata_input_text_color = "#A5C25C"
+        UI_style.metadata_input_valid_background = "#323232"
+        UI_style.metadata_input_invalid_background = "#D25252"
+
+        UI_style.metadata_text_ctrl_size = (400, 20)
+        UI_style.metadata_big_button = (120, 25)
+        UI_style.metadata_small_button_size = (30, 25)
+        UI_style.metadata_panel_size = (1024, 100)
+        UI_style.metadata_label_size = (200, 25)
+
+        # Conversion Panel
+        UI_style.conversion_border = wx.BORDER_NONE
+        UI_style.conversion_background_color = "#2B2B2B"
+        UI_style.conversion_big_button_size = (120, 30)
+
+        # Log Panel
+        UI_style.log_border = wx.BORDER_NONE
+        UI_style.log_background_color = "#2B2B2B"
+        UI_style.log_text_background_color = "#323232"
+        UI_style.log_default_text_color = "#A9B7C6"
+        UI_style.log_info_text_color = "white"
+        UI_style.log_warning_text_color = "#FFC66D"
+        UI_style.log_debug_text_color = "#BED6FF"
+        UI_style.log_error_text_color = "#D25252"
+
+        UI_style.log_big_button = (70, 25)
+        UI_style.log_output_size = (920, 165)
+        UI_style.log_panel_size = (1022, 500)
+        UI_style.log_font_size = 10

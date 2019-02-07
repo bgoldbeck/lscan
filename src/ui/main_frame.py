@@ -20,7 +20,7 @@ class MainFrame(wx.Frame):
         """Default constructor for MainFrame class.
         """
         wx.Frame.__init__(self, None, title="LScan", size=UI_style.main_frame_current_size,
-                          style=wx.DEFAULT_FRAME_STYLE
+                          style=UI_style.main_frame_border
                           | wx.FULL_REPAINT_ON_RESIZE)
         self._build_gui()
 
