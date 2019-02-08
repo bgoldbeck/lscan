@@ -98,10 +98,12 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         """
         self.is_paused = not self.is_paused
         if self.is_paused:
+            self.pause_button.SetLabelText('Resume')
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_PAUSED,
                           LogMessage(LogType.INFORMATION, "Conversion process paused.")))
         else:
+            self.pause_button.SetLabelText('Pause')
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_STARTED,
                           LogMessage(LogType.INFORMATION, "Conversion process resumed.")))
@@ -145,6 +147,10 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             self.cancel_button.Disable()
             self.pause_button.Disable()
             self.convert_button.Enable()
+            if self.is_paused:
+                self.is_paused = False
+                self.pause_button.SetLabelText('Pause')
+
         elif new_state == ApplicationState.WORKING:
             self.save_button.Disable() # I assume this will be enabled after
             self.cancel_button.Enable()
