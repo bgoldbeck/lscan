@@ -9,40 +9,35 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
 from wx import glcanvas
+from src.rendering.scene import Scene
 from OpenGL.GL import *
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.iui_behavior import IUIBehavior
+from pyrr import Vector3
 
 
 class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     """This is the canvas for OpenGL to render objects to.
     """
-    size = (600, 300)
+    canvas_size = (400, 300)
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
+        # Call the base constructor for the OpenGL canvas.
+        glcanvas.GLCanvas.__init__(self, parent, -1, size=self.canvas_size)
         self.parent = parent
         self.context = None
+        self.scene = None
+        self.wire_frame = False
+        self.interacted = False
+        self.canvas_color = Vector3([0.0, 0.0, 0.3])
         self.init = False
-        self.aspect_ratio = self.size[0] / self.size[1]
+        self.aspect_ratio = self.canvas_size[0] / self.canvas_size[1]
 
-        # Call the base constructor for the OpenGL canvas.
-        glcanvas.GLCanvas.__init__(self, parent, -1, size=self.size)
-
-        # Bind events to functions.
         self.Bind(wx.EVT_PAINT, self.on_paint)
-        self.Bind(wx.EVT_SIZE, self.on_resize)
-
-    def on_resize(self, event):
-        """Event that occurs when resize is detected.
-        :param event: the event that occurred.
-        :return: None
-        """
-        size = self.GetClientSize()
-        glViewport(0, 0, size.width, size.height)
 
     def on_paint(self, event):
         """Event that occurs when the canvas paint event is called.
@@ -61,14 +56,31 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """
         self.context = glcanvas.GLContext(self)
         self.SetCurrent(self.context)
-        glClearColor(0.1, 0.15, 0.1, 1.0)
+        glClearColor(self.canvas_color[0],  # Red
+                     self.canvas_color[1],  # Green
+                     self.canvas_color[2],  # Blue
+                     1.0)  # Alpha
+
         glEnable(GL_DEPTH_TEST)
+
+        glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
+        self.scene = Scene(self)
 
     def draw(self):
         """Draw the previous OpenGL buffer with all the 3D data.
         :return: None
         """
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        if self.wire_frame is True:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+        else:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+
+
+        self.Refresh()
+        self.scene.update()
+        self.scene.draw()
         self.SwapBuffers()
 
     def on_state_changed(self, new_state: ApplicationState):
@@ -85,4 +97,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        pass
+        if event is not None:
+            if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
+                print("SUCCESS!")
+                self.wire_frame = not self.wire_frame

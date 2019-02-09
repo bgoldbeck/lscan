@@ -61,3 +61,7 @@ class UI_style():
     log_output_size = (920, 165)
     log_panel_size = (1022, 500)
     log_font_size = 9
+
+    # OpenGL
+    opengl_panel_border = wx.BORDER_SUNKEN
+    opengl_canvas_background_color = "#eee111"
