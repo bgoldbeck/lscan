@@ -19,16 +19,15 @@ import random
 import numpy
 import time
 
+
 class BasicMeshObject(SceneObject):
-    def __init__(self, tag, file_path):
+    def __init__(self, tag, mesh):
         """
         """
         SceneObject.__init__(self, tag)
+        self.mesh_data = mesh
 
-        # TODO: confirm valid filepath
-        self.mesh_data = mesh.Mesh.from_file(file_path)
         triangle_data = []
-
         for i in range(len(self.mesh_data.normals)):
                 triangle_data.append(self.mesh_data.v2[i][0])
                 triangle_data.append(self.mesh_data.v2[i][1])

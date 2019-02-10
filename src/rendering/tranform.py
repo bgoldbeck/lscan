@@ -9,8 +9,10 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
-from pyrr import *
+from pyrr import Vector3, Vector4, Matrix44, vector3
 import math
+import numpy as np
+from pyquaternion import Quaternion
 
 
 class Transform:
@@ -84,16 +86,16 @@ class Transform:
 
         axis.normalise()
 
-        q_rot = Quaternion.from_axis_rotation(axis, radians)
+        #q_rot = Quaternion.from_axis_rotation(axis, radians)
 
-        translation_matrix = Matrix44.from_translation(point)
-        translation_matrix_inverse = Matrix44.from_translation(-point)
+        #translation_matrix = Matrix44.from_translation(point)
+        #translation_matrix_inverse = Matrix44.from_translation(-point)
 
-        rot_mat = q_rot * translation_matrix_inverse
-        rot_mat = translation_matrix * rot_mat
+        #rot_mat = q_rot * translation_matrix_inverse
+        #rot_mat = translation_matrix * rot_mat
 
-        self.position = rot_mat * Vector4.from_vector3(self.position, w=1.0)
-        self.position = Vector3.from_vector4(Vector4(self.position))[0]
+        #self.position = rot_mat * Vector4.from_vector3(self.position, w=1.0)
+        #self.position = Vector3.from_vector4(Vector4(self.position))[0]
 
     def look_at(self, target: Vector3):
         heading = Vector3(target - self.position)
@@ -127,11 +129,12 @@ class Transform:
         self.euler_angles[1] = self.clamp_angle(self.euler_angles[1])
         self.euler_angles[2] = self.clamp_angle(self.euler_angles[2])
 
-        qx = Quaternion.from_x_rotation(self.euler_angles[0] * (-math.pi / 180.0))
-        qy = Quaternion.from_y_rotation(self.euler_angles[1] * (-math.pi / 180.0))
-        qz = Quaternion.from_z_rotation(self.euler_angles[2] * (-math.pi / 180.0))
+        #q = Quaternion(axis=[1, 0, 0], self.euler_angles[0])
 
-        return Matrix44.from_quaternion(qz * qy * qx)
+        #q = quaternion.from_euler_angles(self.euler_angles)
+
+        #return Matrix44.from_quaternion(q)
+        return Matrix44.from_eulers(self.euler_angles)
 
     def get_trs_matrix(self):
         # Scale
@@ -147,13 +150,15 @@ class Transform:
 
     @staticmethod
     def clamp_angle(angle, min_angle=0.0, max_angle=360.0):
-        while angle < 0.0:
-            angle += 360.0
+        if angle > 360:
+            angle = 360 - angle
 
-        while angle > 360.0:
-            angle -= 360.0
+        angle = max(min(angle, max_angle), min_angle)
 
-        return max(min(angle, max_angle), min_angle)
+        if angle < -360:
+            angle = 360 + angle
+
+        return angle
 
     @staticmethod
     def angle_between_vectors(a: Vector3, b: Vector3):
@@ -173,42 +178,76 @@ class Transform:
 
     @staticmethod
     def euler_to_quaternion(roll, pitch, yaw):
-        pitch = math.radians(pitch)
-        yaw = math.radians(yaw)
-        roll = math.radians(roll)
+        pitch = pitch * (math.pi / 180.0)
+        yaw = yaw * (math.pi / 180.0)
+        roll = roll * (math.pi / 180.0)
 
-        qx = math.sin(roll / 2) * math.cos(pitch / 2) * math.cos(yaw / 2) - math.cos(roll / 2) * math.sin(pitch / 2) * math.sin(yaw / 2)
-        qy = math.cos(roll / 2) * math.sin(pitch / 2) * math.cos(yaw / 2) + math.sin(roll / 2) * math.cos(pitch / 2) * math.sin(yaw / 2)
-        qz = math.cos(roll / 2) * math.cos(pitch / 2) * math.sin(yaw / 2) - math.sin(roll / 2) * math.sin(pitch / 2) * math.cos(yaw / 2)
-        qw = math.cos(roll / 2) * math.cos(pitch / 2) * math.cos(yaw / 2) + math.sin(roll / 2) * math.sin(pitch / 2) * math.sin(yaw / 2)
+        qx = np.sin(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) - np.cos(roll / 2) * np.sin(pitch / 2) * np.sin(yaw / 2)
+        qy = np.cos(roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2) + np.sin(roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2)
+        qz = np.cos(roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2) - np.sin(roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2)
+        qw = np.cos(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) + np.sin(roll / 2) * np.sin(pitch / 2) * np.sin(yaw / 2)
+
+        qr = Quaternion(axis=[1, 1, 1], angle=pitch + yaw + roll)
+        #qy = Quaternion(axis=[0, 1, 0], angle=yaw)
+        #qz = Quaternion(axis=[0, 0, 1], angle=roll)
+        #qr = qz * qy * qx
         return [qx, qy, qz, qw]
 
+        #quaternion = tf.transformations.quaternion_from_euler(roll, pitch, yaw)
+
+        #return quaternion
+
     @staticmethod
-    def quaternion_to_euler(quaternion):
-        w = quaternion[3]
-        x = quaternion[0]
-        y = quaternion[1]
-        z = quaternion[2]
+    def mult_quaternion_by_vector(q1, v1: Vector3):
+        #u = Vector3([q[0], q[1], q[2]])
+        #s = q[3]
+        #q0 = np.quaternion(q[0], q[1], q[2], q[3])
+        #result = np.multiply(q0, v)[2]
+        #return q0 * v
+        #return (2.0 * Vector3.dot(u, v) * u) + ((s*s - Vector3.dot(u, u)) * v) + (2.0 * s * Vector3.cross(u, v))
+        #q0 = Quaternion(q[0], q[1], q[2], q[3])
+        #v0 = Vector4.from_vector3(v, 1.0)
 
-        t0 = +2.0 * (w * x + y * z)
-        t1 = +1.0 - 2.0 * (x * x + y * y)
-        x_out = math.degrees(math.atan2(t0, t1))
+        #v_rotated = q0 * v0 * q0.inverse
+        #r = q[0]
+        #i = q[1]
+        #j = q[2]
+        #k = q[3]
 
-        t2 = +2.0 * (w * y - z * x)
-        t2 = +1.0 if t2 > +1.0 else t2
-        t2 = -1.0 if t2 < -1.0 else t2
-        y_out = math.degrees(math.asin(t2))
+        #v_prime = [0, 0, 0]
+        #v_prime[0] = 2 * (r * v[2] * j + i * v[2] * k - r * v[1] * k + i * v[1] * j) + v[0] * (
+        #            r * r + i * i - j * j - k * k)
+        #v_prime[1] = 2 * (r * v[0] * k + i * v[0] * j - r * v[2] * i + j * v[2] * k) + v[1] * (
+        #            r * r - i * i + j * j - k * k)
+        #v_prime[2] = 2 * (r * v[1] * i - r * v[0] * j + i * v[0] * k + j * v[1] * k) + v[2] * (
+        #            r * r - i * i - j * j + k * k)
+        #q1 = q
+        #q2 = [v[0], v[1], v[2], 0.0]
 
-        t3 = +2.0 * (w * z + x * y)
-        t4 = +1.0 - 2.0 * (y * y + z * z)
-        z_out = math.degrees(math.atan2(t3, t4))
+        #q3 = Transform.quaternion_multiply(Transform.quaternion_multiply(q1, q2), Transform.quaternion_conjugate(q1))[1:]
+        x, y, z = v1
+        q2 = [x, y, z, 0.0]
 
-        return [z_out, y_out, x_out]
+        result = Transform.quaternion_multiply(Transform.quaternion_multiply(q1, q2), Transform.quaternion_conjugate(q1))[1:]
+        q1 = Quaternion(q1[3], q1[0], q1[1], q1[2])
+        result = q1.rotate(v1)
 
-    def mult_quaternion_by_vector(q, v):
-        u = Vector3([q[0], q[1], q[2]])
-        s = q[3]
+        #print(q1)
+        #print(result)
 
-        return (2.0 * Vector3.dot(u, v) * u)\
-                 + ((s*s - Vector3.dot(u, u)) * v)\
-                 + (2.0 * s * Vector3.cross(u, v))
+        return result
+
+    @staticmethod
+    def quaternion_conjugate(q):
+        w, x, y, z = q
+        return [w, -x, -y, -z]
+
+    @staticmethod
+    def quaternion_multiply(q1, q2):
+        w1, x1, y1, z1 = q1
+        w2, x2, y2, z2 = q2
+        w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+        x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+        y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
+        z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
+        return [w, x, y, z]

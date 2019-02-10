@@ -14,3 +14,10 @@ class SceneObject:
     def __init__(self, tag):
         self.transform = Transform()
         self.tag = tag
+        self.enabled = False
+
+    def enable(self):
+        self.enabled = True
+
+    def disable(self):
+        self.enabled = False

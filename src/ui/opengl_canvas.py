@@ -15,6 +15,7 @@ from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.iui_behavior import IUIBehavior
+from src.model_conversion.model_shipper import ModelShipper
 from pyrr import Vector3
 
 
@@ -77,7 +78,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         else:
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-
         self.Refresh()
         self.scene.update()
         self.scene.draw()
@@ -98,6 +98,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :return: None
         """
         if event is not None:
+            if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
+                self.scene.replace_input_model_mesh(ModelShipper.input_model)
+                self.scene.set_input_model_active(True)
             if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
-                print("SUCCESS!")
                 self.wire_frame = not self.wire_frame

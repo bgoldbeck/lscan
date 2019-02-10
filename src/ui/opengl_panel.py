@@ -39,13 +39,10 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        print("test")
-        #self.SetBackgroundColour("#111eee")
         self.wf_btn = wx.Button(self, label="Wireframe", size=UI_style.conversion_big_button_size)
         self.wf_btn.SetBackgroundColour(UI_style.button_background)
         self.wf_btn.SetForegroundColour(UI_style.button_text)
         self.opengl_canvas = OpenGLCanvas(self)
-
 
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_layout.Add(self.wf_btn, 0, wx.ALIGN_CENTER_HORIZONTAL)
