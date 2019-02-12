@@ -48,7 +48,7 @@ class Transform:
         cosy_cosp = 1.0 - 2.0 * (q[1] * q[1] + q[2] * q[2])
 
         yaw = math.atan2(2 * q[1] * q[3] - 2 * q[0] * q[2],
-                         1 - 2  * (q[1] * q[1]) - 2 * (q[2] * q[2]))
+                         1 - 2 * (q[1] * q[1]) - 2 * (q[2] * q[2]))
 
         self.euler_angles = Vector3([pitch, yaw, roll])
 
@@ -83,19 +83,7 @@ class Transform:
     def rotate_position_around_point(self, point, axis: Vector3, angle):
         # Convert degrees to radians.
         radians = math.radians(-angle)
-
         axis.normalise()
-
-        #q_rot = Quaternion.from_axis_rotation(axis, radians)
-
-        #translation_matrix = Matrix44.from_translation(point)
-        #translation_matrix_inverse = Matrix44.from_translation(-point)
-
-        #rot_mat = q_rot * translation_matrix_inverse
-        #rot_mat = translation_matrix * rot_mat
-
-        #self.position = rot_mat * Vector4.from_vector3(self.position, w=1.0)
-        #self.position = Vector3.from_vector4(Vector4(self.position))[0]
 
     def look_at(self, target: Vector3):
         heading = Vector3(target - self.position)
@@ -129,11 +117,6 @@ class Transform:
         self.euler_angles[1] = self.clamp_angle(self.euler_angles[1])
         self.euler_angles[2] = self.clamp_angle(self.euler_angles[2])
 
-        #q = Quaternion(axis=[1, 0, 0], self.euler_angles[0])
-
-        #q = quaternion.from_euler_angles(self.euler_angles)
-
-        #return Matrix44.from_quaternion(q)
         return Matrix44.from_eulers(self.euler_angles)
 
     def get_trs_matrix(self):
@@ -199,41 +182,12 @@ class Transform:
 
     @staticmethod
     def mult_quaternion_by_vector(q1, v1: Vector3):
-        #u = Vector3([q[0], q[1], q[2]])
-        #s = q[3]
-        #q0 = np.quaternion(q[0], q[1], q[2], q[3])
-        #result = np.multiply(q0, v)[2]
-        #return q0 * v
-        #return (2.0 * Vector3.dot(u, v) * u) + ((s*s - Vector3.dot(u, u)) * v) + (2.0 * s * Vector3.cross(u, v))
-        #q0 = Quaternion(q[0], q[1], q[2], q[3])
-        #v0 = Vector4.from_vector3(v, 1.0)
-
-        #v_rotated = q0 * v0 * q0.inverse
-        #r = q[0]
-        #i = q[1]
-        #j = q[2]
-        #k = q[3]
-
-        #v_prime = [0, 0, 0]
-        #v_prime[0] = 2 * (r * v[2] * j + i * v[2] * k - r * v[1] * k + i * v[1] * j) + v[0] * (
-        #            r * r + i * i - j * j - k * k)
-        #v_prime[1] = 2 * (r * v[0] * k + i * v[0] * j - r * v[2] * i + j * v[2] * k) + v[1] * (
-        #            r * r - i * i + j * j - k * k)
-        #v_prime[2] = 2 * (r * v[1] * i - r * v[0] * j + i * v[0] * k + j * v[1] * k) + v[2] * (
-        #            r * r - i * i - j * j + k * k)
-        #q1 = q
-        #q2 = [v[0], v[1], v[2], 0.0]
-
-        #q3 = Transform.quaternion_multiply(Transform.quaternion_multiply(q1, q2), Transform.quaternion_conjugate(q1))[1:]
         x, y, z = v1
         q2 = [x, y, z, 0.0]
 
         result = Transform.quaternion_multiply(Transform.quaternion_multiply(q1, q2), Transform.quaternion_conjugate(q1))[1:]
         q1 = Quaternion(q1[3], q1[0], q1[1], q1[2])
         result = q1.rotate(v1)
-
-        #print(q1)
-        #print(result)
 
         return result
 

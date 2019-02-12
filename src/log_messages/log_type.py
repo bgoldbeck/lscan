@@ -19,4 +19,5 @@ class LogType(Enum):
     WARNING = 1
     ERROR = 2
     DEBUG = 3
+    IGNORE = 4
 

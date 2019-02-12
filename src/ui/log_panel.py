@@ -119,19 +119,21 @@ class LogPanel(wx.Panel, IUIBehavior):
         if event is not None:
             if event.get_log_message() is not None:
                 log_message = event.get_log_message()
-                message = log_message.get_message()
-                timestamp = log_message.get_timestamp()
-                color = log_message.get_log_message_color()
                 log_type = log_message.get_message_type()
+                if log_type is not LogType.IGNORE:
+                    message = log_message.get_message()
+                    timestamp = log_message.get_timestamp()
+                    color = log_message.get_log_message_color()
 
-                if log_type == LogType.DEBUG and __debug__ or log_type != LogType.DEBUG:
-                    self.log_text_ctrl.BeginFontSize(UI_style.log_font_size)
-                    self.log_text_ctrl.BeginTextColour(UI_style.log_default_text_color)
-                    self.log_text_ctrl.WriteText(timestamp + ": ")
-                    self.log_text_ctrl.BeginTextColour(wx.Colour(color))
-                    if __debug__ and event.get_event_type() is not None:
-                        self.log_text_ctrl.WriteText(str(event.get_event_type()) + "| ")
-                    self.log_text_ctrl.WriteText(message + "\n")
-                    self.log_text_ctrl.EndFontSize()
-                    # Scrolls down to show last line added
-                    self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
+
+                    if log_type == LogType.DEBUG and __debug__ or log_type != LogType.DEBUG:
+                        self.log_text_ctrl.BeginFontSize(UI_style.log_font_size)
+                        self.log_text_ctrl.BeginTextColour(UI_style.log_default_text_color)
+                        self.log_text_ctrl.WriteText(timestamp + ": ")
+                        self.log_text_ctrl.BeginTextColour(wx.Colour(color))
+                        if __debug__ and event.get_event_type() is not None:
+                            self.log_text_ctrl.WriteText(str(event.get_event_type()) + "| ")
+                        self.log_text_ctrl.WriteText(message + "\n")
+                        self.log_text_ctrl.EndFontSize()
+                        # Scrolls down to show last line added
+                        self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())

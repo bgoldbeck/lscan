@@ -23,7 +23,7 @@ class BasicMaterial(Material):
         Material.__init__(self)
 
         self.vertex_shader = """
-# version 330
+# version 420
 in layout(location = 0) vec3 vertex_position;
 in layout(location = 1) vec2 vertex_uv;
 in layout(location = 2) vec3 vertex_normal;
@@ -66,7 +66,7 @@ void main() {
 """
 
         self.fragment_shader = """
-# version 330
+# version 420
 
 // Interpolated values from the vertex shaders
 in vec2 uv;

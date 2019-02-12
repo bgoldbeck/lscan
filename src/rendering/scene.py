@@ -22,33 +22,20 @@ class Scene:
     _last_time = 0.0
     _ang_x = 0
     _ang_y = 0
-    _camera_distance = 20.0
+    _camera_distance = 10.0
+    _current_model_context = None
 
     def __init__(self, gl_canvas):
         self.last_mouse_position = (0.0, 0.0)
         self.delta_mouse = (0.0, 0.0)
         self._last_time = time.process_time()
         self.active_scene_object = None
+
         self.scene_objects = {
-            "camera": Camera("camera"),
-        #    "plane_model": BasicMeshObject("stl_model", "assets/models/plane.stl"),
-        #    "cube_model": BasicMeshObject("stl_model", "assets/models/cube.stl")
+            "camera": Camera("camera")
         }
 
         RenderingEngine.camera = self.scene_objects["camera"]
-        #RenderingEngine.camera.position = Vector3([0.0, 0.0, -22.0])
-        #RenderingEngine.camera.transform.look_at(Vector3([0.0, 0.0, 0.0]))
-
-        #self.scene_objects["cube_model"].transform.position = Vector3([0.0, 0.0, 0.0])
-
-        #self.scene_objects["stl_model"].transform.rotate_position_around_point(
-        #    Vector3([0.0, 0.0, 0.0]), Vector3([0.0, 1.0, 0.0]), 45.0)
-
-        #self.scene_objects["stl_model"].transform.look_at(
-        #    Vector3([0.0, 0.0, 0.0]))
-
-        gl_canvas.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
-        gl_canvas.Bind(wx.EVT_MOTION, self.on_mouse_move)
 
     def on_mouse_move(self, event):
         """
@@ -68,7 +55,13 @@ class Scene:
         self.last_mouse_position = point
 
     def on_mouse_wheel(self, event):
-        self._camera_distance -= event.GetWheelRotation() / 70.0
+        """
+
+        :param event:
+        :return:
+        """
+        self._camera_distance -= event.GetWheelRotation() / 500.0
+        event.Skip()
 
     def draw(self):
         for key, scene_object in self.scene_objects.items():
@@ -78,54 +71,27 @@ class Scene:
         RenderingEngine.delta_time = time.process_time() - self._last_time
         self._last_time = time.process_time()
 
-        #self.scene_objects["stl_model"].transform.rotate_position_around_point(
-        #    Vector3([0.0, 0.0, 0.0]), Vector3([0.0, 1.0, 0.0]), 0.5)
-
         self._ang_x -= self.delta_mouse[0] * 0.7
         self._ang_y += self.delta_mouse[1] * 0.7
 
         self._ang_y = Transform.clamp_angle(self._ang_y, -85.0, 85.0)
-        #self._ang_x = Transform.clamp_angle(self._ang_x)
-        #self._ang_x = 210.0
-        #self._ang_y = 310.0
-
-        print(self._ang_y)
-
-        #self._ang_x = 45.0
-        #self._ang_y = 45.0
 
         rotation = Transform.euler_to_quaternion(
             self._ang_y,
             self._ang_x,
             0.0)
 
-
-        #position = Transform.mult_quaternion_by_vector(rotation, Vector3([0.0, 0.0, -self._camera_distance])) + self.scene_objects["cube_model"].transform.position
-
-        #position = Vector3((0.0, 0.0, -5.0))
-        #RenderingEngine.camera.transform.position = position
-        #RenderingEngine.camera.transform.rotation_from_quaternion(rotation)
-
-        #print(position)
-        #print(rotation)
-
-        #RenderingEngine.camera.transform.look_at(self.scene_objects["stl_model"].transform.position)
-        #RenderingEngine.camera.transform.position = rotation * Vector4([0.0, 0.0, -20.0, 1.0]) + Vector4.from_vector3(self.scene_objects["stl_model"].transform.position)
-
-        #RenderingEngine.camera.transform.euler_angles = Vector3(Transform.quaternion_to_euler(rotation))
-
         q0 = Transform.mult_quaternion_by_vector(
             rotation,
             (Vector3([0.0, 0.0, -1.0]) * self._camera_distance))
-
-        #print(q0)
 
         if self.active_scene_object is not None:
             RenderingEngine.camera.transform.position = \
                 self.active_scene_object.transform.position + q0
 
         for key, scene_object in self.scene_objects.items():
-            scene_object.update()
+            if scene_object.enabled:
+                scene_object.update()
 
         self.delta_mouse = (0.0, 0.0)
 
@@ -156,8 +122,17 @@ class Scene:
                 self.scene_objects[tag].enable()
             else:
                 self.scene_objects[tag].disable()
+        self._current_model_context = self.scene_objects[tag]
 
     def remove_scene_object(self, tag):
         if self.scene_objects.get(tag) is not None:
             self.scene_objects.pop(tag)
 
+    def get_main_camera(self):
+        return RenderingEngine.camera
+
+    def get_camera_distance_to_origin(self):
+        return self._camera_distance
+
+    def get_current_model_scale(self):
+        return self._current_model_context.transform.scale

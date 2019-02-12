@@ -16,6 +16,10 @@ from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.iui_behavior import IUIBehavior
 from src.model_conversion.model_shipper import ModelShipper
+from src.ui.ui_driver import UIDriver
+from src.log_messages.log_message import LogMessage
+from src.log_messages.float_message import FloatMessage
+from src.log_messages.log_type import LogType
 from pyrr import Vector3
 
 
@@ -39,6 +43,27 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         self.aspect_ratio = self.canvas_size[0] / self.canvas_size[1]
 
         self.Bind(wx.EVT_PAINT, self.on_paint)
+        self.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
+        self.Bind(wx.EVT_MOTION, self.on_mouse_move)
+
+    def on_mouse_move(self, event):
+        if ModelShipper.input_model is not None:
+            self.scene.on_mouse_move(event)
+            #UIDriver.fire_event(UserEvent(
+            #    UserEventType.RENDERING_MOUSE_MOVE_EVENT,
+            #    LogMessage(
+            #        LogType.DEBUG,
+            #        "Mouse Wheel Scrolled.")))
+
+    def on_mouse_wheel(self, event):
+        if ModelShipper.input_model is not None:
+            self.scene.on_mouse_wheel(event)
+            UIDriver.fire_event(UserEvent(
+                UserEventType.RENDERING_MOUSE_WHEEL_EVENT,
+                FloatMessage(
+                    LogType.IGNORE,
+                    "Mouse Moved",
+                    self.scene.get_camera_distance_to_origin())))
 
     def on_paint(self, event):
         """Event that occurs when the canvas paint event is called.
@@ -102,4 +127,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
                 self.scene.replace_input_model_mesh(ModelShipper.input_model)
                 self.scene.set_input_model_active(True)
             if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
-                self.wire_frame = not self.wire_frame
+                # A log message of this type is a BoolMessage.
+                self.wire_frame = event.get_log_message().get_bool()
+
