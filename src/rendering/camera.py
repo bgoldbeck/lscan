@@ -11,7 +11,6 @@
 # See LICENSE file for the full text.
 from pyrr import Vector3, Matrix44, vector, vector3
 from src.rendering.scene_object import SceneObject
-import math, sys
 
 
 # Code is attributed to totex/PyOpenGL_season_02
