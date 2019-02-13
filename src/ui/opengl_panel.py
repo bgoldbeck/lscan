@@ -20,7 +20,6 @@ from src.log_messages.float_message import FloatMessage
 from src.log_messages.bool_message import BoolMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
-from src.rendering.scene import Scene
 
 
 class OpenGLPanel(wx.Panel, IUIBehavior):
@@ -180,11 +179,11 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                         "Camera Distance to Origin: " + str(self.opengl_canvas.scene.get_camera_distance_to_origin()))
 
     def on_wire_frame_pressed(self, event):
-        """Send an event that the wireframe button was pressed. The OpenGLCanvas will
+        """Send an event that the wire frame button was pressed. The OpenGLCanvas will
         detect and react accordingly.
 
         :param event: The wxpython event that occured.
-        :return:
+        :return: None
         """
         UIDriver.fire_event(UserEvent(
             UserEventType.RENDERING_WIRE_FRAME_PRESSED,
@@ -195,7 +194,11 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         event.Skip()
 
     def on_cycle_preview_pressed(self, event):
-        print("cycle preview pressed")
+        """The user pressed the cycle preview button to switch between previewing stl and ldraw model.
+
+        :param event: The wxpython Event.
+        :return: None
+        """
         self.stl_preview_context = not self.stl_preview_context
         if self.stl_preview_context is True:
             self.cycle_preview_button.SetLabelText("Preview LDraw Model")
@@ -204,13 +207,28 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         event.Skip()
 
     def on_scale_value_changed(self, event):
-        self.set_model_scale()
+        """The scale input value has been modified by the user. Notify the OpenGL scene
+        of the new scale value.
+
+        :param event: The wxpython Event.
+        :return: None
+        """
+        self.update_model_scale()
         event.Skip()
 
-    def set_model_scale(self):
+    def update_model_scale(self):
+        """Update the model scale to reflect the value within the scale input control.
+
+        :return: None
+        """
         self.opengl_canvas.scene.set_model_scale(self.scale_input.GetValue())
 
     def set_widget_rendering_contexts(self, enabled):
+        """Disable or enable the controls the user may press on the OpenGL Panel.
+
+        :param enabled: Whether to enable or disable the controls.
+        :return: None
+        """
         self.scale_down_button.Enabled = enabled
         self.cb_wireframe.Enabled = enabled
         self.scale_input.Enabled = enabled
@@ -218,18 +236,34 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.scale_up_button.Enabled = enabled
 
     def on_scale_up(self, event):
+        """User pressed the scale up button.
+
+        :param event: The wxpython Event.
+        :return: None
+        """
         value = self.scale_input.GetValue()
         self.scale_input.SetValue(value + 0.125)
         event.Skip()
 
     def on_scale_down(self, event):
+        """User pressed the scale down button.
+
+        :param event: The wxpython Event.
+        :return: None
+        """
         value = self.scale_input.GetValue()
         self.scale_input.SetValue(value - 0.125)
         event.Skip()
 
     def update(self, dt: float):
+        """Called every loop by the GUIEventLoop
+
+        :param dt: The delta time between that last call.
+        :return:
+        """
         self.timer += dt
-        if self.timer > 0.25:
+        delay = 0.20  # Activate timer every 200 ms
+        if self.timer > delay:
             self.timer = 0
             if self.opengl_canvas is not None:
                 scene = self.opengl_canvas.scene
@@ -238,6 +272,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                     if camera is not None:
                         rotation = camera.transform.euler_angles
                         position = camera.transform.position
+                        # Update the camera rotation and position metrics on screen.
                         self.camera_rotation_static_text_ctrl.SetLabelText("Camera Rotation: " + str(rotation))
                         self.camera_position_static_text_ctrl.SetLabelText("Camera Position: " + str(position))
 

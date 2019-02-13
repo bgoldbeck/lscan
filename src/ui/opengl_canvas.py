@@ -20,6 +20,7 @@ from src.ui.ui_driver import UIDriver
 from src.log_messages.log_message import LogMessage
 from src.log_messages.float_message import FloatMessage
 from src.log_messages.log_type import LogType
+from src.ui.ui_style import UIStyle
 from pyrr import Vector3
 
 
@@ -82,15 +83,15 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """
         self.context = glcanvas.GLContext(self)
         self.SetCurrent(self.context)
-        glClearColor(self.canvas_color[0],  # Red
-                     self.canvas_color[1],  # Green
-                     self.canvas_color[2],  # Blue
-                     1.0)  # Alpha
+        glClearColor(UIStyle.opengl_canvas_background_color[0],  # Red
+                     UIStyle.opengl_canvas_background_color[1],  # Green
+                     UIStyle.opengl_canvas_background_color[2],  # Blue
+                     UIStyle.opengl_canvas_background_color[3])  # Alpha
 
         glEnable(GL_DEPTH_TEST)
 
         glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
-        self.scene = Scene(self)
+        self.scene = Scene()
 
     def draw(self):
         """Draw the previous OpenGL buffer with all the 3D data.

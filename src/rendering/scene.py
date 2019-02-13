@@ -14,18 +14,22 @@ from src.rendering.camera import Camera
 from src.rendering.rendering_engine import RenderingEngine
 from src.rendering.tranform import Transform
 from pyrr import Vector3, Vector4, Matrix44
-
 import time, wx, math
 
 
 class Scene:
+    """The scene context that stores the references to models and sets up the camera to view the
+    OpenGL 3D rendering environment.
+    """
     _last_time = 0.0
     _ang_x = 0
     _ang_y = 0
     _camera_distance = 10.0
     _current_model_context = None
 
-    def __init__(self, gl_canvas):
+    def __init__(self):
+        """Constructor to initialize the scene.
+        """
         self.last_mouse_position = (0.0, 0.0)
         self.delta_mouse = (0.0, 0.0)
         self._last_time = time.process_time()
