@@ -115,7 +115,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         self.Refresh()
-        self.scene.update()
         self.scene.draw()
         self.SwapBuffers()
 
@@ -148,4 +147,5 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param dt: The delta time between that last call.
         :return: None
         """
-        pass
+        if self.scene is not None:
+            self.scene.update(dt)

@@ -19,6 +19,10 @@ import numpy
 
 
 class BasicMaterial(Material):
+    """This class controls the shader material information and determines how the mesh object should look
+    in the OpenGL rendering context.
+    """
+
     def __init__(self, triangle_data):
         """Constructor for the BasicMaterial.
 

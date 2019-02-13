@@ -78,17 +78,15 @@ class Scene:
             if scene_object is not None:
                 scene_object.draw()
 
-    def update(self):
-        """Update the scene.
+    def update(self, dt: float):
+        """Called by the OpenGLCanvas, which is called every loop by the GUIEventLoop.
 
-        :return: None
-        """
-        RenderingEngine.delta_time = time.process_time() - self._last_time
-        self._last_time = time.process_time()
-
+         :param dt: The delta time between that last call.
+         :return: None
+         """
         # Move the camera based on mouse tracking.
-        self._ang_x -= self.delta_mouse[0] * 0.7
-        self._ang_y += self.delta_mouse[1] * 0.7
+        self._ang_x -= self.delta_mouse[0] * 95.0 * dt
+        self._ang_y += self.delta_mouse[1] * 95.0 * dt
 
         self._ang_y = Transform.clamp_angle(self._ang_y, -85.0, 85.0)
 
