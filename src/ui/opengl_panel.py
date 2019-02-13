@@ -8,6 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
+from wx.lib.masked import NumCtrl
 from src.ui.opengl_canvas import OpenGLCanvas
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
@@ -34,6 +35,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         """
         wx.Panel.__init__(self, parent, size=(1024, 300), style=UI_style.conversion_border)
         self.parent = parent
+        self.stl_preview_context = True
         self.wf_btn = None
         self._build_gui()
 
@@ -57,47 +59,70 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.scale_static_text = wx.StaticText(self, label="Scale:", size=(50, 20))
         self.scale_static_text.SetForegroundColour(UI_style.metadata_label_color)
 
-        self.scale_up_button = wx.Button(self, label="+", size=(20, 20))
-        self.scale_down_button = wx.Button(self, label="-", size=(20, 20))
-        self.scale_input = wx.TextCtrl(self, size=(100, 20))
-        #self.scale_input.SetMaxLength(self.max_path_length)
+        self.scale_up_button = wx.Button(self, label="+", size=(23, 23))
+        self.scale_down_button = wx.Button(self, label="-", size=(23, 23))
+
+        self.scale_input = wx.lib.masked.NumCtrl(
+            self,
+            value=1.0,
+            size=(100, 20),
+            integerWidth=10,
+            fractionWidth=10,
+            min=0.0)
+
         self.scale_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
         self.scale_input.SetForegroundColour(UI_style.metadata_input_text_color)
 
+        self.cycle_preview_button = wx.Button(self, label="Preview LDraw Model", size=(150, 30))
+
         self.opengl_canvas = OpenGLCanvas(self)
+
+        self.help_static_text_ctrl = wx.StaticText(self, size=UI_style.metadata_label_size)
+        self.help_static_text_ctrl.SetLabelText("Hold left click while moving \nthe mouse to rotate the camera.")
+        self.help_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
 
         # Layout the UI
         # Left Side
-
         left_vertical_layout = wx.BoxSizer(wx.VERTICAL)
         left_vertical_layout.Add(self.cb_wireframe, 0, wx.ALIGN_LEFT)
         left_vertical_layout.AddSpacer(10)
         left_vertical_layout.Add(self.scale_static_text, 0, wx.ALIGN_LEFT)
+
         scale_horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
         scale_horizontal_layout.Add(self.scale_down_button, 0, wx.ALIGN_LEFT)
         scale_horizontal_layout.Add(self.scale_input, 0, wx.ALIGN_LEFT)
         scale_horizontal_layout.Add(self.scale_up_button, 0, wx.ALIGN_LEFT)
-        scale_horizontal_layout.AddSpacer(150)
+        scale_horizontal_layout.AddSpacer(115)
+
         left_vertical_layout.Add(scale_horizontal_layout)
+        left_vertical_layout.AddSpacer(10)
+        left_vertical_layout.Add(self.cycle_preview_button)
 
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_layout.Add(left_vertical_layout)
-        #horizontal_layout.AddSpacer(50)
-
 
         # Middle
         horizontal_layout.Add(self.opengl_canvas, 0, wx.ALIGN_CENTER_HORIZONTAL)
-       #horizontal_layout.AddSpacer(5)
 
         # Right Side
         right_vertical_layout = wx.BoxSizer(wx.VERTICAL)
-        horizontal_layout.Add(self.zoom_static_text_ctrl, 0, wx.ALIGN_CENTER_HORIZONTAL)
-        #horizontal_layout.AddSpacer(5)
+        right_vertical_layout.Add(self.help_static_text_ctrl, wx.ALIGN_LEFT)
+        right_vertical_layout.Add(self.zoom_static_text_ctrl, wx.ALIGN_LEFT)
+
+        horizontal_layout.Add(right_vertical_layout, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SetSizer(horizontal_layout)
 
         # Bind events to functions.
         self.Bind(wx.EVT_CHECKBOX, self.on_wire_frame_pressed, self.cb_wireframe)
+        self.Bind(wx.EVT_BUTTON, self.on_cycle_preview_pressed, self.cycle_preview_button)
+        self.Bind(wx.EVT_BUTTON, self.on_scale_up, self.scale_up_button)
+        self.Bind(wx.EVT_BUTTON, self.on_scale_down, self.scale_down_button)
+
+        self.scale_input.Bind(wx.lib.masked.EVT_NUM, self.on_scale_value_changed)
+
+        # Disable widgets until they are necessary from application state context.
+        self.set_widget_rendering_contexts(False)
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the ConversionPanel.
@@ -120,6 +145,8 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                     self.zoom_static_text_ctrl.SetLabelText(
                         "Camera Distance to Origin: " + str(event.get_log_message().get_float()))
             elif event.get_event_type() == UserEventType.INPUT_MODEL_READY:
+                    self.set_widget_rendering_contexts(True)
+                    self.cycle_preview_button.Enabled = False
                     self.zoom_static_text_ctrl.SetLabelText(
                         "Camera Distance to Origin: " + str(self.opengl_canvas.scene.get_camera_distance_to_origin()))
 
@@ -136,4 +163,38 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                 LogType.DEBUG, "Wire frame checkbox pressed.",
                 self.cb_wireframe.GetValue())
         ))
+        event.Skip()
+
+    def on_cycle_preview_pressed(self, event):
+        print("cycle preview pressed")
+        self.stl_preview_context = not self.stl_preview_context
+        if self.stl_preview_context is True:
+            self.cycle_preview_button.SetLabelText("Preview LDraw Model")
+        else:
+            self.cycle_preview_button.SetLabelText("Preview STL Model")
+        event.Skip()
+
+    def on_scale_value_changed(self, event):
+        print("scale changed!")
+        self.set_model_scale()
+        event.Skip()
+
+    def set_model_scale(self):
+        self.opengl_canvas.scene.set_model_scale(self.scale_input.GetValue())
+
+    def set_widget_rendering_contexts(self, enabled):
+        self.scale_down_button.Enabled = enabled
+        self.cb_wireframe.Enabled = enabled
+        self.scale_input.Enabled = enabled
+        self.cycle_preview_button.Enabled = enabled
+        self.scale_up_button.Enabled = enabled
+
+    def on_scale_up(self, event):
+        value = self.scale_input.GetValue()
+        self.scale_input.SetValue(value + 0.125)
+        event.Skip()
+
+    def on_scale_down(self, event):
+        value = self.scale_input.GetValue()
+        self.scale_input.SetValue(value - 0.125)
         event.Skip()

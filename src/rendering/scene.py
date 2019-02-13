@@ -32,7 +32,9 @@ class Scene:
         self.active_scene_object = None
 
         self.scene_objects = {
-            "camera": Camera("camera")
+            "camera": Camera("camera"),
+            "input_model": None,
+            "output_model": None
         }
 
         RenderingEngine.camera = self.scene_objects["camera"]
@@ -65,7 +67,8 @@ class Scene:
 
     def draw(self):
         for key, scene_object in self.scene_objects.items():
-            scene_object.draw()
+            if scene_object is not None:
+                scene_object.draw()
 
     def update(self):
         RenderingEngine.delta_time = time.process_time() - self._last_time
@@ -90,8 +93,9 @@ class Scene:
                 self.active_scene_object.transform.position + q0
 
         for key, scene_object in self.scene_objects.items():
-            if scene_object.enabled:
-                scene_object.update()
+            if scene_object is not None:
+                if scene_object.enabled:
+                    scene_object.update()
 
         self.delta_mouse = (0.0, 0.0)
 
@@ -136,3 +140,14 @@ class Scene:
 
     def get_current_model_scale(self):
         return self._current_model_context.transform.scale
+
+    def set_model_scale(self, scale: float):
+        input_model = self.scene_objects["input_model"]
+        output_model = self.scene_objects["output_model"]
+        scale_vector = Vector3([scale, scale, scale])
+
+        if input_model is not None:
+            input_model.transform.scale = scale_vector
+        if output_model is not None:
+            output_model.transform.scale = scale_vector
+
