@@ -23,13 +23,13 @@ class LScan(wx.App):
             self.main_loop = UIEventLoop()
             self.main_loop.Run()
 
+    def ExitMainLoop(self):
+        self.main_loop.Exit()
+
     def __init__(self):
         """Default constructor for LScan class.
         """
         wx.App.__init__(self)
-
-
-
         root_frame = MainFrame()
         root_frame.Show()
 

@@ -45,11 +45,6 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-
-        #self.wf_btn = wx.Button(self, label="Wireframe", size=UI_style.conversion_big_button_size)
-        #self.wf_btn.SetBackgroundColour(UI_style.button_background)
-        #self.wf_btn.SetForegroundColour(UI_style.button_text)
-
         self.cb_wireframe = wx.CheckBox(self, label=" Wireframe")
         self.cb_wireframe.SetForegroundColour(UI_style.metadata_label_color)
 
