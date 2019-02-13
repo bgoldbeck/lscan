@@ -164,3 +164,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         pass
+
+    def update(self, dt: float):
+        pass

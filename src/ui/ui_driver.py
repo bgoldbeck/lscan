@@ -114,3 +114,18 @@ class UIDriver:
             pass
 
         return text
+
+    @staticmethod
+    def update(dt: float):
+
+        """Send an update down the wx widget tree to all IUIBehavior objects.
+
+        :param dt:
+        :return:
+        """
+        # We need to notify all the ui behaviors of the event.
+        ui_behaviors = []
+        UIDriver.get_all_ui_behaviors(UIDriver.root_frame, ui_behaviors)
+
+        for ui_behavior in ui_behaviors:
+            ui_behavior.update(dt)

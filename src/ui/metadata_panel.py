@@ -584,3 +584,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Return the string of the license.
         """
         return self.license_text
+
+    def update(self, dt: float):
+        pass

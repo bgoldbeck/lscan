@@ -7,7 +7,7 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import wx
+import wx, time
 from wx.lib.masked import NumCtrl
 from src.ui.opengl_canvas import OpenGLCanvas
 from src.ui.iui_behavior import IUIBehavior
@@ -37,6 +37,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.parent = parent
         self.stl_preview_context = True
         self.wf_btn = None
+        self.timer = 0
         self._build_gui()
 
     def _build_gui(self):
@@ -75,6 +76,13 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         self.cycle_preview_button = wx.Button(self, label="Preview LDraw Model", size=(150, 30))
 
+        self.camera_rotation_static_text_ctrl = wx.StaticText(self, size=(270, 20))
+        self.camera_rotation_static_text_ctrl.SetLabelText("Camera Rotation: ")
+        self.camera_rotation_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+
+        self.camera_position_static_text_ctrl = wx.StaticText(self, size=(270, 20))
+        self.camera_position_static_text_ctrl.SetLabelText("Camera Position: ")
+        self.camera_position_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
 
         self.help_rotate_static_text_ctrl = wx.StaticText(self, size=(270, 50))
         self.help_rotate_static_text_ctrl.SetLabelText("Hold left click while moving the mouse to rotate the camera.")
@@ -116,6 +124,8 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         # Right Side
         right_vertical_layout = wx.BoxSizer(wx.VERTICAL)
         right_vertical_layout.AddSpacer(10)
+        right_vertical_layout.Add(self.camera_rotation_static_text_ctrl, wx.ALIGN_LEFT)
+        right_vertical_layout.Add(self.camera_position_static_text_ctrl, wx.ALIGN_LEFT)
         right_vertical_layout.Add(self.zoom_static_text_ctrl, wx.ALIGN_LEFT)
         right_vertical_layout.AddSpacer(40)
         right_vertical_layout.Add(self.help_rotate_static_text_ctrl, wx.ALIGN_RIGHT)
@@ -132,6 +142,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.Bind(wx.EVT_BUTTON, self.on_cycle_preview_pressed, self.cycle_preview_button)
         self.Bind(wx.EVT_BUTTON, self.on_scale_up, self.scale_up_button)
         self.Bind(wx.EVT_BUTTON, self.on_scale_down, self.scale_down_button)
+        #self.Bind(wx.EVT_, self.on_paint)
 
         self.scale_input.Bind(wx.lib.masked.EVT_NUM, self.on_scale_value_changed)
 
@@ -212,3 +223,20 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         value = self.scale_input.GetValue()
         self.scale_input.SetValue(value - 0.125)
         event.Skip()
+
+    def update(self, dt: float):
+        self.timer += dt
+        if self.timer > 0.25:
+            self.timer = 0
+            if self.opengl_canvas is not None:
+                scene = self.opengl_canvas.scene
+                if scene is not None:
+                    camera = scene.get_main_camera()
+                    if camera is not None:
+                        rotation = camera.transform.euler_angles
+                        position = camera.transform.position
+                        self.camera_rotation_static_text_ctrl.SetLabelText("Camera Rotation: " + str(rotation))
+                        self.camera_position_static_text_ctrl.SetLabelText("Camera Position: " + str(position))
+
+
+

@@ -130,3 +130,5 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
                 # A log message of this type is a BoolMessage.
                 self.wire_frame = event.get_log_message().get_bool()
 
+    def update(self, dt: float):
+        pass

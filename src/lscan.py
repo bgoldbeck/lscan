@@ -10,6 +10,7 @@
 import wx
 from src.ui.ui_driver import UIDriver
 from src.ui.main_frame import MainFrame
+from src.ui.ui_event_loop import UIEventLoop
 
 
 class LScan(wx.App):
@@ -17,10 +18,17 @@ class LScan(wx.App):
     """
     ui_driver = None
 
+    def MainLoop(self):
+            self.SetExitOnFrameDelete(True)
+            self.main_loop = UIEventLoop()
+            self.main_loop.Run()
+
     def __init__(self):
         """Default constructor for LScan class.
         """
         wx.App.__init__(self)
+
+
 
         root_frame = MainFrame()
         root_frame.Show()

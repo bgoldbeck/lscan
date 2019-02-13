@@ -137,3 +137,6 @@ class LogPanel(wx.Panel, IUIBehavior):
                         self.log_text_ctrl.EndFontSize()
                         # Scrolls down to show last line added
                         self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
+
+    def update(self, dt: float):
+        pass
