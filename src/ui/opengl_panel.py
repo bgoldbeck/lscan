@@ -75,15 +75,24 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         self.cycle_preview_button = wx.Button(self, label="Preview LDraw Model", size=(150, 30))
 
+
+        self.help_rotate_static_text_ctrl = wx.StaticText(self, size=(270, 50))
+        self.help_rotate_static_text_ctrl.SetLabelText("Hold left click while moving the mouse to rotate the camera.")
+        self.help_rotate_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+        self.help_rotate_static_text_ctrl.SetFont(wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.NORMAL))
+
+        self.help_zoom_static_text_ctrl = wx.StaticText(self, size=(270, 50))
+        self.help_zoom_static_text_ctrl.SetLabelText("Use the mouse wheel to zoom the camera from the origin.")
+        self.help_zoom_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+        self.help_zoom_static_text_ctrl.SetFont(wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.NORMAL))
+
         self.opengl_canvas = OpenGLCanvas(self)
 
-        self.help_static_text_ctrl = wx.StaticText(self, size=UI_style.metadata_label_size)
-        self.help_static_text_ctrl.SetLabelText("Hold left click while moving \nthe mouse to rotate the camera.")
-        self.help_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
 
         # Layout the UI
         # Left Side
         left_vertical_layout = wx.BoxSizer(wx.VERTICAL)
+        left_vertical_layout.AddSpacer(10)
         left_vertical_layout.Add(self.cb_wireframe, 0, wx.ALIGN_LEFT)
         left_vertical_layout.AddSpacer(10)
         left_vertical_layout.Add(self.scale_static_text, 0, wx.ALIGN_LEFT)
@@ -102,14 +111,19 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         horizontal_layout.Add(left_vertical_layout)
 
         # Middle
-        horizontal_layout.Add(self.opengl_canvas, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(self.opengl_canvas, 0, wx.ALIGN_LEFT)
 
         # Right Side
         right_vertical_layout = wx.BoxSizer(wx.VERTICAL)
-        right_vertical_layout.Add(self.help_static_text_ctrl, wx.ALIGN_LEFT)
+        right_vertical_layout.AddSpacer(10)
         right_vertical_layout.Add(self.zoom_static_text_ctrl, wx.ALIGN_LEFT)
+        right_vertical_layout.AddSpacer(40)
+        right_vertical_layout.Add(self.help_rotate_static_text_ctrl, wx.ALIGN_RIGHT)
+        right_vertical_layout.AddSpacer(10)
+        right_vertical_layout.Add(self.help_zoom_static_text_ctrl, wx.ALIGN_RIGHT)
 
-        horizontal_layout.Add(right_vertical_layout, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.AddSpacer(5)
+        horizontal_layout.Add(right_vertical_layout, 0, wx.ALIGN_RIGHT)
 
         self.SetSizer(horizontal_layout)
 
