@@ -30,7 +30,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     canvas_size = (400, 300)
 
     def __init__(self, parent):
-        """Default constructor for MainPanel class.
+        """Default constructor for OpenGLCanvas class.
+
+        :param parent: The parent wx control object.
         """
         # Call the base constructor for the OpenGL canvas.
         glcanvas.GLCanvas.__init__(self, parent, -1, size=self.canvas_size)
@@ -48,15 +50,21 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         self.Bind(wx.EVT_MOTION, self.on_mouse_move)
 
     def on_mouse_move(self, event):
+        """Called when the user moves the mouse.
+
+        :param event: The wxpython Event.
+        :return: None
+        """
         if ModelShipper.input_model is not None:
             self.scene.on_mouse_move(event)
-            #UIDriver.fire_event(UserEvent(
-            #    UserEventType.RENDERING_MOUSE_MOVE_EVENT,
-            #    LogMessage(
-            #        LogType.DEBUG,
-            #        "Mouse Wheel Scrolled.")))
 
     def on_mouse_wheel(self, event):
+        """Called when the user scrolls with the mouse wheel. We will notify all panels of the
+        mouse wheel instance.
+
+        :param event: The wxpython Event.
+        :return: None
+        """
         if ModelShipper.input_model is not None:
             self.scene.on_mouse_wheel(event)
             UIDriver.fire_event(UserEvent(
@@ -68,7 +76,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
 
     def on_paint(self, event):
         """Event that occurs when the canvas paint event is called.
-        :param event: the event that occurred.
+
+        :param event: The wxpython Event.
         :return: None
         """
         wx.PaintDC(self)
@@ -79,6 +88,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
 
     def init_gl(self):
         """Initialize OpenGL functionality.
+
         :return: None
         """
         self.context = glcanvas.GLContext(self)
@@ -133,4 +143,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
                 self.wire_frame = event.get_log_message().get_bool()
 
     def update(self, dt: float):
+        """Called every loop by the GUIEventLoop
+
+        :param dt: The delta time between that last call.
+        :return: None
+        """
         pass

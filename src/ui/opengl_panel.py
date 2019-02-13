@@ -35,7 +35,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         wx.Panel.__init__(self, parent, size=(1024, 300), style=UIStyle.conversion_border)
         self.parent = parent
         self.stl_preview_context = True
-        self.cb_wireframe = None
+        self.cb_wire_frame = None
         self.zoom_static_text_ctrl = None
         self.scale_static_text = None
         self.scale_up_button = None
@@ -55,8 +55,8 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        self.cb_wireframe = wx.CheckBox(self, label=" Wireframe")
-        self.cb_wireframe.SetForegroundColour(UIStyle.opengl_label_color)
+        self.cb_wire_frame = wx.CheckBox(self, label=" Wireframe")
+        self.cb_wire_frame.SetForegroundColour(UIStyle.opengl_label_color)
 
         self.zoom_static_text_ctrl = wx.StaticText(self, size=(150, 30))
         self.zoom_static_text_ctrl.SetLabelText("Camera Distance to Origin: ")
@@ -105,7 +105,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         # Left Side
         left_vertical_layout = wx.BoxSizer(wx.VERTICAL)
         left_vertical_layout.AddSpacer(10)
-        left_vertical_layout.Add(self.cb_wireframe, 0, wx.ALIGN_LEFT)
+        left_vertical_layout.Add(self.cb_wire_frame, 0, wx.ALIGN_LEFT)
         left_vertical_layout.AddSpacer(10)
         left_vertical_layout.Add(self.scale_static_text, 0, wx.ALIGN_LEFT)
 
@@ -142,7 +142,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.SetSizer(horizontal_layout)
 
         # Bind events to functions.
-        self.Bind(wx.EVT_CHECKBOX, self.on_wire_frame_pressed, self.cb_wireframe)
+        self.Bind(wx.EVT_CHECKBOX, self.on_wire_frame_pressed, self.cb_wire_frame)
         self.Bind(wx.EVT_BUTTON, self.on_cycle_preview_pressed, self.cycle_preview_button)
         self.Bind(wx.EVT_BUTTON, self.on_scale_up, self.scale_up_button)
         self.Bind(wx.EVT_BUTTON, self.on_scale_down, self.scale_down_button)
@@ -189,7 +189,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
             UserEventType.RENDERING_WIRE_FRAME_PRESSED,
             BoolMessage(
                 LogType.DEBUG, "Wire frame checkbox pressed.",
-                self.cb_wireframe.GetValue())
+                self.cb_wire_frame.GetValue())
         ))
         event.Skip()
 
@@ -230,7 +230,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         self.scale_down_button.Enabled = enabled
-        self.cb_wireframe.Enabled = enabled
+        self.cb_wire_frame.Enabled = enabled
         self.scale_input.Enabled = enabled
         self.cycle_preview_button.Enabled = enabled
         self.scale_up_button.Enabled = enabled
@@ -259,7 +259,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         """Called every loop by the GUIEventLoop
 
         :param dt: The delta time between that last call.
-        :return:
+        :return: None
         """
         self.timer += dt
         delay = 0.20  # Activate timer every 200 ms
