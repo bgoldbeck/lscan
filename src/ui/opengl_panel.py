@@ -33,27 +33,38 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 300), style=UI_style.conversion_border)
+        wx.Panel.__init__(self, parent, size=(1024, 300), style=UIStyle.conversion_border)
         self.parent = parent
         self.stl_preview_context = True
-        self.wf_btn = None
+        self.cb_wireframe = None
+        self.zoom_static_text_ctrl = None
+        self.scale_static_text = None
+        self.scale_up_button = None
+        self.scale_down_button = None
+        self.scale_input = None
+        self.cycle_preview_button = None
+        self.camera_rotation_static_text_ctrl = None
+        self.camera_position_static_text_ctrl = None
+        self.help_rotate_static_text_ctrl = None
+        self.help_zoom_static_text_ctrl = None
+        self.opengl_canvas = None
         self.timer = 0
         self._build_gui()
 
     def _build_gui(self):
-        """Initializing wx objects that make up this conversion panel and their layout within.
+        """Initializing wx objects that make up this OpenGL panel and their layout within.
 
         :return: None
         """
         self.cb_wireframe = wx.CheckBox(self, label=" Wireframe")
-        self.cb_wireframe.SetForegroundColour(UI_style.metadata_label_color)
+        self.cb_wireframe.SetForegroundColour(UIStyle.opengl_label_color)
 
-        self.zoom_static_text_ctrl = wx.StaticText(self, size=UI_style.metadata_label_size)
+        self.zoom_static_text_ctrl = wx.StaticText(self, size=(150, 30))
         self.zoom_static_text_ctrl.SetLabelText("Camera Distance to Origin: ")
-        self.zoom_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+        self.zoom_static_text_ctrl.SetForegroundColour(UIStyle.opengl_label_color)
 
         self.scale_static_text = wx.StaticText(self, label="Scale:", size=(50, 20))
-        self.scale_static_text.SetForegroundColour(UI_style.metadata_label_color)
+        self.scale_static_text.SetForegroundColour(UIStyle.metadata_label_color)
 
         self.scale_up_button = wx.Button(self, label="+", size=(23, 23))
         self.scale_down_button = wx.Button(self, label="-", size=(23, 23))
@@ -66,31 +77,30 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
             fractionWidth=10,
             min=0.0)
 
-        self.scale_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
-        self.scale_input.SetForegroundColour(UI_style.metadata_input_text_color)
+        self.scale_input.SetBackgroundColour(UIStyle.opengl_input_background)
+        self.scale_input.SetForegroundColour(UIStyle.opengl_input_foreground)
 
         self.cycle_preview_button = wx.Button(self, label="Preview LDraw Model", size=(150, 30))
 
         self.camera_rotation_static_text_ctrl = wx.StaticText(self, size=(270, 20))
         self.camera_rotation_static_text_ctrl.SetLabelText("Camera Rotation: ")
-        self.camera_rotation_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+        self.camera_rotation_static_text_ctrl.SetForegroundColour(UIStyle.opengl_label_color)
 
         self.camera_position_static_text_ctrl = wx.StaticText(self, size=(270, 20))
         self.camera_position_static_text_ctrl.SetLabelText("Camera Position: ")
-        self.camera_position_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+        self.camera_position_static_text_ctrl.SetForegroundColour(UIStyle.opengl_label_color)
 
         self.help_rotate_static_text_ctrl = wx.StaticText(self, size=(270, 50))
         self.help_rotate_static_text_ctrl.SetLabelText("Hold left click while moving the mouse to rotate the camera.")
-        self.help_rotate_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+        self.help_rotate_static_text_ctrl.SetForegroundColour(UIStyle.opengl_label_color)
         self.help_rotate_static_text_ctrl.SetFont(wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.NORMAL))
 
         self.help_zoom_static_text_ctrl = wx.StaticText(self, size=(270, 50))
         self.help_zoom_static_text_ctrl.SetLabelText("Use the mouse wheel to zoom the camera from the origin.")
-        self.help_zoom_static_text_ctrl.SetForegroundColour(UI_style.metadata_label_color)
+        self.help_zoom_static_text_ctrl.SetForegroundColour(UIStyle.opengl_label_color)
         self.help_zoom_static_text_ctrl.SetFont(wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.NORMAL))
 
         self.opengl_canvas = OpenGLCanvas(self)
-
 
         # Layout the UI
         # Left Side
@@ -137,7 +147,6 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.Bind(wx.EVT_BUTTON, self.on_cycle_preview_pressed, self.cycle_preview_button)
         self.Bind(wx.EVT_BUTTON, self.on_scale_up, self.scale_up_button)
         self.Bind(wx.EVT_BUTTON, self.on_scale_down, self.scale_down_button)
-        #self.Bind(wx.EVT_, self.on_paint)
 
         self.scale_input.Bind(wx.lib.masked.EVT_NUM, self.on_scale_value_changed)
 
@@ -195,7 +204,6 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         event.Skip()
 
     def on_scale_value_changed(self, event):
-        print("scale changed!")
         self.set_model_scale()
         event.Skip()
 

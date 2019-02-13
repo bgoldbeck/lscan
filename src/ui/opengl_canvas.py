@@ -125,6 +125,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         if event is not None:
             if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                 self.scene.replace_input_model_mesh(ModelShipper.input_model)
+                self.scene.replace_output_model_mesh(None)
                 self.scene.set_input_model_active(True)
             if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
                 # A log message of this type is a BoolMessage.

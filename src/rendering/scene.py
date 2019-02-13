@@ -110,8 +110,11 @@ class Scene:
 
     def _replace_model_mesh(self, tag, mesh):
         self.remove_scene_object(tag)
-        self.scene_objects.update({tag: BasicMeshObject(tag, mesh)})
-        self.scene_objects[tag].transform.position = Vector3([0.0, 0.0, 0.0])
+        if mesh is not None:
+            self.scene_objects.update({tag: BasicMeshObject(tag, mesh)})
+            self.scene_objects[tag].transform.position = Vector3([0.0, 0.0, 0.0])
+        else:
+            self.scene_objects.update({tag: None})
 
     def set_input_model_active(self, value):
         self._set_model_active("input_model", value)

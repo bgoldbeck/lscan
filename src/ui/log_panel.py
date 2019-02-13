@@ -30,7 +30,7 @@ class LogPanel(wx.Panel, IUIBehavior):
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=UI_style.log_panel_size, style=UI_style.log_border)
+        wx.Panel.__init__(self, parent, size=UIStyle.log_panel_size, style=UIStyle.log_border)
         self.parent = parent
         self.save_log_button = None
         self.log_text_ctrl = None
@@ -43,14 +43,14 @@ class LogPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         # Build the wx control objects.
-        self.SetBackgroundColour(UI_style.log_background_color)
+        self.SetBackgroundColour(UIStyle.log_background_color)
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
 
-        self.save_log_button = wx.Button(self, label="Save Log", size=UI_style.log_big_button)
-        self.save_log_button.SetBackgroundColour(UI_style.button_background)
-        self.save_log_button.SetForegroundColour(UI_style.button_text)
-        self.log_text_ctrl = rt.RichTextCtrl(self, size=UI_style.log_output_size, style=style)
-        self.log_text_ctrl.SetBackgroundColour(wx.Colour(UI_style.log_text_background_color))
+        self.save_log_button = wx.Button(self, label="Save Log", size=UIStyle.log_big_button)
+        self.save_log_button.SetBackgroundColour(UIStyle.button_background)
+        self.save_log_button.SetForegroundColour(UIStyle.button_text)
+        self.log_text_ctrl = rt.RichTextCtrl(self, size=UIStyle.log_output_size, style=style)
+        self.log_text_ctrl.SetBackgroundColour(wx.Colour(UIStyle.log_text_background_color))
 
         self.Bind(wx.EVT_BUTTON, self.save_log, self.save_log_button)
 
@@ -127,8 +127,8 @@ class LogPanel(wx.Panel, IUIBehavior):
 
 
                     if log_type == LogType.DEBUG and __debug__ or log_type != LogType.DEBUG:
-                        self.log_text_ctrl.BeginFontSize(UI_style.log_font_size)
-                        self.log_text_ctrl.BeginTextColour(UI_style.log_default_text_color)
+                        self.log_text_ctrl.BeginFontSize(UIStyle.log_font_size)
+                        self.log_text_ctrl.BeginTextColour(UIStyle.log_default_text_color)
                         self.log_text_ctrl.WriteText(timestamp + ": ")
                         self.log_text_ctrl.BeginTextColour(wx.Colour(color))
                         if __debug__ and event.get_event_type() is not None:

@@ -28,7 +28,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 30), style=UI_style.conversion_border)
+        wx.Panel.__init__(self, parent, size=(1024, 30), style=UIStyle.conversion_border)
         self.parent = parent
         self.convert_button = None
         self.pause_button = None
@@ -42,21 +42,21 @@ class ConversionPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        self.SetBackgroundColour(UI_style.conversion_background_color)
+        self.SetBackgroundColour(UIStyle.conversion_background_color)
 
         # Create the wx controls for this conversion panel.
-        self.convert_button = wx.Button(self, label="Convert to LDraw", size=UI_style.conversion_big_button_size)
-        self.convert_button.SetBackgroundColour(UI_style.button_background)
-        self.convert_button.SetForegroundColour(UI_style.button_text)
-        self.pause_button = wx.Button(self, label="Pause/Continue", size=UI_style.conversion_big_button_size)
-        self.pause_button.SetBackgroundColour(UI_style.button_background)
-        self.pause_button.SetForegroundColour(UI_style.button_text)
-        self.cancel_button = wx.Button(self, label="Cancel", size=UI_style.conversion_big_button_size)
-        self.cancel_button.SetBackgroundColour(UI_style.button_background)
-        self.cancel_button.SetForegroundColour(UI_style.button_text)
-        self.save_button = wx.Button(self, label="Save Conversion", size=UI_style.conversion_big_button_size)
-        self.save_button.SetBackgroundColour(UI_style.button_background)
-        self.save_button.SetForegroundColour(UI_style.button_text)
+        self.convert_button = wx.Button(self, label="Convert to LDraw", size=UIStyle.conversion_big_button_size)
+        self.convert_button.SetBackgroundColour(UIStyle.button_background)
+        self.convert_button.SetForegroundColour(UIStyle.button_text)
+        self.pause_button = wx.Button(self, label="Pause/Continue", size=UIStyle.conversion_big_button_size)
+        self.pause_button.SetBackgroundColour(UIStyle.button_background)
+        self.pause_button.SetForegroundColour(UIStyle.button_text)
+        self.cancel_button = wx.Button(self, label="Cancel", size=UIStyle.conversion_big_button_size)
+        self.cancel_button.SetBackgroundColour(UIStyle.button_background)
+        self.cancel_button.SetForegroundColour(UIStyle.button_text)
+        self.save_button = wx.Button(self, label="Save Conversion", size=UIStyle.conversion_big_button_size)
+        self.save_button.SetBackgroundColour(UIStyle.button_background)
+        self.save_button.SetForegroundColour(UIStyle.button_text)
 
         # Create the layout.
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)

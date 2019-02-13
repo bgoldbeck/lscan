@@ -18,22 +18,23 @@ class LScan(wx.App):
     """
     ui_driver = None
 
-    def MainLoop(self):
-            self.SetExitOnFrameDelete(True)
-            self.main_loop = UIEventLoop()
-            self.main_loop.Run()
-
-    def ExitMainLoop(self):
-        self.main_loop.Exit()
-
     def __init__(self):
         """Default constructor for LScan class.
         """
         wx.App.__init__(self)
+        self.main_loop = None
         root_frame = MainFrame()
         root_frame.Show()
 
         self.ui_driver = UIDriver(root_frame)
+
+    def MainLoop(self):
+        self.SetExitOnFrameDelete(True)
+        self.main_loop = UIEventLoop()
+        self.main_loop.Run()
+
+    def ExitMainLoop(self):
+        self.main_loop.Exit()
 
     def OnInit(self):
         """Called by WxPython on startup.

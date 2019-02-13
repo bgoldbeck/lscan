@@ -10,7 +10,7 @@
 import wx
 
 
-class UI_style():
+class UIStyle:
     """The UI style class holds all information about size, background color,
     border and text color.
     The color scheme in this class is the default color (for debug).
@@ -65,3 +65,6 @@ class UI_style():
     # OpenGL
     opengl_panel_border = wx.BORDER_SUNKEN
     opengl_canvas_background_color = "#eee111"
+    opengl_label_color = "#666666"
+    opengl_input_background = "#ffffff"
+    opengl_input_foreground = "#111111"

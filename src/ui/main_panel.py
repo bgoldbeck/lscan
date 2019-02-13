@@ -42,7 +42,7 @@ class MainPanel(wx.Panel, IUIBehavior):
         """Create all the sub-panels and their layout on this main panel.
         :return: None
         """
-        self.SetBackgroundColour(UI_style.main_panel_background_color)
+        self.SetBackgroundColour(UIStyle.main_panel_background_color)
 
         # Create the sub-panels
         self.metadata_panel = MetadataPanel(self)
@@ -79,51 +79,54 @@ class MainPanel(wx.Panel, IUIBehavior):
         """Set up dark color theme for program.
         """
         # Utility
-        # UI_style.button_background = "#2B2B2B"
-        # UI_style.button_text = "#A9B7C6"
+        # UIStyle.button_background = "#2B2B2B"
+        # UIStyle.button_text = "#A9B7C6"
 
         # Main Frame
-        UI_style.main_frame_border = wx.DEFAULT_FRAME_STYLE
-        UI_style.main_frame_min_size = (1024, 640)
-        UI_style.main_frame_max_size = (1024, 900)
-        UI_style.main_frame_current_size = UI_style.main_frame_min_size
+        UIStyle.main_frame_border = wx.DEFAULT_FRAME_STYLE
+        UIStyle.main_frame_min_size = (1024, 640)
+        UIStyle.main_frame_max_size = (1024, 900)
+        UIStyle.main_frame_current_size = UIStyle.main_frame_min_size
 
         # Main Panel
-        UI_style.main_panel_background_color = "#2B2B2B"
+        UIStyle.main_panel_background_color = "#2B2B2B"
 
         # Metadata Panel
-        UI_style.metadata_border = wx.BORDER_NONE
-        UI_style.metadata_background_color = "#2B2B2B"
-        UI_style.metadata_label_color = "#808080"
-        UI_style.metadata_input_text_color = "#A5C25C"
-        UI_style.metadata_input_valid_background = "#323232"
-        UI_style.metadata_input_invalid_background = "#D25252"
+        UIStyle.metadata_border = wx.BORDER_NONE
+        UIStyle.metadata_background_color = "#2B2B2B"
+        UIStyle.metadata_label_color = "#808080"
+        UIStyle.metadata_input_text_color = "#A5C25C"
+        UIStyle.metadata_input_valid_background = "#323232"
+        UIStyle.metadata_input_invalid_background = "#D25252"
 
-        UI_style.metadata_text_ctrl_size = (400, 20)
-        UI_style.metadata_big_button = (120, 25)
-        UI_style.metadata_small_button_size = (30, 25)
-        UI_style.metadata_panel_size = (1024, 100)
-        UI_style.metadata_label_size = (200, 25)
+        UIStyle.metadata_text_ctrl_size = (400, 20)
+        UIStyle.metadata_big_button = (120, 25)
+        UIStyle.metadata_small_button_size = (30, 25)
+        UIStyle.metadata_panel_size = (1024, 100)
+        UIStyle.metadata_label_size = (200, 25)
 
         # Conversion Panel
-        UI_style.conversion_border = wx.BORDER_NONE
-        UI_style.conversion_background_color = "#2B2B2B"
-        UI_style.conversion_big_button_size = (120, 30)
+        UIStyle.conversion_border = wx.BORDER_NONE
+        UIStyle.conversion_background_color = "#2B2B2B"
+        UIStyle.conversion_big_button_size = (120, 30)
 
         # Log Panel
-        UI_style.log_border = wx.BORDER_NONE
-        UI_style.log_background_color = "#2B2B2B"
-        UI_style.log_text_background_color = "#323232"
-        UI_style.log_default_text_color = "#A9B7C6"
-        UI_style.log_info_text_color = "white"
-        UI_style.log_warning_text_color = "#FFC66D"
-        UI_style.log_debug_text_color = "#BED6FF"
-        UI_style.log_error_text_color = "#D25252"
+        UIStyle.log_border = wx.BORDER_NONE
+        UIStyle.log_background_color = "#2B2B2B"
+        UIStyle.log_text_background_color = "#323232"
+        UIStyle.log_default_text_color = "#A9B7C6"
+        UIStyle.log_info_text_color = "white"
+        UIStyle.log_warning_text_color = "#FFC66D"
+        UIStyle.log_debug_text_color = "#BED6FF"
+        UIStyle.log_error_text_color = "#D25252"
 
-        UI_style.log_big_button = (70, 25)
-        UI_style.log_output_size = (920, 165)
-        UI_style.log_panel_size = (1022, 500)
-        UI_style.log_font_size = 10
+        UIStyle.log_big_button = (70, 25)
+        UIStyle.log_output_size = (920, 165)
+        UIStyle.log_panel_size = (1022, 500)
+        UIStyle.log_font_size = 10
+
+        # OpenGL Panel
+
 
     def update(self, dt: float):
         pass
