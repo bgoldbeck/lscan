@@ -14,6 +14,7 @@ from src.rendering.camera import Camera
 
 
 class RenderingEngine:
+    """Contains static rendering context information for OpenGL
+    """
     projection = matrix44.create_perspective_projection_matrix(75.0, 4/3, 0.1, 100.0)
     camera = Camera("default")
-    delta_time = 0.0

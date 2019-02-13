@@ -28,7 +28,6 @@ class Camera(SceneObject):
         self.transform.eulerAngles = Vector3([0.0, 0.0, 0.0])
 
     def get_view_matrix(self):
-
         return self.transform.look_at(self.target)
 
     def draw(self):

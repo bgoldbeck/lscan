@@ -21,8 +21,15 @@ import time
 
 
 class BasicMeshObject(SceneObject):
+    """This class serves as a derived class for a SceneObject that contains mesh data
+    for OpenGL rendering context.
+    """
+
     def __init__(self, tag, mesh):
-        """
+        """Constructor for a BasicMeshObject.
+
+        :param tag: The tag str to recognize this object.
+        :param mesh: The Mesh object to use for OpenGL rendering.
         """
         SceneObject.__init__(self, tag)
         self.mesh_data = mesh
@@ -61,19 +68,39 @@ class BasicMeshObject(SceneObject):
         self.unbind()
 
     def bind(self):
+        """Bind the vertex array object.
+
+        :return: None
+        """
         glBindVertexArray(self.vao)
 
     def unbind(self):
+        """Unbind the vertex array object.
+
+        :return:
+        """
         glBindVertexArray(0)
 
     def draw(self):
+        """Draw the vertex buffer.
+
+        :return: None
+        """
         self.bind()
         glDrawArrays(GL_TRIANGLES, 0, len(self.mesh_data.normals) * 3)
         self.unbind()
 
     def update(self):
+        """Update the material values for the vertex buffers.
+
+        :return: None
+        """
         self.material.set_view_matrix(RenderingEngine.camera.get_view_matrix())
         self.material.set_model_matrix(self.transform.get_trs_matrix())
 
     def get_mesh_data(self):
+        """Retrieve the stored mesh data.
+
+        :return: The Mesh data stored in this object.
+        """
         return self.mesh_data

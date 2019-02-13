@@ -20,6 +20,10 @@ import numpy
 
 class BasicMaterial(Material):
     def __init__(self, triangle_data):
+        """Constructor for the BasicMaterial.
+
+        :param triangle_data: The triangle data to use in OpenGL Rendering context.
+        """
         Material.__init__(self)
 
         self.vertex_shader = """
@@ -198,7 +202,17 @@ void main() {
         self.set_uniform1f("light_power", 100.0)
 
     def set_view_matrix(self, view_matrix):
+        """Update the view matrix.
+
+        :param view_matrix: The new view Matrix44.
+        :return: None
+        """
         self.set_uniform_matrix4fv("view", view_matrix)
 
     def set_model_matrix(self, model_matrix):
+        """Update the model matrix.
+
+        :param model_matrix: The new model Matrix44.
+        :return: None
+        """
         self.set_uniform_matrix4fv("model", model_matrix)

@@ -11,13 +11,27 @@ from src.rendering.tranform import Transform
 
 
 class SceneObject:
+    """A scene object that is part of the scene.
+    """
     def __init__(self, tag):
+        """Constructor for a scene object.
+
+        :param tag: The tag is used to easily find the object in the dictionary.
+        """
         self.transform = Transform()
         self.tag = tag
         self.enabled = False
 
     def enable(self):
+        """Enable this scene object.
+
+        :return: None
+        """
         self.enabled = True
 
     def disable(self):
+        """Disable this scene object.
+
+        :return: None
+        """
         self.enabled = False

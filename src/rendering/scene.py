@@ -44,10 +44,10 @@ class Scene:
         RenderingEngine.camera = self.scene_objects["camera"]
 
     def on_mouse_move(self, event):
-        """
+        """Called when the user moves the mouse.
 
-        :param event:
-        :return:
+        :param event: The wxpython Event.
+        :return: None
         """
         point = event.GetPosition()
         if self.last_mouse_position == (0.0, 0.0):
@@ -61,28 +61,38 @@ class Scene:
         self.last_mouse_position = point
 
     def on_mouse_wheel(self, event):
-        """
+        """Called when the user uses the mouse wheel scroll.
 
-        :param event:
-        :return:
+        :param event: The wxpython Event.
+        :return: None
         """
         self._camera_distance -= event.GetWheelRotation() / 500.0
         event.Skip()
 
     def draw(self):
+        """Draw all the scene objects that are enabled.
+
+        :return: None
+        """
         for key, scene_object in self.scene_objects.items():
             if scene_object is not None:
                 scene_object.draw()
 
     def update(self):
+        """Update the scene.
+
+        :return: None
+        """
         RenderingEngine.delta_time = time.process_time() - self._last_time
         self._last_time = time.process_time()
 
+        # Move the camera based on mouse tracking.
         self._ang_x -= self.delta_mouse[0] * 0.7
         self._ang_y += self.delta_mouse[1] * 0.7
 
         self._ang_y = Transform.clamp_angle(self._ang_y, -85.0, 85.0)
 
+        # Rotation of the camera.
         rotation = Transform.euler_to_quaternion(
             self._ang_y,
             self._ang_x,
@@ -96,6 +106,7 @@ class Scene:
             RenderingEngine.camera.transform.position = \
                 self.active_scene_object.transform.position + q0
 
+        # Update the scene objects.
         for key, scene_object in self.scene_objects.items():
             if scene_object is not None:
                 if scene_object.enabled:
@@ -103,16 +114,29 @@ class Scene:
 
         self.delta_mouse = (0.0, 0.0)
 
-    def get_scene_object(self, tag):
-        return self.objects[tag]
-
     def replace_input_model_mesh(self, mesh):
+        """Replace the input model mesh with a new mesh.
+
+        :param mesh: The new mesh.
+        :return: None
+        """
         self._replace_model_mesh("input_model", mesh)
 
     def replace_output_model_mesh(self, mesh):
+        """Replace the output model mesh with a new mesh.
+
+        :param mesh: The new mesh.
+        :return: None
+        """
         self._replace_model_mesh("output_model", mesh)
 
     def _replace_model_mesh(self, tag, mesh):
+        """Replace the model mesh with a new mesh.
+
+        :param mesh: The new mesh.
+        :param tag: The tag to use to search for the scene object.
+        :return: None
+        """
         self.remove_scene_object(tag)
         if mesh is not None:
             self.scene_objects.update({tag: BasicMeshObject(tag, mesh)})
@@ -121,12 +145,28 @@ class Scene:
             self.scene_objects.update({tag: None})
 
     def set_input_model_active(self, value):
+        """Set the input model active state.
+
+        :param value: The enable/disable state of the model.
+        :return: None
+        """
         self._set_model_active("input_model", value)
 
     def set_output_model_active(self, value):
+        """Set the output model active state.
+
+        :param value: The enable/disable state of the model.
+        :return: None
+        """
         self._set_model_active("output_model", value)
 
     def _set_model_active(self, tag, value):
+        """Set the model with tag active state.
+
+        :param tag: The tag to use to search for the scene object.
+        :param value: The enable/disable state of the model.
+        :return:
+        """
         if self.scene_objects[tag] is not None:
             if value is True:
                 self.active_scene_object = self.scene_objects[tag]
@@ -136,19 +176,34 @@ class Scene:
         self._current_model_context = self.scene_objects[tag]
 
     def remove_scene_object(self, tag):
+        """Destroy a scene object.
+
+        :param tag: The tag to use to search for the scene object.
+        :return: None
+        """
         if self.scene_objects.get(tag) is not None:
             self.scene_objects.pop(tag)
 
     def get_main_camera(self):
-        return RenderingEngine.camera
+        """Retrieve the main camera object.
+
+        :return: The Camera object that is designated as the camera in the scene.
+        """
+        return self.scene_objects["camera"]
 
     def get_camera_distance_to_origin(self):
+        """Retrieve the distance the main camera is from the origin.
+
+        :return: The float distance the camera is from the origin.
+        """
         return self._camera_distance
 
-    def get_current_model_scale(self):
-        return self._current_model_context.transform.scale
-
     def set_model_scale(self, scale: float):
+        """Set the scale of the model's in the scene.
+
+        :param scale: The new scale as float to use.
+        :return: None
+        """
         input_model = self.scene_objects["input_model"]
         output_model = self.scene_objects["output_model"]
         scale_vector = Vector3([scale, scale, scale])

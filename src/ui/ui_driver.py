@@ -117,11 +117,10 @@ class UIDriver:
 
     @staticmethod
     def update(dt: float):
+        """Called every loop by the GUIEventLoop
 
-        """Send an update down the wx widget tree to all IUIBehavior objects.
-
-        :param dt:
-        :return:
+        :param dt: The delta time between that last call.
+        :return: None
         """
         # We need to notify all the ui behaviors of the event.
         ui_behaviors = []
