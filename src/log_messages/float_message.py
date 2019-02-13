@@ -18,7 +18,11 @@ class FloatMessage(LogMessage):
     """Log message for storing floating point data.
     """
     def __init__(self, message_type: LogType, message: str, value: float):
-        """Constructor for the OutputModelMessage class.
+        """Constructor for the FloatMessage class.
+
+        :param message_type: The LogType for the message.
+        :param message: The str message contained in the LogMessage.
+        :param value: The float value that is contained.
         """
         LogMessage.__init__(self, message_type, message)
         self.value = value

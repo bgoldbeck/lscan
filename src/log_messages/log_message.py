@@ -21,6 +21,9 @@ class LogMessage:
 
     def __init__(self, message_type: LogType, message: str):
         """Constructor for the LogMessage class.
+
+        :param message_type: The LogType for the message.
+        :param message: The str message contained in the LogMessage.
         """
         self.timestamp = datetime.datetime.now().strftime("%m-%d-%Y %I:%M:%S %p")
         self.message = message

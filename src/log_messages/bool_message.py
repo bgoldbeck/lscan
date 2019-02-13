@@ -15,18 +15,22 @@ from src.model_conversion.ldraw_model import LDrawModel
 
 
 class BoolMessage(LogMessage):
-    """Log message for storing floating point data.
+    """Log message for storing bool data.
     """
     def __init__(self, message_type: LogType, message: str, value: bool):
-        """Constructor for the OutputModelMessage class.
+        """Constructor for the FloatMessage class.
+
+        :param message_type: The LogType for the message.
+        :param message: The str message contained in the LogMessage.
+        :param value: The bool value that is contained.
         """
         LogMessage.__init__(self, message_type, message)
         self.value = value
 
     def get_bool(self):
-        """Get the floating point value.
+        """Get the bool value.
 
-        :return: The float data stored in the LogMessage
+        :return: The bool data stored in the LogMessage
         """
         return self.value
 
