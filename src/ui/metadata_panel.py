@@ -19,6 +19,7 @@ from sys import platform
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
+from src.ui.popup import Popup
 import re
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -222,11 +223,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         help_text = UIDriver.get_assets_file_text("HELP.txt")
-        if help_text is not None:
+        popup = Popup(self.GetTopLevelParent(), "Help", help_text)
+        popup.Show(True)
+
+        """if help_text is not None:
             wx.MessageBox(help_text, "Help", wx.OK | wx.ICON_QUESTION)
         else:
             wx.MessageBox("Could not read help text file, sorry.", "Error",
-                          wx.OK | wx.ICON_INFORMATION)
+                          wx.OK | wx.ICON_INFORMATION)"""
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
@@ -234,11 +238,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         about_text = UIDriver.get_assets_file_text("ABOUT.txt")
+        popup = Popup(self.GetTopLevelParent(), "About", about_text)
+        popup.Show(True)
+
+        """
         if about_text is not None:
             wx.MessageBox(about_text, "About LScan", wx.OK | wx.ICON_INFORMATION)
         else:
             wx.MessageBox("Could not read about text file, sorry.", "Error",
                           wx.OK | wx.ICON_INFORMATION)
+        """
 
     def browse_input(self, event):
         """Browse for a valid STL input file.
