@@ -1,5 +1,5 @@
-C:\Users\User\Documents\Capstone Work\lscan\assets\models
+C:\Users\melon\Documents\Programming\Python\lscan\assets\models
 untitled.dat
-C:\Users\User\Documents\Capstone Work\lscan\assets\models
+C:\Users\melon\Documents\Programming\Python\lscan\assets\models
 First Last
 Redistributable under CCAL version 2.0 : see CAreadme.txt

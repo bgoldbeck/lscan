@@ -39,6 +39,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.browse_stl_button = None
         self.help_button = None
         self.about_button = None
+        self.popup = None
         self.browse_stl_button = None
         self.author_input = None
         self.license_input = None
@@ -224,11 +225,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         help_text = UIDriver.get_assets_file_text("HELP.txt")
         if help_text is not None:
-            popup = Popup(self.GetTopLevelParent(), "Help", help_text)
+            self.popup = Popup(self.GetTopLevelParent(), "Help", help_text)
         else:
-            popup = Popup(self.GetTopLevelParent(), "Error",
+            self.popup = Popup(self.GetTopLevelParent(), "Error",
                           "Could not read help text file, sorry.")
-        popup.Show(True)
+        self.help_button.Disable()
+        self.about_button.Disable()
+        self.popup.Show(True)
+        self.popup.Bind(wx.EVT_CLOSE, self.popup_on_close)
+
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
         :param event:
@@ -236,11 +241,21 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         about_text = UIDriver.get_assets_file_text("ABOUT.txt")
         if about_text is not None:
-            popup = Popup(self.GetTopLevelParent(), "About", about_text)
+            self.popup = Popup(self.GetTopLevelParent(), "About", about_text)
         else:
-            popup = Popup(self.GetTopLevelParent(), "Error",
+            self.popup = Popup(self.GetTopLevelParent(), "Error",
                           "Could not read about text file, sorry.")
-        popup.Show(True)
+        self.help_button.Disable()
+        self.about_button.Disable()
+        self.popup.Show(True)
+        self.popup.Bind(wx.EVT_CLOSE, self.popup_on_close)
+
+    def popup_on_close(self, event):
+        print("window closed")
+        self.popup.Destroy()
+        self.popup = None
+        self.help_button.Enable()
+        self.about_button.Enable()
 
     def browse_input(self, event):
         """Browse for a valid STL input file.
@@ -458,6 +473,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.help_button.Enable()
             self.browse_stl_button.Enable()
         elif new_state == ApplicationState.WORKING:
+            if self.popup is not None:
+                self.popup.Destroy()
+                self.popup = None
             self.stl_path_input.Disable()
             self.ldraw_name_input.Disable()
             self.author_input.Disable()
