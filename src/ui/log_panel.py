@@ -125,7 +125,6 @@ class LogPanel(wx.Panel, IUIBehavior):
                     timestamp = log_message.get_timestamp()
                     color = log_message.get_log_message_color()
 
-
                     if log_type == LogType.DEBUG and __debug__ or log_type != LogType.DEBUG:
                         self.log_text_ctrl.BeginFontSize(UIStyle.log_font_size)
                         self.log_text_ctrl.BeginTextColour(UIStyle.log_default_text_color)
@@ -138,5 +137,11 @@ class LogPanel(wx.Panel, IUIBehavior):
                         # Scrolls down to show last line added
                         self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
 
-    def update(self, dt: float):
+        def update(self, dt: float):
+        """Called every loop by the GUIEventLoop
+
+        :param dt: The delta time between the last call.
+        :return: None
+        """
         pass
+
