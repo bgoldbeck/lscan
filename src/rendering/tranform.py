@@ -34,7 +34,8 @@ class Transform:
 
         :param direction: The direction to translate.
         :param distance: The distance to translate.
-        :return:
+
+        :return: None
         """
         self.position += direction * distance
 

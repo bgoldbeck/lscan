@@ -17,7 +17,6 @@ from src.rendering.rendering_engine import RenderingEngine
 
 class Material:
     """Base material class for handling a shader object.
-
     """
     def __init__(self):
         self.shader = None

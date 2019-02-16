@@ -163,7 +163,7 @@ class Scene:
 
         :param tag: The tag to use to search for the scene object.
         :param value: The enable/disable state of the model.
-        :return:
+        :return: None
         """
         if self.scene_objects[tag] is not None:
             if value is True:
@@ -222,7 +222,7 @@ class Scene:
         """Set a new mouse rotation sensitivity.
 
         :param value: The new mouse rotation sensitivity.
-        :return:
+        :return: None
         """
         self.mouse_rotate_sensitivity = value
 
