@@ -148,9 +148,11 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         elif new_state == ApplicationState.WAITING_INPUT:
             self.convert_button.Disable()
         elif new_state == ApplicationState.WAITING_GO:
+            self.convert_button.Enable()
+            # This is a work-around for the button now showing up immediately after enabling.
+            self.convert_button.SetLabelText(self.convert_button.GetLabelText())
             self.cancel_button.Disable()
             self.pause_button.Disable()
-            self.convert_button.Enable()
             if self.is_paused:
                 self.is_paused = False
                 self.pause_button.SetLabelText('Pause')
