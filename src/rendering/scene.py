@@ -71,7 +71,7 @@ class Scene:
         """
         self._camera_distance -= event.GetWheelRotation() / 500.0
         if self._camera_distance < 0.0:
-            self._camera_distance = 0.0
+            self._camera_distance = 0.0001
 
         RenderingEngine.camera.follow_distance = self._camera_distance
         RenderingEngine.camera.update()
