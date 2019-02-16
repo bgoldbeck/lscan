@@ -144,7 +144,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
 
-        :param dt: The delta time between that last call.
+        :param dt: The delta time between the last call.
         :return: None
         """
         if self.scene is not None:

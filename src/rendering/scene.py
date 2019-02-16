@@ -89,7 +89,7 @@ class Scene:
     def update(self, dt: float):
         """Called by the OpenGLCanvas, which is called every loop by the GUIEventLoop.
 
-         :param dt: The delta time between that last call.
+         :param dt: The delta time between the last call.
          :return: None
          """
         # Move the camera based on mouse tracking.

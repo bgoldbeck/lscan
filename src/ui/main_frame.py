@@ -22,6 +22,8 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, title="LScan", size=UIStyle.main_frame_current_size,
                           style=UIStyle.main_frame_border
                           | wx.FULL_REPAINT_ON_RESIZE)
+
+        UIStyle.setup_dark_theme()  # Overwrite the default color
         self._build_gui()
 
     def _build_gui(self):
