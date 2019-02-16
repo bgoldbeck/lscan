@@ -16,6 +16,8 @@ from src.ui.ui_driver import UIDriver
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
+from src.ui.user_event_type import UserEventType
+
 
 
 class ConversionPanel(wx.Panel, IUIBehavior):
@@ -23,12 +25,14 @@ class ConversionPanel(wx.Panel, IUIBehavior):
     pausing, and canceling the conversion process.
     """
 
+    _conversion_border = wx.SIMPLE_BORDER
+
     def __init__(self, parent):
         """Default constructor for ConversionPanel class.
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 30), style=UI_style.conversion_border)
+        wx.Panel.__init__(self, parent, size=(1024, 30), style=self._conversion_border)
         self.parent = parent
         self.convert_button = None
         self.pause_button = None
@@ -48,7 +52,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         self.convert_button = wx.Button(self, label="Convert to LDraw", size=UI_style.conversion_big_button_size)
         self.convert_button.SetBackgroundColour(UI_style.button_background)
         self.convert_button.SetForegroundColour(UI_style.button_text)
-        self.pause_button = wx.Button(self, label="Pause/Continue", size=UI_style.conversion_big_button_size)
+        self.pause_button = wx.Button(self, label="Pause", size=UI_style.conversion_big_button_size)
         self.pause_button.SetBackgroundColour(UI_style.button_background)
         self.pause_button.SetForegroundColour(UI_style.button_text)
         self.cancel_button = wx.Button(self, label="Cancel", size=UI_style.conversion_big_button_size)
@@ -89,6 +93,9 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             UserEvent(UserEventType.CONVERSION_STARTED,
                       LogMessage(LogType.INFORMATION, "Conversion process started..")))
         UIDriver.change_application_state(ApplicationState.WORKING)
+        UIDriver.thread_manager.start_work()
+        if not UIDriver.timer.IsRunning():
+            UIDriver.timer.Start(UIDriver.thread_manager.interval)
 
     def pause_resume(self, event):
         """Pause/resume the conversion process.
@@ -102,12 +109,14 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_PAUSED,
                           LogMessage(LogType.INFORMATION, "Conversion process paused.")))
+            UIDriver.thread_manager.pause_work()
+
         else:
             self.pause_button.SetLabelText('Pause')
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_STARTED,
                           LogMessage(LogType.INFORMATION, "Conversion process resumed.")))
-
+            UIDriver.thread_manager.continue_work()
 
     def cancel(self, event):
         """Cancel the conversion operation.
@@ -118,7 +127,9 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         UIDriver.fire_event(
             UserEvent(UserEventType.CONVERSION_PAUSED,
                       LogMessage(LogType.INFORMATION, "Conversion process canceled.")))
+        UIDriver.thread_manager.kill_work()
         UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
 
     def save(self, event):
         """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
@@ -143,7 +154,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         elif new_state == ApplicationState.WAITING_INPUT:
             self.convert_button.Disable()
         elif new_state == ApplicationState.WAITING_GO:
-            self.save_button.Disable()
             self.cancel_button.Disable()
             self.pause_button.Disable()
             self.convert_button.Enable()
@@ -163,4 +173,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        pass
+        if event.get_event_type() == UserEventType.CONVERSION_COMPLETE:
+            self.save_button.Enable()
+

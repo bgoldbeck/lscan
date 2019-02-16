@@ -27,12 +27,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     and ldraw file output.
     """
     max_path_length = 256
+    _metadata_border = wx.BORDER_SUNKEN
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
         wx.Panel.__init__(self, parent, size=UI_style.metadata_panel_size,
-                          style=UI_style.metadata_border)
+                          style=self._metadata_border)
         self.parent = parent
         self.browse_stl_button = None
         self.help_button = None
@@ -309,9 +310,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                         UIDriver.fire_event(
                             UserEvent(UserEventType.INPUT_VALIDATION,
                                       LogMessage(LogType.ERROR,
-                                                 "The input file " +
+                                                 "The input file '" +
                                                  self.stl_path_text +
-                                                 " is not a valid STL file.")))
+                                                 "' is not a valid STL file.")))
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
@@ -359,8 +360,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 UIDriver.fire_event(
                     UserEvent(UserEventType.INPUT_VALIDATION,
                               LogMessage(LogType.INFORMATION,
-                                         "Output file will be saved as: " +
-                                         self.out_file)))
+                                         "Output file will be saved as: '" +
+                                         self.out_file + "'.")))
 
         dialog.Destroy()
 
