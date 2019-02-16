@@ -35,7 +35,7 @@ class Scene:
         self.delta_mouse = (0.0, 0.0)
         self._last_time = time.process_time()
         self.active_scene_model = None
-
+        self.mouse_rotate_sensitivity = 1.0
         self.scene_objects = {
             "camera": Camera("camera"),
             "input_model": None,
@@ -90,8 +90,8 @@ class Scene:
          :return: None
          """
         # Move the camera based on mouse tracking.
-        dy = self.delta_mouse[1] * 50.0 * dt
-        dx = self.delta_mouse[0] * 50.0 * dt
+        dy = self.delta_mouse[1] * self.mouse_rotate_sensitivity
+        dx = self.delta_mouse[0] * self.mouse_rotate_sensitivity
 
         if self.active_scene_model is not None and (dx != 0 or dy != 0):
             # Rotation of the camera.
@@ -215,3 +215,17 @@ class Scene:
         if output_model is not None:
             output_model.transform.scale = scale_vector
 
+    def set_mouse_rotation_sensitivity(self, value: float):
+        """Set a new mouse rotation sensitivity.
+
+        :param value: The new mouse rotation sensitivity.
+        :return:
+        """
+        self.mouse_rotate_sensitivity = value
+
+    def get_mouse_rotation_sensitivity(self):
+        """Retrieve the mouse sensitivity.
+
+        :return: The current mouse rotation sensitivity.
+        """
+        return self.mouse_rotate_sensitivity

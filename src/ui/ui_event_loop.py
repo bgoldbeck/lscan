@@ -26,8 +26,9 @@ class UIEventLoop(wx.GUIEventLoop):
         # loop. In this example we'll just sleep a bit to simulate something
         # real happening.
         current = time.time()
-        UIDriver.update(current - self.last)
-        self.last = current
+        if current - self.last >= 0.00833333334:
+            UIDriver.update(current - self.last)
+            self.last = current
 
     def Run(self):
         # Set this loop as the active one. It will automatically reset to the
