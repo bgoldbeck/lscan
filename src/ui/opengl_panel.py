@@ -82,7 +82,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.cycle_preview_button = wx.Button(self, label="Preview LDraw Model", size=(150, 30))
 
         self.camera_rotation_static_text_ctrl = wx.StaticText(self, size=(270, 20))
-        self.camera_rotation_static_text_ctrl.SetLabelText("Camera Rotation: ")
+        self.camera_rotation_static_text_ctrl.SetLabelText("Model Rotation: ")
         self.camera_rotation_static_text_ctrl.SetForegroundColour(UIStyle.opengl_label_color)
 
         self.camera_position_static_text_ctrl = wx.StaticText(self, size=(270, 20))
@@ -171,7 +171,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                 # Log Message here is of derived class FloatMessage.
                 if isinstance(event.get_log_message(), FloatMessage):
                     self.zoom_static_text_ctrl.SetLabelText(
-                        "Camera Distance to Origin: " + str(event.get_log_message().get_float()))
+                        "Camera Distance to Origin: {0:0.3f}".format(event.get_log_message().get_float()))
             elif event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                     self.set_widget_rendering_contexts(True)
                     self.cycle_preview_button.Enabled = False
@@ -269,12 +269,18 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                 scene = self.opengl_canvas.scene
                 if scene is not None:
                     camera = scene.get_main_camera()
-                    if camera is not None:
-                        rotation = camera.transform.euler_angles
+                    active_model = scene.get_active_model()
+                    if camera is not None and active_model is not None:
+                        rotation = active_model.transform.euler_angles
                         position = camera.transform.position
                         # Update the camera rotation and position metrics on screen.
-                        self.camera_rotation_static_text_ctrl.SetLabelText("Camera Rotation: " + str(rotation))
-                        self.camera_position_static_text_ctrl.SetLabelText("Camera Position: " + str(position))
-
-
-
+                        self.camera_rotation_static_text_ctrl.SetLabelText(
+                            "Model Rotation: [{0:0.3f}, {1:0.3f}, {2:0.3f}]".format(
+                                rotation[0],
+                                rotation[1],
+                                rotation[2]))
+                        self.camera_position_static_text_ctrl.SetLabelText(
+                            "Camera Position: [{0:0.3f}, {1:0.3f}, {2:0.3f}]".format(
+                                position[0],
+                                position[1],
+                                position[2]))

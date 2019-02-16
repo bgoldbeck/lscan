@@ -13,7 +13,8 @@ from src.rendering.basic_mesh_object import BasicMeshObject
 from src.rendering.camera import Camera
 from src.rendering.rendering_engine import RenderingEngine
 from src.rendering.tranform import Transform
-from pyrr import Vector3, Vector4, Matrix44
+from pyrr import *
+import pyrr
 import time, wx, math
 
 
@@ -24,8 +25,8 @@ class Scene:
     _last_time = 0.0
     _ang_x = 0
     _ang_y = 0
-    _camera_distance = 10.0
-    _current_model_context = None
+    _camera_distance = 4.0
+    _view = Vector3()
 
     def __init__(self):
         """Constructor to initialize the scene.
@@ -33,7 +34,7 @@ class Scene:
         self.last_mouse_position = (0.0, 0.0)
         self.delta_mouse = (0.0, 0.0)
         self._last_time = time.process_time()
-        self.active_scene_object = None
+        self.active_scene_model = None
 
         self.scene_objects = {
             "camera": Camera("camera"),
@@ -42,6 +43,8 @@ class Scene:
         }
 
         RenderingEngine.camera = self.scene_objects["camera"]
+        RenderingEngine.camera.follow_distance
+        RenderingEngine.camera.update()
 
     def on_mouse_move(self, event):
         """Called when the user moves the mouse.
@@ -67,6 +70,8 @@ class Scene:
         :return: None
         """
         self._camera_distance -= event.GetWheelRotation() / 500.0
+        RenderingEngine.camera.follow_distance = self._camera_distance
+        RenderingEngine.camera.update()
         event.Skip()
 
     def draw(self):
@@ -85,24 +90,14 @@ class Scene:
          :return: None
          """
         # Move the camera based on mouse tracking.
-        self._ang_x -= self.delta_mouse[0] * 95.0 * dt
-        self._ang_y += self.delta_mouse[1] * 95.0 * dt
+        dy = self.delta_mouse[1] * 50.0 * dt
+        dx = self.delta_mouse[0] * 50.0 * dt
 
-        self._ang_y = Transform.clamp_angle(self._ang_y, -85.0, 85.0)
+        if self.active_scene_model is not None and (dx != 0 or dy != 0):
+            # Rotation of the camera.
+            self.active_scene_model.transform.euler_angles += Vector3([-dy, -dx, 0.0])
 
-        # Rotation of the camera.
-        rotation = Transform.euler_to_quaternion(
-            self._ang_y,
-            self._ang_x,
-            0.0)
-
-        q0 = Transform.mult_quaternion_by_vector(
-            rotation,
-            (Vector3([0.0, 0.0, -1.0]) * self._camera_distance))
-
-        if self.active_scene_object is not None:
-            RenderingEngine.camera.transform.position = \
-                self.active_scene_object.transform.position + q0
+        RenderingEngine.camera.update()
 
         # Update the scene objects.
         for key, scene_object in self.scene_objects.items():
@@ -139,6 +134,8 @@ class Scene:
         if mesh is not None:
             self.scene_objects.update({tag: BasicMeshObject(tag, mesh)})
             self.scene_objects[tag].transform.position = Vector3([0.0, 0.0, 0.0])
+            self.scene_objects[tag].transform.euler_angles = Vector3([0.0, 0.0, 0.0])
+            RenderingEngine.camera.target = self.scene_objects[tag].transform.position
         else:
             self.scene_objects.update({tag: None})
 
@@ -171,7 +168,7 @@ class Scene:
                 self.scene_objects[tag].enable()
             else:
                 self.scene_objects[tag].disable()
-        self._current_model_context = self.scene_objects[tag]
+        self.active_scene_model = self.scene_objects[tag]
 
     def remove_scene_object(self, tag):
         """Destroy a scene object.
@@ -188,6 +185,13 @@ class Scene:
         :return: The Camera object that is designated as the camera in the scene.
         """
         return self.scene_objects["camera"]
+
+    def get_active_model(self):
+        """Retrieve the current scene object model
+
+        :return: The active model in the scene.
+        """
+        return self.active_scene_model
 
     def get_camera_distance_to_origin(self):
         """Retrieve the distance the main camera is from the origin.

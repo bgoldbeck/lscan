@@ -22,6 +22,7 @@ from src.ui.ui_style import *
 from src.ui.popup import Popup
 import re
 
+
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over
     metadata information in the program. These widgets may include,
