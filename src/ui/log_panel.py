@@ -137,7 +137,7 @@ class LogPanel(wx.Panel, IUIBehavior):
                         # Scrolls down to show last line added
                         self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
 
-        def update(self, dt: float):
+    def update(self, dt: float):
         """Called every loop by the GUIEventLoop
 
         :param dt: The delta time between the last call.

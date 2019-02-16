@@ -78,4 +78,9 @@ class MainPanel(wx.Panel, IUIBehavior):
         pass
 
     def update(self, dt: float):
+        """Called every loop by the GUIEventLoop
+
+        :param dt: The delta time between the last call.
+        :return: None
+        """
         pass
