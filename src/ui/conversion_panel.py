@@ -91,8 +91,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
                       LogMessage(LogType.INFORMATION, "Conversion process started..")))
         UIDriver.change_application_state(ApplicationState.WORKING)
         UIDriver.thread_manager.start_work()
-        if not UIDriver.timer.IsRunning():
-            UIDriver.timer.Start(UIDriver.thread_manager.interval)
 
     def pause_resume(self, event):
         """Pause/resume the conversion process.
@@ -127,7 +125,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         UIDriver.thread_manager.kill_work()
         UIDriver.change_application_state(ApplicationState.WAITING_GO)
 
-
     def save(self, event):
         """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
         options. Once the user finalizes their metadata options (back or save), they return to the original options.
@@ -159,7 +156,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
                 self.pause_button.SetLabelText('Pause')
 
         elif new_state == ApplicationState.WORKING:
-            self.save_button.Disable() # I assume this will be enabled after
+            self.save_button.Disable()  # I assume this will be enabled after
             self.cancel_button.Enable()
             self.pause_button.Enable()
             self.convert_button.Disable()
