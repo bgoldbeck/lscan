@@ -43,7 +43,7 @@ class Scene:
         }
 
         RenderingEngine.camera = self.scene_objects["camera"]
-        RenderingEngine.camera.follow_distance
+        RenderingEngine.camera.follow_distance = self._camera_distance
         RenderingEngine.camera.update()
 
     def on_mouse_move(self, event):
