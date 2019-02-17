@@ -18,16 +18,28 @@ class Button(wx.Button):
     _log_file_path = "log.txt"
 
     def __init__(self, parent, id=wx.ID_ANY, label="", size=(100, 20), pos=wx.DefaultPosition):
-        """Default constructor for MainPanel class.
+        """Constructor for Button class.
 
-        :param parent: The parent wx object for this panel.
+        :param parent: The parent object.
+        :param id: The id of the button
+        :param label: The label of the button
+        :param size: The size of the button.
+        :param pos: The position of the button.
         """
         wx.Button.__init__(self, parent, size=size, id=id, label=label, pos=pos)
 
     def Enable(self):
+        """Override the default enable button behavior.
+
+        :return: None
+        """
         super().Enable()
         self.SetLabelText(self.GetLabelText())
 
     def Disable(self):
+        """Override the default disable button behavior.
+
+        :return: None
+        """
         super().Disable()
         self.SetLabelText(self.GetLabelText())

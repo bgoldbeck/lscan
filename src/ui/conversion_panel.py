@@ -17,7 +17,7 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.user_event_type import UserEventType
-from src.ui.Button import Button
+from src.ui.button import Button
 
 class ConversionPanel(wx.Panel, IUIBehavior):
     """Holds wx controls relevant to controlling the program behavior for starting, stopping,
