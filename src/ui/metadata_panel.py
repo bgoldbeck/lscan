@@ -18,6 +18,7 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.popup import Popup
+from src.ui.Button import Button
 import re
 from util import Util
 
@@ -83,7 +84,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
         self.stl_path_input.SetForegroundColour(UIStyle.metadata_input_text_color)
 
-        self.browse_stl_button = wx.Button(self, label="Browse Input",
+        self.browse_stl_button = Button(self, label="Browse Input",
                                            size=UIStyle.metadata_big_button)
         self.browse_stl_button.SetForegroundColour(UIStyle.button_text)
         self.browse_stl_button.SetBackgroundColour(UIStyle.button_background)
