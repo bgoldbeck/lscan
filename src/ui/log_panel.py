@@ -16,7 +16,7 @@ from src.ui.iui_behavior import IUIBehavior
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
-from src.ui.Button import Button
+from src.ui.button import Button
 
 
 class LogPanel(wx.Panel, IUIBehavior):

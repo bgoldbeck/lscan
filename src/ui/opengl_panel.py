@@ -20,7 +20,8 @@ from src.log_messages.float_message import FloatMessage
 from src.log_messages.bool_message import BoolMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
-from src.ui.Button import Button
+from src.ui.button import Button
+
 
 class OpenGLPanel(wx.Panel, IUIBehavior):
     """Holds wx controls relevant to controlling the program behavior for starting, stopping,
