@@ -273,9 +273,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                | wx.FD_FILE_MUST_EXIST)
 
         if dialog.ShowModal() == wx.ID_OK:
-            UIDriver.fire_event(UserEvent(
-                UserEventType.RENDERING_CANVAS_ENABLE,
-                LogMessage(LogType.IGNORE, "")))
             filename = dialog.GetPath()
             # Check for file existing
             # If valid, pass to worker thread who will check data
@@ -304,6 +301,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                              "' is not a valid STL file.")))
                 self.check_input()
 
+            UIDriver.fire_event(UserEvent(
+                UserEventType.RENDERING_CANVAS_ENABLE,
+                LogMessage(LogType.IGNORE, "")))
 
         dialog.Destroy()
 
@@ -375,10 +375,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         dialog.SetFilename(self.part_name)
 
         if dialog.ShowModal() == wx.ID_OK:
-            UIDriver.fire_event(UserEvent(
-                UserEventType.RENDERING_CANVAS_ENABLE,
-                LogMessage(LogType.IGNORE, "")))
-
             pathname = dialog.GetPath()
 
             if self.out_file != pathname:
@@ -399,6 +395,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                          "Output file will be saved as: '" +
                                          self.out_file + "'.")))
 
+        UIDriver.fire_event(UserEvent(
+            UserEventType.RENDERING_CANVAS_ENABLE,
+            LogMessage(LogType.IGNORE, "")))
         dialog.Destroy()
 
     def text_ctrl_placeholder_on_gain_focus(self, event):

@@ -141,6 +141,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
                 self.wire_frame = event.get_log_message().get_bool()
             if event.get_event_type() == UserEventType.RENDERING_CANVAS_DISABLE:
                 self.Unbind(wx.EVT_PAINT)
+                self.Refresh()
             if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
                 self.Bind(wx.EVT_PAINT, self.on_paint)
                 self.Refresh()
