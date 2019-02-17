@@ -11,11 +11,9 @@ import wx
 
 
 class Button(wx.Button):
-    """This panel controls the behavior for the output log panel that will display
-    running information to the user about the programs progress while running
-    various algorithms.
+    """Override the default wx.Button with this instance of a button. So, we can use this as a workaround
+    for the OpenGL canvas paint DC object that messes with the behavior.
     """
-    _log_file_path = "log.txt"
 
     def __init__(self, parent, id=wx.ID_ANY, label="", size=(100, 20), pos=wx.DefaultPosition):
         """Constructor for Button class.
