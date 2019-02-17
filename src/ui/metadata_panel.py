@@ -90,11 +90,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.browse_stl_button.SetBackgroundColour(UIStyle.button_background)
 
         # Help / About.
-        self.help_button = wx.Button(self, label="?",
+        self.help_button = Button(self, label="?",
                                      size=UIStyle.metadata_small_button_size)
         self.help_button.SetForegroundColour(UIStyle.button_text)
         self.help_button.SetBackgroundColour(UIStyle.button_background)
-        self.about_button = wx.Button(self, label="i",
+        self.about_button = Button(self, label="i",
                                       size=UIStyle.metadata_small_button_size)
         self.about_button.SetForegroundColour(UIStyle.button_text)
         self.about_button.SetBackgroundColour(UIStyle.button_background)
@@ -111,7 +111,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.ldraw_name_input.SetForegroundColour(UIStyle.metadata_input_text_color)
         self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
 
-        self.browse_output_button = wx.Button(self, label="Browse Output",
+        self.browse_output_button = Button(self, label="Browse Output",
                                               size=UIStyle.metadata_big_button)
         self.browse_output_button.SetForegroundColour(UIStyle.button_text)
         self.browse_output_button.SetBackgroundColour(UIStyle.button_background)
