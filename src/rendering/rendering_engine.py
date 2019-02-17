@@ -29,6 +29,20 @@ class RenderingEngine:
         return GL.glGetString(GL.GL_VERSION)
 
     @staticmethod
+    def glsl_version():
+        """Returns the GLSL version string.
+        """
+        return GL.glGetString(GL.GL_SHADING_LANGUAGE_VERSION)
+
+    @staticmethod
+    def glsl_version_major_minor():
+        """Returns the GLSL version as a tuple.
+
+        :return: The major and minor version strings as an array [major, minor].
+        """
+        return RenderingEngine._gl_retrieve_versions(RenderingEngine.glsl_version())
+
+    @staticmethod
     def gl_version_major_minor():
         """Retrieve the OpenGL Major and Minor version.
 

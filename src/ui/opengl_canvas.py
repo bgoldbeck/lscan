@@ -105,6 +105,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
 
         print("OpenGL Major: " + str(RenderingEngine.gl_version_major_minor()[0]))
         print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))
+        print("GLSL Major: " + str(RenderingEngine.glsl_version_major_minor()[0]))
+        print("GLSL Minor: " + str(RenderingEngine.glsl_version_major_minor()[1]))
 
     def draw(self):
         """Draw the previous OpenGL buffer with all the 3D data.
