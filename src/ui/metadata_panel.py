@@ -22,7 +22,6 @@ import re
 from util import Util
 
 
-
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over
     metadata information in the program. These widgets may include,
@@ -198,8 +197,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     def check_input(self):
         """Checks if all input fields have valid flag, and changes program
         state if needed. Should be called after an input field updates.
-        :param event:
-        :return:
+
+        :return: None
         """
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
@@ -264,6 +263,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
+        UIDriver.fire_event(UserEvent(
+            UserEventType.RENDERING_CANVAS_DISABLE,
+            LogMessage(LogType.IGNORE, "")))
         stl_wildcard = "*.stl"
         dialog = wx.FileDialog(self, "Choose a STL file",
                                defaultDir=self.stl_dir, wildcard=stl_wildcard,
@@ -271,6 +273,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                | wx.FD_FILE_MUST_EXIST)
 
         if dialog.ShowModal() == wx.ID_OK:
+            UIDriver.fire_event(UserEvent(
+                UserEventType.RENDERING_CANVAS_ENABLE,
+                LogMessage(LogType.IGNORE, "")))
             filename = dialog.GetPath()
             # Check for file existing
             # If valid, pass to worker thread who will check data
@@ -298,6 +303,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                              filename +
                                              "' is not a valid STL file.")))
                 self.check_input()
+
+
         dialog.Destroy()
 
     def text_ctrl_input_on_kill_focus(self, event):
@@ -355,13 +362,23 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
+        UIDriver.fire_event(UserEvent(
+            UserEventType.RENDERING_CANVAS_DISABLE,
+            LogMessage(LogType.IGNORE, "")))
+
         dat_wildcard = "*.dat"
         dialog = wx.FileDialog(self, "Choose a location for the LDraw file",
                                defaultDir=self.part_dir,
                                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
                                wildcard=dat_wildcard)
+
         dialog.SetFilename(self.part_name)
+
         if dialog.ShowModal() == wx.ID_OK:
+            UIDriver.fire_event(UserEvent(
+                UserEventType.RENDERING_CANVAS_ENABLE,
+                LogMessage(LogType.IGNORE, "")))
+
             pathname = dialog.GetPath()
 
             if self.out_file != pathname:
