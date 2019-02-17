@@ -89,11 +89,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         UIDriver.fire_event(
             UserEvent(UserEventType.CONVERSION_STARTED,
                       LogMessage(LogType.INFORMATION, "Conversion process started..")))
-
-        UIDriver.fire_event(
-            UserEvent(UserEventType.RENDERING_CANVAS_DISABLE,
-                      LogMessage(LogType.IGNORE, "")))
-
         UIDriver.change_application_state(ApplicationState.WORKING)
         UIDriver.thread_manager.start_work()
 
@@ -154,6 +149,8 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             self.convert_button.Disable()
         elif new_state == ApplicationState.WAITING_GO:
             self.convert_button.Enable()
+            # This is a work-around for the button now showing up immediately after enabling.
+            self.convert_button.SetLabelText(self.convert_button.GetLabelText())
             self.cancel_button.Disable()
             self.pause_button.Disable()
             if self.is_paused:
