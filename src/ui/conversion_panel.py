@@ -17,7 +17,8 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.user_event_type import UserEventType
-
+from src.model_conversion.model_shipper import ModelShipper
+from src.ui.button import Button
 
 class ConversionPanel(wx.Panel, IUIBehavior):
     """Holds wx controls relevant to controlling the program behavior for starting, stopping,
@@ -46,16 +47,16 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         self.SetBackgroundColour(UIStyle.conversion_background_color)
 
         # Create the wx controls for this conversion panel.
-        self.convert_button = wx.Button(self, label="Convert to LDraw", size=UIStyle.conversion_big_button_size)
+        self.convert_button = Button(self, label="Convert to LDraw", size=UIStyle.conversion_big_button_size)
         self.convert_button.SetBackgroundColour(UIStyle.button_background)
         self.convert_button.SetForegroundColour(UIStyle.button_text)
-        self.pause_button = wx.Button(self, label="Pause", size=UIStyle.conversion_big_button_size)
+        self.pause_button = Button(self, label="Pause", size=UIStyle.conversion_big_button_size)
         self.pause_button.SetBackgroundColour(UIStyle.button_background)
         self.pause_button.SetForegroundColour(UIStyle.button_text)
-        self.cancel_button = wx.Button(self, label="Cancel", size=UIStyle.conversion_big_button_size)
+        self.cancel_button = Button(self, label="Cancel", size=UIStyle.conversion_big_button_size)
         self.cancel_button.SetBackgroundColour(UIStyle.button_background)
         self.cancel_button.SetForegroundColour(UIStyle.button_text)
-        self.save_button = wx.Button(self, label="Save Conversion", size=UIStyle.conversion_big_button_size)
+        self.save_button = Button(self, label="Save Conversion", size=UIStyle.conversion_big_button_size)
         self.save_button.SetBackgroundColour(UIStyle.button_background)
         self.save_button.SetForegroundColour(UIStyle.button_text)
 
@@ -132,8 +133,15 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :param event: The wx event that was recorded.
         :return: None
         """
-        pass
-
+        self.save_button.Disable()
+        with open(ModelShipper.output_path, "w") as text_file:
+            text_file.write(ModelShipper.output_file)
+        self.save_button.Enable()
+        UIDriver.fire_event(
+            UserEvent(UserEventType.CONVERSION_PAUSED,
+                      LogMessage(LogType.INFORMATION,
+                                 "File was saved to '"+ ModelShipper.output_path
+                                 + "'.")))
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the ConversionPanel.
 
