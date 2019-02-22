@@ -94,17 +94,19 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
 
         :return: None
         """
+
         self.context = glcanvas.GLContext(self)
         self.SetCurrent(self.context)
-        glClearColor(UIStyle.opengl_canvas_background_color[0],  # Red
-                     UIStyle.opengl_canvas_background_color[1],  # Green
-                     UIStyle.opengl_canvas_background_color[2],  # Blue
-                     UIStyle.opengl_canvas_background_color[3])  # Alpha
+        if glInitGl42VERSION():
+            glClearColor(UIStyle.opengl_canvas_background_color[0],  # Red
+                         UIStyle.opengl_canvas_background_color[1],  # Green
+                         UIStyle.opengl_canvas_background_color[2],  # Blue
+                         UIStyle.opengl_canvas_background_color[3])  # Alpha
 
-        glEnable(GL_DEPTH_TEST)
+            glEnable(GL_DEPTH_TEST)
 
-        glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
-        self.scene = Scene()
+            glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
+            self.scene = Scene()
 
         print("OpenGL Major: " + str(RenderingEngine.gl_version_major_minor()[0]))
         print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))

@@ -285,3 +285,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                                 position[0],
                                 position[1],
                                 position[2]))
+
+    def can_use_opengl(self):
+        return self.opengl_canvas.scene is not None
+

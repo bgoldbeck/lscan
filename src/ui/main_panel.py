@@ -55,7 +55,8 @@ class MainPanel(wx.Panel, IUIBehavior):
         # Create the layout of the sub-panels.
         vertical_layout = wx.BoxSizer(wx.VERTICAL)
         vertical_layout.Add(self.metadata_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
-        vertical_layout.Add(self.opengl_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        if self.opengl_panel.can_use_opengl():
+            vertical_layout.Add(self.opengl_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
         vertical_layout.Add(self.conversion_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
         vertical_layout.Add(self.log_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
