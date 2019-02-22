@@ -51,6 +51,10 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         self.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
         self.Bind(wx.EVT_MOTION, self.on_mouse_move)
 
+        if not self.init:
+            self.init_gl()
+            self.init = True
+
     def on_mouse_move(self, event):
         """Called when the user moves the mouse.
 
@@ -82,7 +86,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The wxpython Event.
         :return: None
         """
-        #if self.is_painting is True:
         wx.PaintDC(self)
         self.draw()
 
@@ -120,6 +123,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         self.Refresh()
+        #if self.scene is not None:
         self.scene.draw()
         self.SwapBuffers()
 
@@ -158,9 +162,5 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param dt: The delta time between the last call.
         :return: None
         """
-        if not self.init:
-            self.init_gl()
-            self.init = True
-
         if self.scene is not None:
             self.scene.update(dt)
