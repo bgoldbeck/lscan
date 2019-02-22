@@ -137,74 +137,79 @@ void main() {
         specular_color * light_color * light_power * pow(cos_alpha,5) / (distance*distance);
 }
 """
+        try:
+            self.shader = OpenGL.GL.shaders.compileProgram(
+                OpenGL.GL.shaders.compileShader(self.vertex_shader,
+                                                GL_VERTEX_SHADER),
+                OpenGL.GL.shaders.compileShader(self.fragment_shader,
+                                                GL_FRAGMENT_SHADER))
+            RenderingEngine.opengl_success = True
+        except Error:
+            print("Failed to compile glsl shader.")
+            RenderingEngine.opengl_success = False
 
-        self.shader = OpenGL.GL.shaders.compileProgram(
-            OpenGL.GL.shaders.compileShader(self.vertex_shader,
-                                            GL_VERTEX_SHADER),
-            OpenGL.GL.shaders.compileShader(self.fragment_shader,
-                                            GL_FRAGMENT_SHADER))
+        if RenderingEngine.opengl_success:
+            glUseProgram(self.shader)
 
-        glUseProgram(self.shader)
+            vbo = glGenBuffers(1)
+            glBindBuffer(GL_ARRAY_BUFFER, vbo)
+            glBufferData(GL_ARRAY_BUFFER, len(triangle_data) * 4, triangle_data, GL_STATIC_DRAW)
 
-        vbo = glGenBuffers(1)
-        glBindBuffer(GL_ARRAY_BUFFER, vbo)
-        glBufferData(GL_ARRAY_BUFFER, len(triangle_data) * 4, triangle_data, GL_STATIC_DRAW)
+            # Positions input to shader.
+            glVertexAttribPointer(0,
+                                  3,
+                                  GL_FLOAT,
+                                  GL_FALSE,
+                                  32,
+                                  ctypes.c_void_p(0))
 
-        # Positions input to shader.
-        glVertexAttribPointer(0,
-                              3,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              32,
-                              ctypes.c_void_p(0))
+            # UV input to shader
+            glVertexAttribPointer(1,
+                                  2,
+                                  GL_FLOAT,
+                                  GL_FALSE,
+                                  32,
+                                  ctypes.c_void_p(12))
 
-        # UV input to shader
-        glVertexAttribPointer(1,
-                              2,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              32,
-                              ctypes.c_void_p(12))
+            # Normal input to shader
+            glVertexAttribPointer(2,
+                                  3,
+                                  GL_FLOAT,
+                                  GL_FALSE,
+                                  32,
+                                  ctypes.c_void_p(20))
 
-        # Normal input to shader
-        glVertexAttribPointer(2,
-                              3,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              32,
-                              ctypes.c_void_p(20))
+            glEnableVertexAttribArray(0)
+            glEnableVertexAttribArray(1)
+            glEnableVertexAttribArray(2)
+            texture = glGenTextures(1)
 
-        glEnableVertexAttribArray(0)
-        glEnableVertexAttribArray(1)
-        glEnableVertexAttribArray(2)
-        texture = glGenTextures(1)
+            glBindTexture(GL_TEXTURE_2D, texture)
+            # Set the texture wrapping parameters
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+            # Set texture filtering parameters
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-        glBindTexture(GL_TEXTURE_2D, texture)
-        # Set the texture wrapping parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        # Set texture filtering parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+            # load image
+            image = Image.open(Util.path_conversion("assets/images/default_brick_diffuse.jpg"))
+            img_data = numpy.array(list(image.getdata()), numpy.uint8)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+            glEnable(GL_TEXTURE_2D)
 
-        # load image
-        image = Image.open(Util.path_conversion("assets/images/default_brick_diffuse.jpg"))
-        img_data = numpy.array(list(image.getdata()), numpy.uint8)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
-        glEnable(GL_TEXTURE_2D)
+            self.set_uniform_matrix4fv("view",
+                                       RenderingEngine.camera.get_view_matrix())
 
-        self.set_uniform_matrix4fv("view",
-                                   RenderingEngine.camera.get_view_matrix())
+            self.set_uniform_matrix4fv("projection",
+                                       RenderingEngine.projection)
 
-        self.set_uniform_matrix4fv("projection",
-                                   RenderingEngine.projection)
-
-        self.set_uniform3f("light_position_worldspace", Vector3([0.0, 10.0, 10.0]))
-        self.set_uniform3f("light_color", Vector3([0.0, 0.0, 1.0]))
-        self.set_uniform3f("ambient_color", Vector3([0.5, 0.5, 0.5]))
-        self.set_uniform3f("specular_color", Vector3([0.3, 0.3, 0.3]))
-        self.set_uniform3f("light_color", Vector3([0.2, 0.2, 0.2]))
-        self.set_uniform1f("light_power", 100.0)
+            self.set_uniform3f("light_position_worldspace", Vector3([0.0, 10.0, 10.0]))
+            self.set_uniform3f("light_color", Vector3([0.0, 0.0, 1.0]))
+            self.set_uniform3f("ambient_color", Vector3([0.5, 0.5, 0.5]))
+            self.set_uniform3f("specular_color", Vector3([0.3, 0.3, 0.3]))
+            self.set_uniform3f("light_color", Vector3([0.2, 0.2, 0.2]))
+            self.set_uniform1f("light_power", 100.0)
 
     def set_view_matrix(self, view_matrix):
         """Update the view matrix.
@@ -212,7 +217,8 @@ void main() {
         :param view_matrix: The new view Matrix44.
         :return: None
         """
-        self.set_uniform_matrix4fv("view", view_matrix)
+        if RenderingEngine.opengl_success:
+            self.set_uniform_matrix4fv("view", view_matrix)
 
     def set_model_matrix(self, model_matrix):
         """Update the model matrix.
@@ -220,4 +226,5 @@ void main() {
         :param model_matrix: The new model Matrix44.
         :return: None
         """
-        self.set_uniform_matrix4fv("model", model_matrix)
+        if RenderingEngine.opengl_success:
+            self.set_uniform_matrix4fv("model", model_matrix)
