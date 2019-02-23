@@ -20,7 +20,6 @@ class RenderingEngine:
     """
     projection = matrix44.create_perspective_projection_matrix(75.0, 4/3, 0.1, 100.0)
     camera = Camera("default")
-    opengl_success = False
 
     @staticmethod
     def gl_version():
