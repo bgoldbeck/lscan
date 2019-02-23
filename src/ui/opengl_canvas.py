@@ -148,6 +148,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """
         if glInitGl42VERSION():
             if event is not None:
+                if event.get_event_type() == UserEventType.CONVERSION_COMPLETE:
+                    self.scene.replace_output_model_mesh(ModelShipper.output_model.get_mesh())
                 if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                     self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
                     self.scene.replace_output_model_mesh(None)
@@ -175,3 +177,35 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """Process the erase background event.
         """
         pass  # Do nothing, to avoid flashing on MSWin
+
+    def set_output_preview_active(self):
+        """Set the state of the output model to active.
+
+        :param show: Whether to show the model
+        :return: None.
+        """
+        self.scene.set_output_model_active(True)
+
+    def set_input_preview_active(self):
+        """Set the state of the input model to active.
+
+        :param show: Whether to show the model
+        :return: None.
+        """
+        self.scene.set_input_model_active(True)
+
+    def set_output_preview_inactive(self):
+        """Set the state of the output model to inactive.
+
+        :param show: Whether to show the model
+        :return: None.
+        """
+        self.scene.set_output_model_active(False)
+
+    def set_input_preview_inactive(self):
+        """Set the state of the input model to inactive.
+
+        :param show: Whether to show the model
+        :return: None.
+        """
+        self.scene.set_input_model_active(False)

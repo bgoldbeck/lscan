@@ -102,6 +102,10 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.help_zoom_static_text_ctrl.SetForegroundColour(UIStyle.opengl_label_color)
         self.help_zoom_static_text_ctrl.SetFont(wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.NORMAL))
 
+        self.preview_render_context = wx.StaticText(self, size=(270, 20))
+        self.preview_render_context.SetLabelText("Current Preview: ")
+        self.preview_render_context.SetForegroundColour(UIStyle.opengl_label_color)
+
         self.opengl_canvas = OpenGLCanvas(self)
         show = glInitGl42VERSION()
         # Build the layout and show the controls if correct OpenGL version
@@ -154,6 +158,8 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         left_vertical_layout.Add(scale_horizontal_layout)
         left_vertical_layout.AddSpacer(10)
         left_vertical_layout.Add(self.cycle_preview_button)
+        left_vertical_layout.AddSpacer(10)
+        left_vertical_layout.Add(self.preview_render_context)
 
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_layout.Add(left_vertical_layout)
@@ -191,7 +197,12 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
+        if not glInitGl42VERSION():
+            return
+
         if event is not None:
+            if event.get_event_type() == UserEventType.CONVERSION_COMPLETE:
+                self.cycle_preview_button.Enable()
             if event.get_event_type() == UserEventType.RENDERING_MOUSE_WHEEL_EVENT:
                 if self.can_use_opengl():
                     # Log Message here is of derived class FloatMessage.
@@ -200,6 +211,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                             "Camera Distance to Origin: {0:0.3f}".format(event.get_log_message().get_float()))
             elif event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                 if self.can_use_opengl():
+                    self.preview_render_context.SetLabelText("Current Preview: STL Model")
                     self.set_widget_rendering_contexts(True)
                     self.cycle_preview_button.Enabled = False
                     self.zoom_static_text_ctrl.SetLabelText(
@@ -227,10 +239,17 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         self.stl_preview_context = not self.stl_preview_context
+
         if self.stl_preview_context is True:
             self.cycle_preview_button.SetLabelText("Preview LDraw Model")
+            self.opengl_canvas.set_output_preview_inactive()
+            self.opengl_canvas.set_input_preview_active()
+            self.preview_render_context.SetLabelText("Current Preview: STL Model")
         else:
             self.cycle_preview_button.SetLabelText("Preview STL Model")
+            self.opengl_canvas.set_input_preview_inactive()
+            self.opengl_canvas.set_output_preview_active()
+            self.preview_render_context.SetLabelText("Current Preview: LDraw Model")
         event.Skip()
 
     def on_scale_value_changed(self, event):

@@ -165,13 +165,14 @@ class Scene:
         :param value: The enable/disable state of the model.
         :return: None
         """
+
         if self.scene_objects[tag] is not None:
             if value is True:
                 self.active_scene_object = self.scene_objects[tag]
                 self.scene_objects[tag].enable()
             else:
                 self.scene_objects[tag].disable()
-        self.active_scene_model = self.scene_objects[tag]
+            self.active_scene_model = self.scene_objects[tag]
 
     def remove_scene_object(self, tag):
         """Destroy a scene object.
