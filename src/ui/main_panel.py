@@ -73,7 +73,7 @@ class MainPanel(wx.Panel, IUIBehavior):
 
         vertical_layout.Add(self.conversion_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
         vertical_layout.Add(self.log_panel, 0, wx.EXPAND)
-        #vertical_layout.Fit(self.log_panel)
+
         self.SetSizer(vertical_layout)
 
     def on_state_changed(self, new_state: ApplicationState):
