@@ -125,9 +125,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         self.Refresh()
-        #if self.scene is not None:
-        self.scene.draw()
-        self.SwapBuffers()
+        if self.scene is not None:
+            self.scene.draw()
+            self.SwapBuffers()
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the OpenGLCanvas.
