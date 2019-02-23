@@ -44,7 +44,7 @@ class LogPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         # Build the wx control objects.
-        self.SetBackgroundColour('black')
+        self.SetBackgroundColour(UIStyle.log_background_color)
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
 
         self.save_log_button = Button(self, label="Save Log", size=UIStyle.log_big_button)
