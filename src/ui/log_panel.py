@@ -44,24 +44,30 @@ class LogPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         # Build the wx control objects.
-        self.SetBackgroundColour(UIStyle.log_background_color)
+        self.SetBackgroundColour('black')
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
 
         self.save_log_button = Button(self, label="Save Log", size=UIStyle.log_big_button)
         self.save_log_button.SetBackgroundColour(UIStyle.button_background)
         self.save_log_button.SetForegroundColour(UIStyle.button_text)
+
+        # Set the log control output size.
         self.log_text_ctrl = rt.RichTextCtrl(self, size=UIStyle.log_output_size, style=style)
         self.log_text_ctrl.SetBackgroundColour(wx.Colour(UIStyle.log_text_background_color))
 
         self.Bind(wx.EVT_BUTTON, self.save_log, self.save_log_button)
+        self._build_layout()
 
+    def _build_layout(self):
         # Build the layout.
+        vertical_layout = wx.BoxSizer(wx.VERTICAL)
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
-        horizontal_layout.Add(self.log_text_ctrl, 0, flag=wx.ALIGN_LEFT)
+        horizontal_layout.Add(self.log_text_ctrl, 0, flag=wx.ALIGN_CENTER_HORIZONTAL)
         horizontal_layout.AddSpacer(5)
         horizontal_layout.Add(self.save_log_button, 0, wx.ALIGN_RIGHT)
+        vertical_layout.Add(horizontal_layout, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
-        self.SetSizer(horizontal_layout)
+        self.SetSizer(vertical_layout)
         self.Show()
 
     def save_log(self, event):
@@ -148,3 +154,10 @@ class LogPanel(wx.Panel, IUIBehavior):
         """
         pass
 
+    def resize_log_ctrl_height(self, height):
+        # Set the log control output size.
+        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
+
+        self.log_text_ctrl = rt.RichTextCtrl(self, size=(self.log_text_ctrl.Size[0], height), style=style)
+        self.log_text_ctrl.SetBackgroundColour(wx.Colour(UIStyle.log_text_background_color))
+        self._build_layout()
