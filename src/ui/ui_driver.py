@@ -65,8 +65,9 @@ class UIDriver:
         children = root.GetChildren()
 
         for child in children:
-            if isinstance(child, IUIBehavior):
-                behaviors.append(child)
+            if child is not None:
+                if isinstance(child, IUIBehavior):
+                    behaviors.append(child)
             UIDriver.get_all_ui_behaviors(child, behaviors)
 
     @staticmethod
