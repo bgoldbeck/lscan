@@ -148,18 +148,19 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """
         if glInitGl42VERSION():
             if event is not None:
-                if event.get_event_type() == UserEventType.CONVERSION_COMPLETE:
-                    self.scene.replace_output_model_mesh(ModelShipper.output_model.get_mesh())
                 if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                     self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
                     self.scene.replace_output_model_mesh(None)
                     self.scene.set_input_model_active(True)
+
                 if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
                     # A log message of this type is a BoolMessage.
                     self.wire_frame = event.get_log_message().get_bool()
+
                 if event.get_event_type() == UserEventType.RENDERING_CANVAS_DISABLE:
                     self.Unbind(wx.EVT_PAINT)
                     self.Refresh()
+
                 if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
                     self.Bind(wx.EVT_PAINT, self.on_paint)
                     self.Refresh()
@@ -177,6 +178,18 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """Process the erase background event.
         """
         pass  # Do nothing, to avoid flashing on MSWin
+
+    def update_meshes(self):
+        """Update the meshes in the scene with the Modelshipper models, if they exist.
+
+        :return: None
+        """
+        if ModelShipper.output_model is not None:
+            print("Update output model")
+            self.scene.replace_output_model_mesh(ModelShipper.output_model.get_mesh())
+        if ModelShipper.input_model is not None:
+            print("Update input model")
+            self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
 
     def set_output_preview_active(self):
         """Set the state of the output model to active.

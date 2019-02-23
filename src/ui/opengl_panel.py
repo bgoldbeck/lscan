@@ -83,6 +83,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.scale_input.SetForegroundColour(UIStyle.opengl_input_foreground)
 
         self.cycle_preview_button = Button(self, label="Preview LDraw Model", size=(150, 30))
+        self.cycle_preview_button.Disable()
 
         self.camera_rotation_static_text_ctrl = wx.StaticText(self, size=(270, 20))
         self.camera_rotation_static_text_ctrl.SetLabelText("Model Rotation: ")
@@ -202,7 +203,10 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         if event is not None:
             if event.get_event_type() == UserEventType.CONVERSION_COMPLETE:
+                self.opengl_canvas.update_meshes()
                 self.cycle_preview_button.Enable()
+                self.set_preview_from_context()
+
             if event.get_event_type() == UserEventType.RENDERING_MOUSE_WHEEL_EVENT:
                 if self.can_use_opengl():
                     # Log Message here is of derived class FloatMessage.
@@ -213,7 +217,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                 if self.can_use_opengl():
                     self.preview_render_context.SetLabelText("Current Preview: STL Model")
                     self.set_widget_rendering_contexts(True)
-                    self.cycle_preview_button.Enabled = False
+                    self.cycle_preview_button.Disable()
                     self.zoom_static_text_ctrl.SetLabelText(
                         "Camera Distance to Origin: " + str(self.opengl_canvas.scene.get_camera_distance_to_origin()))
 
@@ -239,7 +243,14 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         self.stl_preview_context = not self.stl_preview_context
+        self.set_preview_from_context()
+        event.Skip()
 
+    def set_preview_from_context(self):
+        """Update the preview label and models based on our current contextual state.
+
+        :return: None
+        """
         if self.stl_preview_context is True:
             self.cycle_preview_button.SetLabelText("Preview LDraw Model")
             self.opengl_canvas.set_output_preview_inactive()
@@ -250,7 +261,6 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
             self.opengl_canvas.set_input_preview_inactive()
             self.opengl_canvas.set_output_preview_active()
             self.preview_render_context.SetLabelText("Current Preview: LDraw Model")
-        event.Skip()
 
     def on_scale_value_changed(self, event):
         """The scale input value has been modified by the user. Notify the OpenGL scene
