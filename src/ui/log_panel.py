@@ -59,15 +59,16 @@ class LogPanel(wx.Panel, IUIBehavior):
         self._build_layout()
 
     def _build_layout(self):
-        # Build the layout.
-        vertical_layout = wx.BoxSizer(wx.VERTICAL)
+        """Set up how the wx controls are laid out on the log panel.
+
+        :return: None
+        """
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_layout.Add(self.log_text_ctrl, 0, flag=wx.ALIGN_CENTER_HORIZONTAL)
         horizontal_layout.AddSpacer(5)
         horizontal_layout.Add(self.save_log_button, 0, wx.ALIGN_RIGHT)
-        vertical_layout.Add(horizontal_layout, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
-        self.SetSizer(vertical_layout)
+        self.SetSizer(horizontal_layout)
         self.Show()
 
     def save_log(self, event):
@@ -154,7 +155,16 @@ class LogPanel(wx.Panel, IUIBehavior):
         pass
 
     def resize_log_ctrl_height(self, height):
+        """Resize the log panel text control to a new height value. This will clear the context of the current control
+        and remove any previous log messages.
+
+        :param height: The new height to set.
+        :return:
+        """
         # Set the log control output size.
+        if height < 0:
+            height = 0
+
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
 
         self.log_text_ctrl = rt.RichTextCtrl(self, size=(self.log_text_ctrl.Size[0], height), style=style)
