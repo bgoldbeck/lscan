@@ -110,7 +110,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
             self.scene = Scene()
             self.Show()
-            self.Refresh(False)
 
         print("OpenGL Major: " + str(RenderingEngine.gl_version_major_minor()[0]))
         print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))
@@ -147,7 +146,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        if RenderingEngine.opengl_success:
+        if glInitGl42VERSION():
             if event is not None:
                 if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                     self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
