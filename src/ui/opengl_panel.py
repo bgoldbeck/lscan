@@ -57,7 +57,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-
+        # Create the controls.
         self.cb_wire_frame = wx.CheckBox(self, label=" Wireframe")
         self.cb_wire_frame.SetForegroundColour(UIStyle.opengl_label_color)
 
@@ -104,6 +104,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         self.opengl_canvas = OpenGLCanvas(self)
         show = glInitGl42VERSION()
+        # Build the layout and show the controls if correct OpenGL version
         self._build_layout(show)
 
         # Bind events to functions.
@@ -118,6 +119,11 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.set_widget_rendering_contexts(False)
 
     def _build_layout(self, show: bool):
+        """Set up how the wx controls are laid out on the log panel.
+
+        :param show: Whether or not to enable all the controls of this panel.
+        :return:
+        """
         self.cb_wire_frame.Show(show)
         self.zoom_static_text_ctrl.Show(show)
         self.scale_static_text.Show(show)
