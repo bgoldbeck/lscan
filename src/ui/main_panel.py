@@ -56,7 +56,6 @@ class MainPanel(wx.Panel, IUIBehavior):
 
         # Add more height to the log panel if OpenGL cannot be used.
         if not self.opengl_panel.can_use_opengl():
-            self.opengl_panel = None
             log_panel_height += UIStyle.opengl_panel_size[1]
 
         self.log_panel.SetInitialSize(size=(UIStyle.log_panel_size[0], log_panel_height))
@@ -68,6 +67,8 @@ class MainPanel(wx.Panel, IUIBehavior):
         # Don't add the OpenGL Panel if OpenGL is not supported.
         if self.opengl_panel.can_use_opengl():
             vertical_layout.Add(self.opengl_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        else:
+            self.opengl_panel = None
 
         vertical_layout.Add(self.conversion_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
         vertical_layout.Add(self.log_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
