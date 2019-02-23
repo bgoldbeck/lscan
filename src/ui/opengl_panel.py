@@ -33,7 +33,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 300), style=UIStyle.conversion_border)
+        wx.Panel.__init__(self, parent, size=UIStyle.opengl_panel_size, style=UIStyle.conversion_border)
         self.parent = parent
         self.stl_preview_context = True
         self.cb_wire_frame = None
