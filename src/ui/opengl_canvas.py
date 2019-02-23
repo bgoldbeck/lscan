@@ -38,6 +38,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         # Call the base constructor for the OpenGL canvas.
         glcanvas.GLCanvas.__init__(self, parent, -1, size=self.canvas_size)
         self.parent = parent
+        self.scene = None
         self.context = None
         self.scene = None
         self.wire_frame = False
@@ -50,6 +51,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
         self.Bind(wx.EVT_MOTION, self.on_mouse_move)
+        self.Bind(wx.EVT_ERASE_BACKGROUND, self.process_erase_background)
 
         if not self.init:
             self.init_gl()
@@ -87,14 +89,14 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :return: None
         """
         wx.PaintDC(self)
-        self.draw()
+        if self.init:
+            self.draw()
 
     def init_gl(self):
         """Initialize OpenGL functionality.
 
         :return: None
         """
-
         self.context = glcanvas.GLContext(self)
         self.SetCurrent(self.context)
         if glInitGl42VERSION():
@@ -107,6 +109,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
 
             glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
             self.scene = Scene()
+            self.Show()
+            self.Refresh(False)
 
         print("OpenGL Major: " + str(RenderingEngine.gl_version_major_minor()[0]))
         print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))
@@ -127,7 +131,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         self.Refresh()
         if self.scene is not None:
             self.scene.draw()
-            self.SwapBuffers()
+        self.SwapBuffers()
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the OpenGLCanvas.
@@ -166,3 +170,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """
         if self.scene is not None:
             self.scene.update(dt)
+
+    def process_erase_background(self, event):
+        """Process the erase background event.
+        """
+        pass  # Do nothing, to avoid flashing on MSWin
