@@ -68,7 +68,7 @@ class MainPanel(wx.Panel, IUIBehavior):
         if self.opengl_panel.can_use_opengl():
             vertical_layout.Add(self.opengl_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
         else:
-            self.opengl_panel = None
+            self.opengl_panel.Show(False)
 
         vertical_layout.Add(self.conversion_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
         vertical_layout.Add(self.log_panel, 0, wx.EXPAND)
