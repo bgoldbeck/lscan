@@ -20,10 +20,8 @@ class UIStyle:
     button_text = ""
 
     # Main Frame
-    main_frame_border = wx.DEFAULT_FRAME_STYLE
-    main_frame_min_size = (1024, 640)
-    main_frame_max_size = (1024, 900)
-    main_frame_current_size = main_frame_min_size
+    main_frame_border = wx.DEFAULT_DIALOG_STYLE
+    main_frame_size = (1024, 640)
 
     # Main Panel
     main_panel_background_color = "#ffffaa"
@@ -64,6 +62,7 @@ class UIStyle:
 
     # OpenGL
     opengl_panel_border = wx.BORDER_SUNKEN
+    opengl_panel_size = (1024, 300)
     opengl_canvas_background_color = [0, 0, 0, 255]
     opengl_label_color = "#666666"
     opengl_input_background = "#ffffff"
