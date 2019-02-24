@@ -29,6 +29,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     """This is the canvas for OpenGL to render objects to.
     """
     canvas_size = (400, 300)
+    render_text = None
 
     def __init__(self, parent):
         """Default constructor for OpenGLCanvas class.
@@ -107,6 +108,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))
         print("GLSL Major: " + str(RenderingEngine.glsl_version_major_minor()[0]))
         print("GLSL Minor: " + str(RenderingEngine.glsl_version_major_minor()[1]))
+        # UIStyle.render_info = RenderingEngine.gl_version_major_minor()[0]
+        UIStyle.render_info = 2
+        print(UIStyle.render_info)
 
     def draw(self):
         """Draw the previous OpenGL buffer with all the 3D data.
@@ -120,8 +124,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         self.Refresh()
-        self.scene.draw()
-        self.SwapBuffers()
+        if self.scene is not None:
+            self.scene.draw()
+            self.SwapBuffers()
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the OpenGLCanvas.
@@ -137,7 +142,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        if event is not None:
+        if event is not None and UIStyle.render_info >= 3:
             if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                 self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
                 self.scene.replace_output_model_mesh(None)
@@ -151,6 +156,11 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
                 self.Bind(wx.EVT_PAINT, self.on_paint)
                 self.Refresh()
+        else:
+            self.render_text = wx.StaticText(self, label="OpenGL is unavailable. Version 3.3 or higher is required.",
+                                             style=wx.STAY_ON_TOP)
+            self.render_text.SetForegroundColour(UIStyle.render_text_color)
+            self.render_text.SetBackgroundColour("black")
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
