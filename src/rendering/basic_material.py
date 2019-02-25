@@ -16,6 +16,7 @@ from src.rendering.rendering_engine import RenderingEngine
 from src.rendering.material import Material
 from PIL import Image
 import numpy
+from src.util import Util
 
 
 class BasicMaterial(Material):
@@ -136,12 +137,15 @@ void main() {
         specular_color * light_color * light_power * pow(cos_alpha,5) / (distance*distance);
 }
 """
-
-        self.shader = OpenGL.GL.shaders.compileProgram(
-            OpenGL.GL.shaders.compileShader(self.vertex_shader,
-                                            GL_VERTEX_SHADER),
-            OpenGL.GL.shaders.compileShader(self.fragment_shader,
-                                            GL_FRAGMENT_SHADER))
+        try:
+            self.shader = OpenGL.GL.shaders.compileProgram(
+                OpenGL.GL.shaders.compileShader(self.vertex_shader,
+                                                GL_VERTEX_SHADER),
+                OpenGL.GL.shaders.compileShader(self.fragment_shader,
+                                                GL_FRAGMENT_SHADER))
+        except Error:
+            print("Failed to compile glsl shader.")
+            return
 
         glUseProgram(self.shader)
 
@@ -187,7 +191,7 @@ void main() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
         # load image
-        image = Image.open("assets/images/default_brick_diffuse.jpg")
+        image = Image.open(Util.path_conversion("assets/images/default_brick_diffuse.jpg"))
         img_data = numpy.array(list(image.getdata()), numpy.uint8)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
         glEnable(GL_TEXTURE_2D)
@@ -211,7 +215,8 @@ void main() {
         :param view_matrix: The new view Matrix44.
         :return: None
         """
-        self.set_uniform_matrix4fv("view", view_matrix)
+        if RenderingEngine.opengl_success:
+            self.set_uniform_matrix4fv("view", view_matrix)
 
     def set_model_matrix(self, model_matrix):
         """Update the model matrix.
@@ -219,4 +224,5 @@ void main() {
         :param model_matrix: The new model Matrix44.
         :return: None
         """
-        self.set_uniform_matrix4fv("model", model_matrix)
+        if RenderingEngine.opengl_success:
+            self.set_uniform_matrix4fv("model", model_matrix)

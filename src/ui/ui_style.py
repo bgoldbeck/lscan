@@ -20,15 +20,14 @@ class UIStyle:
     button_text = ""
 
     # Main Frame
-    main_frame_border = wx.DEFAULT_FRAME_STYLE
-    main_frame_min_size = (1024, 640)
-    main_frame_max_size = (1024, 900)
-    main_frame_current_size = main_frame_min_size
+    main_frame_border = wx.DEFAULT_DIALOG_STYLE
+    main_frame_size = (1024, 640)
 
     # Main Panel
     main_panel_background_color = "#ffffaa"
 
     # Metadata Panel
+    metadata_border = wx.BORDER_SUNKEN
     metadata_background_color = "#777fea"
     metadata_label_color = ""
     metadata_input_text_color = "black"
@@ -42,10 +41,12 @@ class UIStyle:
     metadata_label_size = (200, 25)
 
     # Conversion Panel
+    conversion_border = wx.SIMPLE_BORDER
     conversion_background_color = "#456eab"
     conversion_big_button_size = (120, 30)
 
     # Log Panel
+    log_border = wx.BORDER_SUNKEN
     log_background_color = "#eee111"
     log_text_background_color = [25, 25, 25]
     log_default_text_color = [225, 225, 225]
@@ -61,6 +62,7 @@ class UIStyle:
 
     # OpenGL
     opengl_panel_border = wx.BORDER_SUNKEN
+    opengl_panel_size = (1024, 300)
     opengl_canvas_background_color = [0, 0, 0, 255]
     opengl_label_color = "#666666"
     opengl_input_background = "#ffffff"
@@ -84,7 +86,7 @@ class UIStyle:
         UIStyle.main_panel_background_color = "#2B2B2B"
 
         # Metadata Panel
-        UIStyle.metadata_border = wx.BORDER_NONE
+        UIStyle.metadata_border = wx.BORDER_SUNKEN
         UIStyle.metadata_background_color = "#2B2B2B"
         UIStyle.metadata_label_color = "#808080"
         UIStyle.metadata_input_text_color = "#A5C25C"
@@ -98,12 +100,12 @@ class UIStyle:
         UIStyle.metadata_label_size = (200, 25)
 
         # Conversion Panel
-        UIStyle.conversion_border = wx.BORDER_NONE
+        UIStyle.conversion_border = wx.SIMPLE_BORDER
         UIStyle.conversion_background_color = "#2B2B2B"
         UIStyle.conversion_big_button_size = (120, 30)
 
         # Log Panel
-        UIStyle.log_border = wx.BORDER_NONE
+        UIStyle.log_border = wx.BORDER_SUNKEN
         UIStyle.log_background_color = "#2B2B2B"
         UIStyle.log_text_background_color = "#323232"
         UIStyle.log_default_text_color = "#A9B7C6"
