@@ -152,15 +152,15 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
                     self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
                     self.scene.replace_output_model_mesh(None)
                     self.scene.set_input_model_active(True)
-
+                    
                 if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
                     # A log message of this type is a BoolMessage.
                     self.wire_frame = event.get_log_message().get_bool()
-
+                    
                 if event.get_event_type() == UserEventType.RENDERING_CANVAS_DISABLE:
                     self.Unbind(wx.EVT_PAINT)
                     self.Refresh()
-
+                    
                 if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
                     self.Bind(wx.EVT_PAINT, self.on_paint)
                     self.Refresh()
