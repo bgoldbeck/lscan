@@ -54,9 +54,21 @@ class EdgeTest(unittest.TestCase):
         self.assertTrue(overlapping_edges2)
         self.assertFalse(overlapping_edges3)
 
-    # TODO
     def test_HasSharedVertex(self):
-        pass
+        test_edge1 = Edge(0, 0, 0, 1, 1, 1)
+        test_edge2 = Edge(1, 1, 1, 0, 0, 0)
+        test_edge3 = Edge(0, 0, 0, -1, -1, -1)
+        test_edge4 = Edge(2, 2, 2, 3, 3, 3)
+
+        shared_vertex1 = Edge.has_shared_vertex(test_edge1, test_edge2)
+        shared_vertex2 = Edge.has_shared_vertex(test_edge1, test_edge3)
+        shared_vertex3 = Edge.has_shared_vertex(test_edge1, test_edge4)
+        shared_vertex4 = Edge.has_shared_vertex(test_edge1, test_edge1)
+
+        self.assertTrue(shared_vertex1)
+        self.assertTrue(shared_vertex2)
+        self.assertFalse(shared_vertex3)
+        self.assertTrue(shared_vertex4)
 
     # TODO
     def test_EdgeIsParallelOrAntiparallel(self):
