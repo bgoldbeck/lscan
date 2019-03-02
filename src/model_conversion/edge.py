@@ -86,9 +86,9 @@ class Edge:
 
         # Case 2. Edges in opposite directions.
         if (  # 'a' start vs 'b' end
-           (a.x1, b.x2) and (a.y1, b.y2) and (a.z1, b.z2) and
+           (a.x1 == b.x2) and (a.y1 == b.y2) and (a.z1 == b.z2) and
             # 'b' start vs 'a' end
-           (b.x1, a.x2) and (b.y1, a.y2) and (b.z1, a.z2)):
+           (b.x1 == a.x2) and (b.y1 == a.y2) and (b.z1 == a.z2)):
             return True
         return False
 
