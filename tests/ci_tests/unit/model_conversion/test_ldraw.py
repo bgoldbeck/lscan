@@ -11,7 +11,7 @@
 import numpy
 import unittest
 from stl import Mesh
-from util import Util
+from src.util import Util
 from src.model_conversion.ldraw_model import LDrawModel
 
 
