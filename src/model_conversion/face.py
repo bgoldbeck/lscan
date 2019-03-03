@@ -10,7 +10,7 @@
 from src.model_conversion.triangle import Triangle
 
 
-class TriangleGroup:
+class Face:
     """
 
     """
@@ -28,7 +28,7 @@ class TriangleGroup:
             self.normal = None
 
     def match_normal(self, normal):
-        """Checks if the given normal matches the TriangleGroup
+        """Checks if the given normal matches the Face's normal
 
         :param normal: [x, y, z]
         :return:
@@ -54,25 +54,20 @@ class TriangleGroup:
                 return True
         return False
 
-    def rearrange_by_neighbors(self):
-        new_triangle_groups = []
-        triangles = self.triangles
-        if triangles:
-            edges = self.triangles[0].edges
-            new_triangle_groups.append(triangles[0])
-            new_group = TriangleGroup([self.triangles[0]])
-            while edges:
-                for triangle in triangles:
-                    if triangle.has_edge(edges[-1]):
-                        pass
-            # TODO not complete
-
     def get_normal(self):
         """
         Returns the normal value
         :return:
         """
         return self.normal
+
+    def get_edges(self):
+        """
+        Gets all the edges of all the triangles in a Face
+        :return:
+        """
+        #TODO
+        pass
 
     @staticmethod
     def set_difference(group_1, group_2):
