@@ -8,6 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import math
+import numpy as np
 
 
 class Edge:
@@ -37,13 +38,13 @@ class Edge:
 
         :return: A floating point value of the length of the edge.
         """
-        x = self.x2 - self.x1
-        y = self.y2 - self.y1
-        z = self.z2 - self.z1
-        return math.sqrt(
-            math.pow(x, 2.0) +
-            math.pow(y, 2.0) +
-            math.pow(z, 2.0))
+        dx = self.x2 - self.x1
+        dy = self.y2 - self.y1
+        dz = self.z2 - self.z1
+        return np.power(
+            np.power(dx, 2.0) +
+            np.power(dy, 2.0) +
+            np.power(dz, 2.0), .5)
 
     @staticmethod
     def dot(a, b):
@@ -129,6 +130,8 @@ class Edge:
         :return: True, if two edges are either parallel or anti-parallel.
         """
         dot = Edge.dot(a, b)
-        angle = math.degrees(math.acos(dot / (a.length() * b.length)))
+        ratio = dot / (a.length() * b.length())
+        radians = np.arccos(np.round(ratio, 7))
+        angle = math.degrees(radians)
 
         return angle == 0.0 or angle == 180.0
