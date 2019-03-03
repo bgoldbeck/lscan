@@ -16,7 +16,7 @@ class Face:
 
     """
 
-    def __init__(self, triangles= None):
+    def __init__(self, triangles=None):
         """
 
         :param triangles: list of Triangles
@@ -65,10 +65,19 @@ class Face:
     def get_edges(self):
         """
         Gets all the edges of all the triangles in a Face
-        :return:
+        :return: return a list of edges in the face (no duplicate)
         """
-        #TODO
-        pass
+        list_edge = []
+
+        for triangle in self.triangles:
+            edge_1 = triangle.get_first_edge()
+            edge_2 = triangle.get_second_edge()
+            edge_3 = triangle.get_third_edge()
+
+            list_edge.append(edge_1)
+            list_edge.append(edge_2)
+            list_edge.append(edge_3)
+        return set(list_edge)
 
     @staticmethod
     def set_difference(group_1, group_2):
