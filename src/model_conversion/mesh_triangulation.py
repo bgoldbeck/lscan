@@ -7,6 +7,7 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
+import time
 from stl import Mesh
 from src.model_conversion.edge import Edge
 from src.model_conversion.unique_edge_list import UniqueEdgeList
@@ -54,53 +55,6 @@ class MeshTriangulation:
             mesh_triangles.append(Triangle(edge_1, edge_2, edge_3, normal=normal))
         return mesh_triangles
 
-    @staticmethod
-    def group_triangles_by_normals(triangles):
-        """
-        Group triangles by normal
-        :param triangles: List of Triangles
-        :return: List of Faces
-        """
-        faces_groups = []
-        group_match = False
-        for triangle in triangles:
-            for group in faces_groups:
-                if group.match_normal(triangle.normal):
-                    group_match = True
-                    group.add_triangle(triangle)
-                    break
-            if not group_match:
-                faces_groups.append(Face([triangle]))
-            group_match = False
-        return faces_groups
-
-    @staticmethod
-    def regroup_by_neighbors(groups):
-        """
-        regroup by neighbors
-        :param groups: List of TriangleGroups
-        :return:
-        """
-        groups
-        new_group = []
-        for group in groups:
-            group_triangles = group.triangles
-            triangle = group_triangles.pop(-1)
-            while group_triangles:
-                MeshTriangulation.regroup(triangle, group_triangles)
-        return new_group
-
-
-    @staticmethod
-    def regroup(group):
-        """
-        Recursive method
-        :param group:
-        :return:
-        """
-
-
-
     def group_triangles_triangulation(self):
         """
 
@@ -108,7 +62,7 @@ class MeshTriangulation:
         """
         triangles = self.get_mesh_triangles()
         groups = MeshTriangulation.group_triangles_by_normals(triangles)
-        return MeshTriangulation.regroup_by_neighbors(groups)
+        return MeshTriangulation.regroup_by_neighbors(groups) # goes infinite loop
 
     def _step_2(self, faces):
         """Step 2. Remove shared edges.
@@ -265,13 +219,74 @@ class MeshTriangulation:
         max_dist_to_origin = -1.0
         outer_boundary_index = 0
 
+    @staticmethod
+    def group_triangles_by_normals(triangles):
+        """
+        Group triangles by normal
+        :param triangles: List of Triangles
+        :return: List of Faces
+        """
+        faces_groups = []
+        group_match = False
+        for triangle in triangles:
+            for group in faces_groups:
+                if group.match_normal(triangle.normal):
+                    group_match = True
+                    group.add_triangle(triangle)
+                    break
+            if not group_match:
+                faces_groups.append(Face([triangle]))
+            group_match = False
+        return faces_groups
 
+    @staticmethod
+    def regroup_by_neighbors(groups):
+        """
+        regroup by neighbors
+        :param groups: List of TriangleGroups
+        :return:
+        """
+        all_groups = []
+        for group in groups:
+            group_triangles = group.triangles
+            triangle = group_triangles.pop(-1)
+            while group_triangles:
+                new_group = MeshTriangulation.regroup(triangle, group_triangles)
+                all_groups.append(new_group)
+        return all_groups
+
+    @staticmethod
+    def regroup(triangle, group_triangles):
+        """
+        Recursive method
+        :param group:
+        :return:
+        """
+        if not group_triangles:
+            return []
+        edges = triangle.edges
+        match_triangles_1 = Triangle.get_edge_match(edges[0], group_triangles)
+        if not match_triangles_1:
+            return []
+        edge_1 = MeshTriangulation.regroup(match_triangles_1, group_triangles).append(match_triangles_1)
+        match_triangles_2 = Triangle.get_edge_match(edges[1], group_triangles)
+        if not match_triangles_2:
+            return []
+        edge_2 = MeshTriangulation.regroup(match_triangles_2, group_triangles).append(match_triangles_2)
+        match_triangles_3 = Triangle.get_edge_match(edges[2], group_triangles)
+        if not match_triangles_3:
+            return []
+        edge_3 = MeshTriangulation.regroup(match_triangles_3, group_triangles).append(match_triangles_3)
+        return edge_1 + edge_2 + edge_3
 # test script
 
-
+start_time = time.time()
 mesh = Mesh.from_file(Util.path_conversion("assets/models/cube.stl"), calculate_normals=False)
 mesh_trianglulation = MeshTriangulation(mesh)
+group = mesh_trianglulation.group_triangles_triangulation()
+end_time = time.time()
+print(len(group))
 print(f"Triangles count: {len(mesh.normals)}")
-
+print(end_time - start_time)
 
 

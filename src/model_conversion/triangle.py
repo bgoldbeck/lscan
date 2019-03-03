@@ -83,5 +83,16 @@ class Triangle:
         """
         pass
 
-
-
+    @staticmethod
+    def get_edge_match(edge: Edge, triangles):
+        """
+        Check if any triangle has the matching edge
+        :param self:
+        :param edge:
+        :param triangles:
+        :return:
+        """
+        for triangle in triangles:
+            if triangle.has_edge(edge):
+                return triangles.pop(triangle)
+        return None
