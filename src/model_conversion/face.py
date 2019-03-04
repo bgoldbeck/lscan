@@ -7,6 +7,7 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
+from src.model_conversion.edge import Edge
 from src.model_conversion.triangle import Triangle
 from src.model_conversion.unique_edge_list import UniqueEdgeList
 
@@ -16,7 +17,7 @@ class Face:
 
     """
 
-    def __init__(self, triangles= None):
+    def __init__(self, triangles=None):
         """
 
         :param triangles: list of Triangles

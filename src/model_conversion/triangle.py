@@ -55,6 +55,27 @@ class Triangle:
                 return True
         return False
 
+    def get_first_edge(self):
+        """"
+        Get first edge in the triangle:
+        :return edges[0] : edge 1.
+        """
+        return self.edges[0]
+
+    def get_second_edge(self):
+        """"
+        Get second edge in the triangle:
+        :return edges[1] : edge 2.
+        """
+        return self.edges[1]
+
+    def get_third_edge(self):
+        """"
+        Get third edge in the triangle:
+        :return edges[2] : edge 3.
+        """
+        return self.edges[2]
+
     @staticmethod
     def are_neighbors(t1, t2):
         """Determine if two triangles have a shared edge.
@@ -83,5 +104,16 @@ class Triangle:
         """
         pass
 
-
-
+    @staticmethod
+    def get_edge_match(edge: Edge, triangles):
+        """
+        Check if any triangle has the matching edge
+        :param self:
+        :param edge:
+        :param triangles:
+        :return:
+        """
+        for triangle in triangles:
+            if triangle.has_edge(edge):
+                return triangles.pop(triangle)
+        return None

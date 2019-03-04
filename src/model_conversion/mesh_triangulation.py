@@ -8,6 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import matplotlib.pyplot as plt
+import time
 from stl import Mesh
 from src.model_conversion.edge import Edge
 from src.model_conversion.unique_edge_list import UniqueEdgeList
@@ -107,7 +108,7 @@ class MeshTriangulation:
         """
         triangles = self.get_mesh_triangles()
         groups = MeshTriangulation.group_triangles_by_normals(triangles)
-        return MeshTriangulation.regroup_by_neighbors(groups)
+        return MeshTriangulation.regroup_by_neighbors(groups) # goes infinite loop
 
     def step_2(self, faces: []):
         """Step 2. Remove shared edges.
@@ -197,12 +198,13 @@ class MeshTriangulation:
         buckets = []
 
         for group in grouped_edges:
-            current_edge_list = UniqueEdgeList()
-            current_edge_list.add(group.edge_list[0])
+            if len(group.edge_list) > 0:
+                current_edge_list = UniqueEdgeList()
+                current_edge_list.add(group.edge_list[0])
 
-            unique_edge_lists = self._step_3_part_2_recursive([current_edge_list], group, 0)
+                unique_edge_lists = self._step_3_part_2_recursive([current_edge_list], group, 0)
 
-            buckets.append(unique_edge_lists)
+                buckets.append(unique_edge_lists)
 
         return buckets
 
@@ -262,13 +264,76 @@ class MeshTriangulation:
 
         return list_of_outer_boundary_indices
 
+    @staticmethod
+    def group_triangles_by_normals(triangles):
+        """
+        Group triangles by normal
+        :param triangles: List of Triangles
+        :return: List of Faces
+        """
+        faces_groups = []
+        group_match = False
+        for triangle in triangles:
+            for group in faces_groups:
+                if group.match_normal(triangle.normal):
+                    group_match = True
+                    group.add_triangle(triangle)
+                    break
+            if not group_match:
+                faces_groups.append(Face([triangle]))
+            group_match = False
+        return faces_groups
 
+    @staticmethod
+    def regroup_by_neighbors(groups):
+        """
+        regroup by neighbors
+        :param groups: List of TriangleGroups
+        :return:
+        """
+        all_groups = []
+        for group in groups:
+            group_triangles = group.triangles
+            triangle = group_triangles.pop(-1)
+            while group_triangles:
+                new_group = MeshTriangulation.regroup(triangle, group_triangles)
+                all_groups.append(new_group)
+        return all_groups
+
+    @staticmethod
+    def regroup(triangle, group_triangles):
+        """
+        Recursive method
+        :param group:
+        :return:
+        """
+        if not group_triangles:
+            return []
+        edges = triangle.edges
+        match_triangles_1 = Triangle.get_edge_match(edges[0], group_triangles)
+        if not match_triangles_1:
+            return []
+        edge_1 = MeshTriangulation.regroup(match_triangles_1, group_triangles).append(match_triangles_1)
+        match_triangles_2 = Triangle.get_edge_match(edges[1], group_triangles)
+        if not match_triangles_2:
+            return []
+        edge_2 = MeshTriangulation.regroup(match_triangles_2, group_triangles).append(match_triangles_2)
+        match_triangles_3 = Triangle.get_edge_match(edges[2], group_triangles)
+        if not match_triangles_3:
+            return []
+        edge_3 = MeshTriangulation.regroup(match_triangles_3, group_triangles).append(match_triangles_3)
+        return edge_1 + edge_2 + edge_3
 # test script
-mesh = Mesh.from_file(Util.path_conversion("assets/models/untitled.stl"), calculate_normals=False)
 
-
+#start_time = time.time()
+mesh = Mesh.from_file(Util.path_conversion("assets/models/2_holes.stl"), calculate_normals=False)
 mesh_trianglulation = MeshTriangulation(mesh)
+#group = mesh_trianglulation.group_triangles_triangulation()
+#end_time = time.time()
 
+#print(len(group))
+print(f"Triangles count: {len(mesh.normals)}")
+#print(end_time - start_time)
 
 face1 = Face()
 face1.triangles = mesh_trianglulation.get_mesh_triangles()
