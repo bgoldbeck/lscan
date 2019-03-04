@@ -37,6 +37,13 @@ class Face:
         """
         return (self.normal == normal).all()
 
+    def count(self):
+        """
+        Counts the numbers of triangles in a face
+        :return: Int value
+        """
+        return len(self.triangles)
+
     def add_triangle(self, triangle: Triangle):
         """
         Assuming the input triangle is the correct triangle (that is satisfying the face's condition)
@@ -79,8 +86,8 @@ class Face:
     def set_difference(group_1, group_2):
         """
         Returns groups from group_1 that are not in group_2 (group_1 - group_2)
-        :param group_1:
-        :param group_2:
-        :return: list
+        :param group_1: List of triangles
+        :param group_2: List of triangles
+        :return: list of triangles
         """
-        return list(set(group_1.triangles) - set(group_2.triangles))
+        return list(set(group_1) - set(group_2))

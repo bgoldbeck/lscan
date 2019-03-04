@@ -255,7 +255,7 @@ class MeshTriangulation:
                 triangle = group.pop(0)
                 bucket = Face([triangle])
                 bucket = MeshTriangulation.regroup(triangle, group, bucket)  # Recursively find neighbor of a triangle
-                group = Face.set_difference(Face(group), bucket)  # Finding remaining triangles to find neighbors
+                group = Face.set_difference(group, bucket.triangles)  # Finding remaining triangles to find neighbors
                 all_faces.append(bucket)
         return all_faces
 
