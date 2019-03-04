@@ -15,6 +15,7 @@ from src.model_conversion.triangle import Triangle
 from src.util import Util
 from src.model_conversion.face import Face
 
+
 # Group by normals into N groups
 # For each group:recursively find neighbors for all edges
 # Copy mesh data array of triangles
@@ -91,7 +92,6 @@ class MeshTriangulation:
                 MeshTriangulation.regroup(triangle, group_triangles)
         return new_group
 
-
     @staticmethod
     def regroup(group):
         """
@@ -121,9 +121,6 @@ class MeshTriangulation:
         # faces.count() should return the number of planes on an object IE: A cube has 6 faces.
         output = []
         k = -1
-        for face in faces:
-            print("CLASS: CLASS CLASS:" + str(face.__class__))
-
         for face in faces:
             shared_edges = UniqueEdgeList()
             # len(face.triangles) should return the # of triangles in the face.
@@ -172,70 +169,70 @@ class MeshTriangulation:
 
                         # Case 2.
                         if (edge_inner.x1 == shared_vertex[0] and
-                            edge_inner.y1 == shared_vertex[1] and
-                            edge_inner.z1 == shared_vertex[2]):
-                                start_vertex = [edge_inner.x2, edge_inner.y2, edge_inner.z2]
+                                edge_inner.y1 == shared_vertex[1] and
+                                edge_inner.z1 == shared_vertex[2]):
+                            start_vertex = [edge_inner.x2, edge_inner.y2, edge_inner.z2]
 
                         # Case 3.
                         end_vertex = [edge_outer.x1, edge_outer.y1, edge_outer.z1]
 
                         # Case 4.
                         if (edge_outer.x1 == shared_vertex[0] and
-                            edge_outer.y1 == shared_vertex[1] and
-                            edge_outer.z1 == shared_vertex[2]):
-                                end_vertex = [edge_outer.x2, edge_outer.y2, edge_outer.z2]
+                                edge_outer.y1 == shared_vertex[1] and
+                                edge_outer.z1 == shared_vertex[2]):
+                            end_vertex = [edge_outer.x2, edge_outer.y2, edge_outer.z2]
                         outline_edge_group.edge_list.remove(edge_outer)
                         outline_edge_group.edge_list.remove(edge_inner)
                         outline_edge_group.add(
-                            Edge(start_vertex[0], start_vertex[1], start_vertex[2], # Edge Start
+                            Edge(start_vertex[0], start_vertex[1], start_vertex[2],  # Edge Start
                                  end_vertex[0], end_vertex[1], end_vertex[2]))  # Edge end
                         self._step_3_recursive(outline_edge_group)
 
-    def _step_3_part_2(self, grouped_edges):
+    def step_3_part_2(self, grouped_edges):
         """
 
-        :param grouped_edges: A list of list of edges that compose the edges of faces.
+        :param grouped_edges: A list of UniqueEdgeLists that compose the edges of a face.
         :return:
         """
-        grouped_buckets = []
+        buckets = []
 
         for group in grouped_edges:
-            first_bucket = UniqueEdgeList()
-            first_bucket.add(grouped_edges.edgeList[0])
-            buckets = [first_bucket]
-            buckets = self._step_3_part_2_recursive(buckets, group, 0)
-            grouped_buckets.append(buckets)
+            current_edge_list = UniqueEdgeList()
+            current_edge_list.add(group.edge_list[0])
 
-        return grouped_buckets
+            unique_edge_lists = self._step_3_part_2_recursive([current_edge_list], group, 0)
 
-    def _step_3_part_2_recursive(self, buckets, edges, i):
+            buckets.append(unique_edge_lists)
+
+        return buckets
+
+    def _step_3_part_2_recursive(self, unique_edge_lists: [], all_edges: UniqueEdgeList, i: int):
         """
 
-        :param edges:
+        :param all_edges:
         :return:
         """
-        if edges.edge_list.count() == 0:
-            return buckets
+        if len(all_edges.edge_list) == 0:
+            return unique_edge_lists
 
-        bucket = buckets[i]
+        # Remove all_edges from list that exist in bucket.
+        for e in unique_edge_lists[i].edge_list:
+            all_edges.remove(e)
 
-        for edge in edges.edge_list:
-            for edge_in_bucket in bucket.edge_list:
-                if not (Edge.same_edge(edge, edge_in_bucket) and
-                        Edge.has_shared_vertex(edge, edge_in_bucket)):
-                    if bucket.add(edge):
-                        return self._step_3_part_2_recursive(buckets, edges, i)
+        for e in all_edges.edge_list:
+            for current_edge in unique_edge_lists[i].edge_list:
+                if (not Edge.same_edge(e, current_edge)) and \
+                        (Edge.has_shared_vertex(e, current_edge) is not None):
+                    if unique_edge_lists[i].add(e):
+                        return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i)
 
-        # Remove edges from list that exist in bucket.
-        for edge in bucket.edge_list:
-            edges.edge_list.remove(edge)
+        if len(all_edges.edge_list) > 0:
+            new_edge_list = UniqueEdgeList()
+            new_edge_list.add(all_edges.edge_list[0])
+            unique_edge_lists.append(new_edge_list)
 
-        if edges.edge_list.count() > 0:
-            new_bucket = UniqueEdgeList()
-            new_bucket.add(edges.edge_list[0])
-            buckets.add(new_bucket)
-            return self._step_3_part_2_recursive(buckets, edges, i + 1)
-        return self._step_3_part_2_recursive(buckets, edges, i)
+            return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i + 1)
+        return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i)
 
     def _step_3_part_3(self, grouped_edges):
         """
@@ -259,20 +256,33 @@ face1.triangles = mesh_trianglulation.get_mesh_triangles()
 face2 = Face()
 face2.triangles = mesh_trianglulation.get_mesh_triangles()
 
-faces = [face1, face2]
+faces = [face1]
 
 output_step_2 = mesh_trianglulation.step_2(faces)
 output_step_3 = mesh_trianglulation.step_3(output_step_2)
+output_step_3_part_2 = mesh_trianglulation.step_3_part_2(output_step_3)
 
 print(f"Triangles count: {len(mesh.normals)}")
 
-for z in range(len(output_step_3)):
-    unique_edge_list = output_step_3[z]
-    unique_edge_list.display()
-    plt.figure(figsize=(1, 1), dpi=150)
-    for edge in unique_edge_list.edge_list:
-        plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o")
+t = -1
+print(f"Length of output_step_3_part_2: " + str(len(output_step_3_part_2)))
+
+for bucket in output_step_3_part_2:
+    print(f"Length of bucket: " + str(len(bucket)))
+    colors = ['g', 'b', 'r', 'y', 'k']
+    for unique_edge_list in bucket:
+        t += 1
+        if t > 4:
+            t = 0
+        for edge in unique_edge_list.edge_list:
+            plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o", color=colors[t])
     plt.show()
-    break
 
-
+# for z in range(len(output_step_3)):
+#    unique_edge_list = output_step_3[z]
+#    unique_edge_list.display()
+#    plt.figure(figsize=(1, 1), dpi=150)
+#    for edge in unique_edge_list.edge_list:
+#        plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o")
+#    plt.show()
+#    break

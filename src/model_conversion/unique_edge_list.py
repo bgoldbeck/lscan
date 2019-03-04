@@ -33,7 +33,7 @@ class UniqueEdgeList:
             if Edge.same_edge(self.edge_list[i], edge_to_remove):
                 index_found = i
 
-        if index_found is not -1:
+        if index_found != -1:
             del self.edge_list[index_found]
 
         return index_found is not -1
