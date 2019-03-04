@@ -58,6 +58,101 @@ class MeshTriangulation:
         return mesh_triangles
 
     @staticmethod
+    def regroup_by_neighbors(groups):
+        """
+        regroup by neighbors
+        :param groups: List of TriangleGroups
+        :return:
+        """
+        all_groups = []
+        for group in groups:
+            group_triangles = group.triangles
+            triangle = group_triangles.pop(-1)
+            while group_triangles:
+                new_group = MeshTriangulation.regroup(triangle, group_triangles)
+                all_groups.append(new_group)
+        return all_groups
+
+    @staticmethod
+    def regroup(triangle, group_triangles):
+        """
+        Recursive method
+        :param group:
+        :return:
+        """
+        if not group_triangles:
+            return []
+        edges = triangle.edges
+        match_triangles_1 = Triangle.get_edge_match(edges[0], group_triangles)
+        if not match_triangles_1:
+            return []
+        edge_1 = MeshTriangulation.regroup(match_triangles_1, group_triangles).append(match_triangles_1)
+        match_triangles_2 = Triangle.get_edge_match(edges[1], group_triangles)
+        if not match_triangles_2:
+            return []
+        edge_2 = MeshTriangulation.regroup(match_triangles_2, group_triangles).append(match_triangles_2)
+        match_triangles_3 = Triangle.get_edge_match(edges[2], group_triangles)
+        if not match_triangles_3:
+            return []
+        edge_3 = MeshTriangulation.regroup(match_triangles_3, group_triangles).append(match_triangles_3)
+        return edge_1 + edge_2 + edge_3
+
+    @staticmethod
+    def group_by_normal(triangles):
+        """
+
+        :param triangles:
+        :return: a list of list of triangles that have same normal.
+        """
+
+    @staticmethod
+    def group_by_face(normal_groups):
+        """
+        This function is assumed that the input is a list of list of triangles that are sorted by normal.
+        Any false input may caused bugs or errors.
+
+        The algorithm:
+        For each normal group do:
+            loop until the normal group is empty:
+                pop a triangle in the normal group (this will guaranty that the loop will end)
+                set a flag (in a face) is false
+                check the whole group finding a neighbor.
+                    if having neighbor:
+                        creating a face and pass the triangle as parameter
+                        set the flag is true
+                        loop all normal group to pop all triangle belong to that face.
+                        (since we know that there is at least one triangle is neighbor with that triangle)
+                        adding the face to face groups
+                if the flag is false, adding that triangle to fa group (for this triangle is alone)
+
+
+
+
+        :param normal_groups: is a list of list of triangles that are sorted by normal.
+        :return face_group: a list of faces
+        """
+        fa_group = []
+        face_group = []
+
+        for normal_group in normal_groups:
+            while not normal_group:
+                chosen_triangle = normal_group.pop()
+                in_face = False
+                for triangle in normal_group:
+                    if Triangle.are_neighbors(triangle, chosen_triangle):
+                        face = Face(chosen_triangle)
+                        in_face = True
+                        # looping to pull all triangles in same face
+                        for neighbor in normal_group:
+                            if face.has_neighbor(neighbor):
+                                face.add_triangle(neighbor)
+                                normal_group.remove(neighbor)
+                if not in_face:
+                    fa_group.append(chosen_triangle)
+
+        return face_group
+
+    @staticmethod
     def group_triangles_by_normals(triangles):
         """
         Group triangles by normal
@@ -76,30 +171,6 @@ class MeshTriangulation:
                 faces_groups.append(Face([triangle]))
             group_match = False
         return faces_groups
-
-    @staticmethod
-    def regroup_by_neighbors(groups):
-        """
-        regroup by neighbors
-        :param groups: List of TriangleGroups
-        :return:
-        """
-        groups
-        new_group = []
-        for group in groups:
-            group_triangles = group.triangles
-            triangle = group_triangles.pop(-1)
-            while group_triangles:
-                MeshTriangulation.regroup(triangle, group_triangles)
-        return new_group
-
-    @staticmethod
-    def regroup(group):
-        """
-        Recursive method
-        :param group:
-        :return:
-        """
 
     def group_triangles_triangulation(self):
         """
@@ -264,120 +335,6 @@ class MeshTriangulation:
 
         return list_of_outer_boundary_indices
 
-    @staticmethod
-    def group_triangles_by_normals(triangles):
-        """
-        Group triangles by normal
-        :param triangles: List of Triangles
-        :return: List of Faces
-        """
-        faces_groups = []
-        group_match = False
-        for triangle in triangles:
-            for group in faces_groups:
-                if group.match_normal(triangle.normal):
-                    group_match = True
-                    group.add_triangle(triangle)
-                    break
-            if not group_match:
-                faces_groups.append(Face([triangle]))
-            group_match = False
-        return faces_groups
-
-    @staticmethod
-    def regroup_by_neighbors(groups):
-        """
-        regroup by neighbors
-        :param groups: List of TriangleGroups
-        :return:
-        """
-        all_groups = []
-        for group in groups:
-            group_triangles = group.triangles
-            triangle = group_triangles.pop(-1)
-            while group_triangles:
-                new_group = MeshTriangulation.regroup(triangle, group_triangles)
-                all_groups.append(new_group)
-        return all_groups
-
-    @staticmethod
-    def regroup(triangle, group_triangles):
-        """
-        Recursive method
-        :param group:
-        :return:
-        """
-        if not group_triangles:
-            return []
-        edges = triangle.edges
-        match_triangles_1 = Triangle.get_edge_match(edges[0], group_triangles)
-        if not match_triangles_1:
-            return []
-        edge_1 = MeshTriangulation.regroup(match_triangles_1, group_triangles).append(match_triangles_1)
-        match_triangles_2 = Triangle.get_edge_match(edges[1], group_triangles)
-        if not match_triangles_2:
-            return []
-        edge_2 = MeshTriangulation.regroup(match_triangles_2, group_triangles).append(match_triangles_2)
-        match_triangles_3 = Triangle.get_edge_match(edges[2], group_triangles)
-        if not match_triangles_3:
-            return []
-        edge_3 = MeshTriangulation.regroup(match_triangles_3, group_triangles).append(match_triangles_3)
-        return edge_1 + edge_2 + edge_3
-
-    @staticmethod
-    def group_by_normal(triangles):
-        """
-
-        :param triangles:
-        :return: a list of list of triangles that have same normal.
-        """
-
-    @staticmethod
-    def group_by_face(normal_groups):
-        """
-        This function is assumed that the input is a list of list of triangles that are sorted by normal.
-        Any false input may caused bugs or errors.
-
-        The algorithm:
-        For each normal group do:
-            loop until the normal group is empty:
-                pop a triangle in the normal group (this will guaranty that the loop will end)
-                set a flag (in a face) is false
-                check the whole group finding a neighbor.
-                    if having neighbor:
-                        creating a face and pass the triangle as parameter
-                        set the flag is true
-                        loop all normal group to pop all triangle belong to that face.
-                        (since we know that there is at least one triangle is neighbor with that triangle)
-                        adding the face to face groups
-                if the flag is false, adding that triangle to fa group (for this triangle is alone)
-
-
-
-
-        :param normal_groups: is a list of list of triangles that are sorted by normal.
-        :return face_group: a list of faces
-        """
-        fa_group = []
-        face_group = []
-
-        for normal_group in normal_groups:
-            while not normal_group:
-                chosen_triangle = normal_group.pop()
-                in_face = False
-                for triangle in normal_group:
-                    if Triangle.are_neighbors(triangle, chosen_triangle):
-                        face = Face(chosen_triangle)
-                        in_face = True
-                        # looping to pull all triangles in same face
-                        for neighbor in normal_group:
-                            if face.has_neighbor(neighbor):
-                                face.add_triangle(neighbor)
-                                normal_group.remove(neighbor)
-                if not in_face:
-                    fa_group.append(chosen_triangle)
-
-        return face_group
 # test script
 
 #start_time = time.time()
