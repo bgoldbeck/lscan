@@ -86,9 +86,9 @@ class Triangle:
         """
         result = False
         # x being an edge in the first triangle.
-        for x in t1:
+        for x in t1.edges:
             # y being an edge in the second triangle.
-            for y in t2:
+            for y in t2.edges:
                 if Edge.same_edge(x, y):
                     # We just need one shared edge to be true.
                     result = True
