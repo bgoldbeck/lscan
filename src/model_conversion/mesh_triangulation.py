@@ -7,12 +7,15 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
+import matplotlib.pyplot as plt
+import time
 from stl import Mesh
 from src.model_conversion.edge import Edge
 from src.model_conversion.unique_edge_list import UniqueEdgeList
 from src.model_conversion.triangle import Triangle
 from src.util import Util
 from src.model_conversion.face import Face
+
 
 # Group by normals into N groups
 # For each group:recursively find neighbors for all edges
@@ -63,7 +66,7 @@ class MeshTriangulation:
         groups = MeshTriangulation.group_triangles_by_normals(triangles)
         return MeshTriangulation.regroup_by_neighbors(groups)
 
-    def _step_2(self, faces):
+    def step_2(self, faces: []):
         """Step 2. Remove shared edges.
         Input: List of faces.
         Output: List of a list of edges where each list of edges is the edges that were not shared
@@ -76,48 +79,27 @@ class MeshTriangulation:
         output = []
         k = -1
         for face in faces:
-            k += 1
-            output[k] = UniqueEdgeList()
-            # face.count() should return the # of triangles in the face.
-            for m in range(face.count()):
-                for n in range(face.count()):
+            shared_edges = UniqueEdgeList()
+            # len(face.triangles) should return the # of triangles in the face.
+            for m in range(len(face.triangles)):
+                for n in range(len(face.triangles)):
                     if m is not n:
                         for i in range(3):
-                            j = i + 1
-                            if i is 2:
-                                j = 0
-                            # Compare an edge in triangle "m" vs the 3 other edges in
-                            # triangle "n"
-                            tri1_edge = Edge(
-                                face[m, i, 0], face[m, i, 1], face[m, i, 2],
-                                face[m, j, 0], face[m, j, 1], face[m, j, 2])
+                            for j in range(3):
+                                # Compare an edge in triangle "m" vs the 3 other edges in
+                                # triangle "n"
+                                if Edge.are_overlapping_edges(face.triangles[m].edges[i],
+                                                              face.triangles[n].edges[j]):
+                                    shared_edges.add(face.triangles[m].edges[i])
 
-                            tri2_edge01 = Edge(
-                                face[n, 0, 0], face[n, 0, 1], face[n, 0, 2],
-                                face[n, 1, 0], face[n, 1, 1], face[n, 1, 2])
-
-                            tri2_edge12 = Edge(
-                                face[n, 1, 0], face[n, 1, 1], face[n, 1, 2],
-                                face[n, 2, 0], face[n, 2, 1], face[n, 2, 2])
-
-                            tri2_edge20 = Edge(
-                                face[n, 2, 0], face[n, 2, 1], face[n, 2, 2],
-                                face[n, 0, 0], face[n, 0, 1], face[n, 0, 2])
-
-                            if Edge.are_overlapping_edges(tri1_edge, tri2_edge01):
-                                output[k].Add(tri1_edge)
-
-                            if Edge.are_overlapping_edges(tri1_edge, tri2_edge12):
-                                output[k].Add(tri1_edge)
-
-                            if Edge.are_overlapping_edges(tri1_edge, tri2_edge20):
-                                output[k].Add(tri1_edge)
-
-            output[k] = UniqueEdgeList.set_difference(face.to_edge_list(), output[k])
+            k += 1
+            output.append(UniqueEdgeList())
+            all_edges_in_face = face.get_edges()
+            output[k] = UniqueEdgeList.set_difference(all_edges_in_face, shared_edges)
 
         return output
 
-    def _step_3(self, grouped_edges):
+    def step_3(self, grouped_edges):
         """
         :param grouped_edges: A list of list of edges, grouped by connectivity between edges.
         :return: List of a list of edges where each list of edges have been simplified. Connecting
@@ -126,9 +108,9 @@ class MeshTriangulation:
         output = []
         k = -1
         for outline_edge_group in grouped_edges:
-            k += 1
             self._step_3_recursive(outline_edge_group)
-            # Assuming outline_edge_group is changed by step_3_recursive.
+            k += 1
+            output.append(UniqueEdgeList())
             output[k] = outline_edge_group
         return output
 
@@ -144,79 +126,99 @@ class MeshTriangulation:
 
                         # Case 2.
                         if (edge_inner.x1 == shared_vertex[0] and
-                            edge_inner.y1 == shared_vertex[1] and
-                            edge_inner.z1 == shared_vertex[2]):
-                                start_vertex = [edge_inner.x2, edge_inner.y2, edge_inner.z2]
+                                edge_inner.y1 == shared_vertex[1] and
+                                edge_inner.z1 == shared_vertex[2]):
+                            start_vertex = [edge_inner.x2, edge_inner.y2, edge_inner.z2]
 
                         # Case 3.
                         end_vertex = [edge_outer.x1, edge_outer.y1, edge_outer.z1]
 
                         # Case 4.
                         if (edge_outer.x1 == shared_vertex[0] and
-                            edge_outer.y1 == shared_vertex[1] and
-                            edge_outer.z1 == shared_vertex[2]):
-                                end_vertex = [edge_outer.x2, edge_outer.y2, edge_outer.z2]
+                                edge_outer.y1 == shared_vertex[1] and
+                                edge_outer.z1 == shared_vertex[2]):
+                            end_vertex = [edge_outer.x2, edge_outer.y2, edge_outer.z2]
                         outline_edge_group.edge_list.remove(edge_outer)
                         outline_edge_group.edge_list.remove(edge_inner)
                         outline_edge_group.add(
-                            Edge(start_vertex[0], start_vertex[1], start_vertex[2], # Edge Start
+                            Edge(start_vertex[0], start_vertex[1], start_vertex[2],  # Edge Start
                                  end_vertex[0], end_vertex[1], end_vertex[2]))  # Edge end
-                        self._step_3(outline_edge_group)
+                        self._step_3_recursive(outline_edge_group)
 
-    def _step_3_part_2(self, grouped_edges):
+    def step_3_part_2(self, grouped_edges):
         """
 
-        :param grouped_edges: A list of list of edges that compose the edges of faces.
+        :param grouped_edges: A list of UniqueEdgeLists that compose the edges of a face.
         :return:
         """
-        grouped_buckets = []
+        buckets = []
 
         for group in grouped_edges:
-            first_bucket = UniqueEdgeList()
-            first_bucket.add(grouped_edges.edgeList[0])
-            buckets = [first_bucket]
-            buckets = self._step_3_part_2_recursive(buckets, group, 0)
-            grouped_buckets.append(buckets)
+            if len(group.edge_list) > 0:
+                current_edge_list = UniqueEdgeList()
+                current_edge_list.add(group.edge_list[0])
 
-        return grouped_buckets
+                unique_edge_lists = self._step_3_part_2_recursive([current_edge_list], group, 0)
 
-    def _step_3_part_2_recursive(self, buckets, edges, i):
+                buckets.append(unique_edge_lists)
+
+        return buckets
+
+    def _step_3_part_2_recursive(self, unique_edge_lists: [], all_edges: UniqueEdgeList, i: int):
         """
 
-        :param edges:
+        :param all_edges:
         :return:
         """
-        if edges.edge_list.count() == 0:
-            return buckets
+        if len(all_edges.edge_list) == 0:
+            return unique_edge_lists
 
-        bucket = buckets[i]
+        # Remove all_edges from list that exist in bucket.
+        for e in unique_edge_lists[i].edge_list:
+            all_edges.remove(e)
 
-        for edge in edges.edge_list:
-            for edge_in_bucket in bucket.edge_list:
-                if not (Edge.same_edge(edge, edge_in_bucket) and
-                        Edge.has_shared_vertex(edge, edge_in_bucket)):
-                    if bucket.add(edge):
-                        return self._step_3_part_2_recursive(buckets, edges, i)
+        for e in all_edges.edge_list:
+            for current_edge in unique_edge_lists[i].edge_list:
+                if (not Edge.same_edge(e, current_edge)) and \
+                        (Edge.has_shared_vertex(e, current_edge) is not None):
+                    if unique_edge_lists[i].add(e):
+                        return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i)
 
-        # Remove edges from list that exist in bucket.
-        for edge in bucket.edge_list:
-            edges.edge_list.remove(edge)
+        if len(all_edges.edge_list) > 0:
+            new_edge_list = UniqueEdgeList()
+            new_edge_list.add(all_edges.edge_list[0])
+            unique_edge_lists.append(new_edge_list)
 
-        if edges.edge_list.count() > 0:
-            new_bucket = UniqueEdgeList()
-            new_bucket.add(edges.edge_list[0])
-            buckets.add(new_bucket)
-            return self._step_3_part_2_recursive(buckets, edges, i + 1)
-        return self._step_3_part_2_recursive(buckets, edges, i)
+            return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i + 1)
+        return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i)
 
-    def _step_3_part_3(self, grouped_edges):
+    def step_3_part_3(self, grouped_edges):
         """
 
         :param grouped_edges:
         :return:
         """
-        max_dist_to_origin = -1.0
-        outer_boundary_index = 0
+        list_of_outer_boundary_indices = []
+
+        for bucket in grouped_edges:
+            outer_boundary_index = 0
+            max_dist_to_origin = -1.0
+            for i in range(len(bucket)):
+                for edge in bucket[i].edge_list:
+                    origin_to_start = Edge(0, 0, 0, edge.x1, edge.y1, edge.z1)
+                    origin_to_end = Edge(0, 0, 0, edge.x2, edge.y2, edge.z2)
+
+                    if origin_to_start.length() > max_dist_to_origin:
+                        max_dist_to_origin = origin_to_start.length()
+                        outer_boundary_index = i
+
+                    if origin_to_end.length() > max_dist_to_origin:
+                        max_dist_to_origin = origin_to_end.length()
+                        outer_boundary_index = i
+
+            list_of_outer_boundary_indices.append(outer_boundary_index)
+
+        return list_of_outer_boundary_indices
 
     @staticmethod
     def group_triangles_by_normals(triangles):

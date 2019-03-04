@@ -9,11 +9,12 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 from src.model_conversion.edge import Edge
 from src.model_conversion.triangle import Triangle
+from src.model_conversion.unique_edge_list import UniqueEdgeList
 
 
 class Face:
     """
-
+    A face is a group of triangles that share same normal and are connected to each other.
     """
 
     def __init__(self, triangles=None):
@@ -38,7 +39,7 @@ class Face:
 
     def add_triangle(self, triangle: Triangle):
         """
-
+        Assuming the input triangle is the correct triangle (that is satisfying the face's condition)
         :param triangle:
         :return:
         """
@@ -63,21 +64,16 @@ class Face:
         return self.normal
 
     def get_edges(self):
-        """
-        Gets all the edges of all the triangles in a Face
-        :return: return a list of edges in the face (no duplicate)
-        """
-        list_edge = []
+        """Gets all the edges of all the triangles in a Face
 
+        :return:
+        """
+        result = UniqueEdgeList()
         for triangle in self.triangles:
-            edge_1 = triangle.get_first_edge()
-            edge_2 = triangle.get_second_edge()
-            edge_3 = triangle.get_third_edge()
-
-            list_edge.append(edge_1)
-            list_edge.append(edge_2)
-            list_edge.append(edge_3)
-        return set(list_edge)
+            result.add(triangle.edges[0])
+            result.add(triangle.edges[1])
+            result.add(triangle.edges[2])
+        return result
 
     @staticmethod
     def set_difference(group_1, group_2):

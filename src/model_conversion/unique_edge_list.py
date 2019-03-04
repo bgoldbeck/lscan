@@ -21,6 +21,23 @@ class UniqueEdgeList:
         """
         self.edge_list = []
 
+    def remove(self, edge_to_remove: Edge):
+        """Attempt to remove an edge from the list of edges.
+
+        :param edge_to_remove: The edge to search for.
+        :return: True, if the edge was removed.
+        """
+        index_found = -1
+
+        for i in range(len(self.edge_list)):
+            if Edge.same_edge(self.edge_list[i], edge_to_remove):
+                index_found = i
+
+        if index_found != -1:
+            del self.edge_list[index_found]
+
+        return index_found is not -1
+
     def add(self, new_edge: Edge):
         """Add a new edge to this list, but only if it isn't in there already.
 
@@ -46,14 +63,22 @@ class UniqueEdgeList:
         :param b: The second set.
         :return: A list of edges in set 'a' that aren't in set 'b'.
         """
-        #result = []
-        #for edge_in_a in a:
-        #    for edge_in_b in b:
-        #        if Edge.same_edge(edge_in_a, edge_in_b):
-        #            found = True
-        #    if not found:
-        #        result.append(edge_in_a)
-        #return result
-        return list(set(a.edge_list) - set(b.edge_list))
+        result = UniqueEdgeList()
+        new_edge_list = []
+        for edge_in_a in a.edge_list:
+            found = False
+            for edge_in_b in b.edge_list:
+                if Edge.same_edge(edge_in_a, edge_in_b):
+                    found = True
+            if not found:
+                new_edge_list.append(edge_in_a)
+        result.edge_list = new_edge_list
+        return result
 
+    def to_vertex_array(self):
+        return [[]]
+
+    def display(self):
+        for edge in self.edge_list:
+            edge.display()
 
