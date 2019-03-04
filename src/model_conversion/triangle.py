@@ -105,15 +105,14 @@ class Triangle:
         pass
 
     @staticmethod
-    def get_edge_match(edge: Edge, triangles):
+    def match_triangle_index(edge: Edge, triangles):
         """
-        Check if any triangle has the matching edge
-        :param self:
-        :param edge:
-        :param triangles:
-        :return:
+        Checks if an any triangle has a matching edge or not
+        :param edge: An Edge to check for matching traingle
+        :param triangles: List of Triangles
+        :return: An index of matching triangle or None
         """
-        for triangle in triangles:
+        for index, triangle in enumerate(triangles):
             if triangle.has_edge(edge):
-                return triangles.pop(triangle)
+                return index
         return None
