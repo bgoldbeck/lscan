@@ -5,3 +5,4 @@ pyrr
 numpy-stl
 pyquaternion
 pillow
+matplotlib
