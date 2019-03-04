@@ -135,3 +135,8 @@ class Edge:
         angle = math.degrees(radians)
 
         return angle == 0.0 or angle == 180.0
+
+    def display(self):
+        print("x1: " + str(self.x1) + ", y1: " + str(self.y1) + ", z1: " + str(self.z1) +
+              " || , x2: " + str(self.x2) + ", y2: " + str(self.y2) + ", z2: " + str(self.z2) +
+              " Length: " + str(self.length()))

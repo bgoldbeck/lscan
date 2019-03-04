@@ -7,6 +7,7 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
+import matplotlib.pyplot as plt
 from stl import Mesh
 from src.model_conversion.edge import Edge
 from src.model_conversion.unique_edge_list import UniqueEdgeList
@@ -265,5 +266,13 @@ output_step_3 = mesh_trianglulation.step_3(output_step_2)
 
 print(f"Triangles count: {len(mesh.normals)}")
 
+for z in range(len(output_step_3)):
+    unique_edge_list = output_step_3[z]
+    unique_edge_list.display()
+    plt.figure(figsize=(1, 1), dpi=150)
+    for edge in unique_edge_list.edge_list:
+        plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o")
+    plt.show()
+    break
 
 

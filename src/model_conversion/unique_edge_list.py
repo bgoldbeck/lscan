@@ -75,5 +75,7 @@ class UniqueEdgeList:
         result.edge_list = new_edge_list
         return result
 
-
+    def display(self):
+        for edge in self.edge_list:
+            edge.display()
 
