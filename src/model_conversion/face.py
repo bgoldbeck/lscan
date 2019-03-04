@@ -8,6 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 from src.model_conversion.triangle import Triangle
+from src.model_conversion.unique_edge_list import UniqueEdgeList
 
 
 class Face:
@@ -62,12 +63,16 @@ class Face:
         return self.normal
 
     def get_edges(self):
-        """
-        Gets all the edges of all the triangles in a Face
+        """Gets all the edges of all the triangles in a Face
+
         :return:
         """
-        #TODO
-        pass
+        result = UniqueEdgeList()
+        for triangle in self.triangles:
+            result.add(triangle.edges[0])
+            result.add(triangle.edges[1])
+            result.add(triangle.edges[2])
+        return result
 
     @staticmethod
     def set_difference(group_1, group_2):

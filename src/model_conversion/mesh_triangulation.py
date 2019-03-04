@@ -50,7 +50,7 @@ class MeshTriangulation:
             vertex_3 = data[1][2]
             edge_1 = Edge(vertex_1[0], vertex_1[1], vertex_1[2], vertex_2[0], vertex_2[1], vertex_2[2])
             edge_2 = Edge(vertex_2[0], vertex_2[1], vertex_2[2], vertex_3[0], vertex_3[1], vertex_3[2])
-            edge_3 = Edge(vertex_1[0], vertex_1[1], vertex_1[2], vertex_3[0], vertex_3[1], vertex_3[2])
+            edge_3 = Edge(vertex_3[0], vertex_3[1], vertex_3[2], vertex_1[0], vertex_1[1], vertex_1[2])
             mesh_triangles.append(Triangle(edge_1, edge_2, edge_3, normal=normal))
         return mesh_triangles
 
@@ -99,8 +99,6 @@ class MeshTriangulation:
         :return:
         """
 
-
-
     def group_triangles_triangulation(self):
         """
 
@@ -110,7 +108,7 @@ class MeshTriangulation:
         groups = MeshTriangulation.group_triangles_by_normals(triangles)
         return MeshTriangulation.regroup_by_neighbors(groups)
 
-    def _step_2(self, faces):
+    def step_2(self, faces: []):
         """Step 2. Remove shared edges.
         Input: List of faces.
         Output: List of a list of edges where each list of edges is the edges that were not shared
@@ -123,48 +121,30 @@ class MeshTriangulation:
         output = []
         k = -1
         for face in faces:
-            k += 1
-            output[k] = UniqueEdgeList()
-            # face.count() should return the # of triangles in the face.
-            for m in range(face.count()):
-                for n in range(face.count()):
+            print("CLASS: CLASS CLASS:" + str(face.__class__))
+
+        for face in faces:
+            shared_edges = UniqueEdgeList()
+            # len(face.triangles) should return the # of triangles in the face.
+            for m in range(len(face.triangles)):
+                for n in range(len(face.triangles)):
                     if m is not n:
                         for i in range(3):
-                            j = i + 1
-                            if i is 2:
-                                j = 0
-                            # Compare an edge in triangle "m" vs the 3 other edges in
-                            # triangle "n"
-                            tri1_edge = Edge(
-                                face[m, i, 0], face[m, i, 1], face[m, i, 2],
-                                face[m, j, 0], face[m, j, 1], face[m, j, 2])
+                            for j in range(3):
+                                # Compare an edge in triangle "m" vs the 3 other edges in
+                                # triangle "n"
+                                if Edge.are_overlapping_edges(face.triangles[m].edges[i],
+                                                              face.triangles[n].edges[j]):
+                                    shared_edges.add(face.triangles[m].edges[i])
 
-                            tri2_edge01 = Edge(
-                                face[n, 0, 0], face[n, 0, 1], face[n, 0, 2],
-                                face[n, 1, 0], face[n, 1, 1], face[n, 1, 2])
-
-                            tri2_edge12 = Edge(
-                                face[n, 1, 0], face[n, 1, 1], face[n, 1, 2],
-                                face[n, 2, 0], face[n, 2, 1], face[n, 2, 2])
-
-                            tri2_edge20 = Edge(
-                                face[n, 2, 0], face[n, 2, 1], face[n, 2, 2],
-                                face[n, 0, 0], face[n, 0, 1], face[n, 0, 2])
-
-                            if Edge.are_overlapping_edges(tri1_edge, tri2_edge01):
-                                output[k].Add(tri1_edge)
-
-                            if Edge.are_overlapping_edges(tri1_edge, tri2_edge12):
-                                output[k].Add(tri1_edge)
-
-                            if Edge.are_overlapping_edges(tri1_edge, tri2_edge20):
-                                output[k].Add(tri1_edge)
-
-            output[k] = UniqueEdgeList.set_difference(face.to_edge_list(), output[k])
+            k += 1
+            output.append(UniqueEdgeList())
+            all_edges_in_face = face.get_edges()
+            output[k] = UniqueEdgeList.set_difference(all_edges_in_face, shared_edges)
 
         return output
 
-    def _step_3(self, grouped_edges):
+    def step_3(self, grouped_edges):
         """
         :param grouped_edges: A list of list of edges, grouped by connectivity between edges.
         :return: List of a list of edges where each list of edges have been simplified. Connecting
@@ -173,9 +153,9 @@ class MeshTriangulation:
         output = []
         k = -1
         for outline_edge_group in grouped_edges:
-            k += 1
             self._step_3_recursive(outline_edge_group)
-            # Assuming outline_edge_group is changed by step_3_recursive.
+            k += 1
+            output.append(UniqueEdgeList())
             output[k] = outline_edge_group
         return output
 
@@ -208,7 +188,7 @@ class MeshTriangulation:
                         outline_edge_group.add(
                             Edge(start_vertex[0], start_vertex[1], start_vertex[2], # Edge Start
                                  end_vertex[0], end_vertex[1], end_vertex[2]))  # Edge end
-                        self._step_3(outline_edge_group)
+                        self._step_3_recursive(outline_edge_group)
 
     def _step_3_part_2(self, grouped_edges):
         """
@@ -269,8 +249,20 @@ class MeshTriangulation:
 # test script
 
 
-mesh = Mesh.from_file(Util.path_conversion("assets/models/cube.stl"), calculate_normals=False)
+mesh = Mesh.from_file(Util.path_conversion("assets/models/untitled.stl"), calculate_normals=False)
 mesh_trianglulation = MeshTriangulation(mesh)
+
+face1 = Face()
+face1.triangles = mesh_trianglulation.get_mesh_triangles()
+
+face2 = Face()
+face2.triangles = mesh_trianglulation.get_mesh_triangles()
+
+faces = [face1, face2]
+
+output_step_2 = mesh_trianglulation.step_2(faces)
+output_step_3 = mesh_trianglulation.step_3(output_step_2)
+
 print(f"Triangles count: {len(mesh.normals)}")
 
 
