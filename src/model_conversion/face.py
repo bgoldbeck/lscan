@@ -14,7 +14,7 @@ from src.model_conversion.unique_edge_list import UniqueEdgeList
 
 class Face:
     """
-
+    A face is a group of triangles that share same normal and are connected to each other.
     """
 
     def __init__(self, triangles=None):
@@ -39,7 +39,7 @@ class Face:
 
     def add_triangle(self, triangle: Triangle):
         """
-
+        Assuming the input triangle is the correct triangle (that is satisfying the face's condition)
         :param triangle:
         :return:
         """
