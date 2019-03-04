@@ -278,6 +278,61 @@ class MeshTriangulation:
             return []
         edge_3 = MeshTriangulation.regroup(match_triangles_3, group_triangles).append(match_triangles_3)
         return edge_1 + edge_2 + edge_3
+
+    @staticmethod
+    def group_by_normal(triangles):
+        """
+
+        :param triangles:
+        :return: a list of list of triangles that have same normal.
+        """
+
+    @staticmethod
+    def group_by_face(normal_groups):
+        """
+        This function is assumed that the input is a list of list of triangles that are sorted by normal.
+        Any false input may caused bugs or errors.
+
+        The algorithm:
+        For each normal group do:
+            loop until the normal group is empty:
+                pop a triangle in the normal group (this will guaranty that the loop will end)
+                set a flag (in a face) is false
+                check the whole group finding a neighbor.
+                    if having neighbor:
+                        creating a face and pass the triangle as parameter
+                        set the flag is true
+                        loop all normal group to pop all triangle belong to that face.
+                        (since we know that there is at least one triangle is neighbor with that triangle)
+                        adding the face to face groups
+                if the flag is false, adding that triangle to fa group (for this triangle is alone)
+
+
+
+
+        :param normal_groups: is a list of list of triangles that are sorted by normal.
+        :return face_group: a list of faces
+        """
+        fa_group = []
+        face_group = []
+
+        for normal_group in normal_groups:
+            while not normal_group:
+                chosen_triangle = normal_group.pop()
+                in_face = False
+                for triangle in normal_group:
+                    if Triangle.are_neighbors(triangle, chosen_triangle):
+                        face = Face(chosen_triangle)
+                        in_face = True
+                        # looping to pull all triangles in same face
+                        for neighbor in normal_group:
+                            if face.has_neighbor(neighbor):
+                                face.add_triangle(neighbor)
+                                normal_group.remove(neighbor)
+                if not in_face:
+                    fa_group.append(chosen_triangle)
+
+        return face_group
 # test script
 
 start_time = time.time()

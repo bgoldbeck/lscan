@@ -13,7 +13,7 @@ from src.model_conversion.triangle import Triangle
 
 class Face:
     """
-
+    A face is a group of triangles that share same normal and are connected to each other.
     """
 
     def __init__(self, triangles=None):
@@ -38,7 +38,7 @@ class Face:
 
     def add_triangle(self, triangle: Triangle):
         """
-
+        Assuming the input triangle is the correct triangle (that is satisfying the face's condition)
         :param triangle:
         :return:
         """
@@ -77,7 +77,7 @@ class Face:
             list_edge.append(edge_1)
             list_edge.append(edge_2)
             list_edge.append(edge_3)
-        return set(list_edge)
+        return list(set(list_edge))
 
     @staticmethod
     def set_difference(group_1, group_2):
