@@ -315,7 +315,7 @@ class MeshTriangulation:
         """
         list_of_outer_boundary_indices = []
 
-        for bucket in output_step_3_part_2:
+        for bucket in grouped_edges:
             outer_boundary_index = 0
             max_dist_to_origin = -1.0
             for i in range(len(bucket)):
@@ -335,62 +335,3 @@ class MeshTriangulation:
 
         return list_of_outer_boundary_indices
 
-# test script
-
-#start_time = time.time()
-mesh = Mesh.from_file(Util.path_conversion("assets/models/2_holes.stl"), calculate_normals=False)
-mesh_trianglulation = MeshTriangulation(mesh)
-#group = mesh_trianglulation.group_triangles_triangulation()
-#end_time = time.time()
-
-#print(len(group))
-print(f"Triangles count: {len(mesh.normals)}")
-#print(end_time - start_time)
-
-face1 = Face()
-face1.triangles = mesh_trianglulation.get_mesh_triangles()
-
-face2 = Face()
-face2.triangles = mesh_trianglulation.get_mesh_triangles()
-
-faces = [face1]
-
-output_step_2 = mesh_trianglulation.step_2(faces)
-output_step_3 = mesh_trianglulation.step_3(output_step_2)
-output_step_3_part_2 = mesh_trianglulation.step_3_part_2(output_step_3)
-# The output for step_3_part3 and step_3_part_2 are both useful.
-output_step_3_part_3 = mesh_trianglulation.step_3_part_3(output_step_3_part_2)
-
-# output_step_3_part_2: Contains a list of "buckets", where each bucket contains a list of
-# UniqueEdgeLists.
-
-# output_step_3_part_3: An array of indices that reference
-# each buckets corresponding outer boundary.
-
-print(f"Triangles count: {len(mesh.normals)}")
-
-t = -1
-print(f"Length of output_step_3_part_2: " + str(len(output_step_3_part_2)))
-
-for i in range(len(output_step_3_part_2)):
-    bucket = output_step_3_part_2[i]
-    print(f"Length of bucket: " + str(len(bucket)))
-    print(f"Outer Boundary Index: " + str(output_step_3_part_3[i]))
-    colors = ['g', 'b', 'k', 'y', 'r']
-    for unique_edge_list in output_step_3_part_2[i]:
-        t += 1
-        if t > 4:
-            t = 0
-        print(f"col index: " + str(t))
-        for edge in unique_edge_list.edge_list:
-            plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o", color=colors[t])
-    plt.show()
-
-# for z in range(len(output_step_3)):
-#    unique_edge_list = output_step_3[z]
-#    unique_edge_list.display()
-#    plt.figure(figsize=(1, 1), dpi=150)
-#    for edge in unique_edge_list.edge_list:
-#        plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o")
-#    plt.show()
-#    break
