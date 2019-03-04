@@ -75,6 +75,9 @@ class UniqueEdgeList:
         result.edge_list = new_edge_list
         return result
 
+    def to_vertex_array(self):
+        return [[]]
+
     def display(self):
         for edge in self.edge_list:
             edge.display()

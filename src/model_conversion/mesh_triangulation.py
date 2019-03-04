@@ -234,21 +234,41 @@ class MeshTriangulation:
             return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i + 1)
         return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i)
 
-    def _step_3_part_3(self, grouped_edges):
+    def step_3_part_3(self, grouped_edges):
         """
 
         :param grouped_edges:
         :return:
         """
-        max_dist_to_origin = -1.0
-        outer_boundary_index = 0
+        list_of_outer_boundary_indices = []
+
+        for bucket in output_step_3_part_2:
+            outer_boundary_index = 0
+            max_dist_to_origin = -1.0
+            for i in range(len(bucket)):
+                for edge in bucket[i].edge_list:
+                    origin_to_start = Edge(0, 0, 0, edge.x1, edge.y1, edge.z1)
+                    origin_to_end = Edge(0, 0, 0, edge.x2, edge.y2, edge.z2)
+
+                    if origin_to_start.length() > max_dist_to_origin:
+                        max_dist_to_origin = origin_to_start.length()
+                        outer_boundary_index = i
+
+                    if origin_to_end.length() > max_dist_to_origin:
+                        max_dist_to_origin = origin_to_end.length()
+                        outer_boundary_index = i
+
+            list_of_outer_boundary_indices.append(outer_boundary_index)
+
+        return list_of_outer_boundary_indices
 
 
 # test script
-
-
 mesh = Mesh.from_file(Util.path_conversion("assets/models/untitled.stl"), calculate_normals=False)
+
+
 mesh_trianglulation = MeshTriangulation(mesh)
+
 
 face1 = Face()
 face1.triangles = mesh_trianglulation.get_mesh_triangles()
@@ -261,19 +281,30 @@ faces = [face1]
 output_step_2 = mesh_trianglulation.step_2(faces)
 output_step_3 = mesh_trianglulation.step_3(output_step_2)
 output_step_3_part_2 = mesh_trianglulation.step_3_part_2(output_step_3)
+# The output for step_3_part3 and step_3_part_2 are both useful.
+output_step_3_part_3 = mesh_trianglulation.step_3_part_3(output_step_3_part_2)
+
+# output_step_3_part_2: Contains a list of "buckets", where each bucket contains a list of
+# UniqueEdgeLists.
+
+# output_step_3_part_3: An array of indices that reference
+# each buckets corresponding outer boundary.
 
 print(f"Triangles count: {len(mesh.normals)}")
 
 t = -1
 print(f"Length of output_step_3_part_2: " + str(len(output_step_3_part_2)))
 
-for bucket in output_step_3_part_2:
+for i in range(len(output_step_3_part_2)):
+    bucket = output_step_3_part_2[i]
     print(f"Length of bucket: " + str(len(bucket)))
-    colors = ['g', 'b', 'r', 'y', 'k']
-    for unique_edge_list in bucket:
+    print(f"Outer Boundary Index: " + str(output_step_3_part_3[i]))
+    colors = ['g', 'b', 'k', 'y', 'r']
+    for unique_edge_list in output_step_3_part_2[i]:
         t += 1
         if t > 4:
             t = 0
+        print(f"col index: " + str(t))
         for edge in unique_edge_list.edge_list:
             plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o", color=colors[t])
     plt.show()
