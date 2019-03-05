@@ -218,9 +218,7 @@ class MeshTriangulation:
 
             if outer_boundary_index > 0:
                 # Swap list[outer_boundary_index] and list[0]
-                temp = bucket[outer_boundary_index]
-                bucket[outer_boundary_index] = bucket[0]
-                bucket[0] = temp
+                bucket[outer_boundary_index], bucket[0] = bucket[0], bucket[outer_boundary_index]
 
         return buckets
 
