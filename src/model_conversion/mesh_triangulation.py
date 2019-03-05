@@ -47,7 +47,7 @@ class MeshTriangulation:
         """
         mesh_triangles = []  # array of Triangles
         for data in self.mesh.data:
-            normal = data[0]
+            normal = data[0].round(5)
             vertex_1 = data[1][0]
             vertex_2 = data[1][1]
             vertex_3 = data[1][2]
@@ -268,39 +268,33 @@ class MeshTriangulation:
         :param bucket: A Face object to hold neighbor triangles
         :return: A bucket(Face object) which contains list of neighbor triangles
         """
-
-        # If there is no traingles left to find neighbor, don't add any triangle
+        # Base Case : group_triangles == [] , group_triangles == None
         if not group_triangles:
             return bucket
+
         edges = triangle.edges # Edges of the triangle
 
-        # Edge 0
-        # Find a triangle with matching and add to the bucket
-        match_triangles_1 = Triangle.match_triangle_index(edges[0], group_triangles)
-        if match_triangles_1 is not None:
-            triangle_1 = group_triangles.pop(match_triangles_1)
-            bucket.add_triangle(triangle_1)
-            bucket = MeshTriangulation.regroup(triangle_1, group_triangles, bucket)
+        # Find a triangle with matching edges and add to the bucket
+        for edge in edges:
+            matching_triangle_index = Triangle.match_triangle_index(edge, group_triangles)
+            if matching_triangle_index is not None:
+                matching_triangle = group_triangles.pop(matching_triangle_index)
+                bucket.add_triangle(matching_triangle)
+                bucket = MeshTriangulation.regroup(matching_triangle, group_triangles, bucket)
 
-        #Edge 1
-        match_triangles_2 = Triangle.match_triangle_index(edges[1], group_triangles)
-        if match_triangles_2 is not None:
-            triangle_2 = group_triangles.pop(match_triangles_2)
-            bucket.add_triangle(triangle_2)
-            bucket = MeshTriangulation.regroup(triangle_2, group_triangles, bucket)
-
-        #Edge 2
-        match_triangles_3 = Triangle.match_triangle_index(edges[2], group_triangles)
-        if match_triangles_3 is not None:
-            triangle_3 = group_triangles.pop(match_triangles_3)
-            bucket.add_triangle(triangle_3)
-            bucket = MeshTriangulation.regroup(triangle_3, group_triangles, bucket)
         return bucket
+
 
 # test script
 
-#mesh = Mesh.from_file(Util.path_conversion("assets/models/brick.stl"), calculate_normals=False)
-#mesh_trianglulation = MeshTriangulation(mesh)
-#groups = mesh_trianglulation.group_triangles_triangulation()
-
+# mesh = Mesh.from_file(Util.path_conversion("assets/models/3001.stl"), calculate_normals=False)
+# print(f"Total Triangle count: {len(mesh.normals)}")
+# mesh_triangulation = MeshTriangulation(mesh)
+# groups = mesh_triangulation.group_triangles_triangulation()
+# print(f"Groups {len(groups)}")
+# total_triangles_group = 0
+# for index, group in enumerate(groups):
+#     print(f"Group {index + 1} has {len(group.triangles)} triangles")
+#     total_triangles_group += len(group.triangles)
+# print(f"Total triangles in groups: {total_triangles_group}")
 
