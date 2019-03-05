@@ -192,19 +192,19 @@ class MeshTriangulation:
             return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i + 1)
         return self._step_3_part_2_recursive(unique_edge_lists, all_edges, i)
 
-    def step_3_part_3(self, grouped_edges):
+    def step_3_part_3(self, buckets):
         """
 
         :param grouped_edges:
         :return:
         """
-        list_of_outer_boundary_indices = []
 
-        for bucket in grouped_edges:
+        for bucket in buckets:
             outer_boundary_index = 0
             max_dist_to_origin = -1.0
             for i in range(len(bucket)):
-                for edge in bucket[i].edge_list:
+                boundary = bucket[i]
+                for edge in boundary.edge_list:
                     origin_to_start = Edge(0, 0, 0, edge.x1, edge.y1, edge.z1)
                     origin_to_end = Edge(0, 0, 0, edge.x2, edge.y2, edge.z2)
 
@@ -216,9 +216,11 @@ class MeshTriangulation:
                         max_dist_to_origin = origin_to_end.length()
                         outer_boundary_index = i
 
-            list_of_outer_boundary_indices.append(outer_boundary_index)
+            if outer_boundary_index > 0:
+                # Swap list[outer_boundary_index] and list[0]
+                bucket[outer_boundary_index], bucket[0] = bucket[0], bucket[outer_boundary_index]
 
-        return list_of_outer_boundary_indices
+        return buckets
 
     @staticmethod
     def group_triangles_by_normals(triangles):
@@ -262,7 +264,7 @@ class MeshTriangulation:
     @staticmethod
     def regroup(triangle, group_triangles, bucket):
         """
-
+        For a given triangle recursively finds all the neighbor triangles
         :param triangle: Find neighbors of this triangle
         :param group_triangles: List of remaining triangles in the group
         :param bucket: A Face object to hold neighbor triangles
