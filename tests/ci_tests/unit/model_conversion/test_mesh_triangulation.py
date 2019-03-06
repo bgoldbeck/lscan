@@ -22,14 +22,15 @@ class TestMeshTriangulation(unittest.TestCase):
 
     def test_mesh_tris(self):
         # Load mesh
-        mesh = Mesh.from_file(Util.path_conversion("assets/models/2_holes.stl"),
+        mesh = Mesh.from_file(Util.path_conversion("assets/models/face_3x3.stl"),
                               calculate_normals=False)
+        #mesh = Mesh.from_file(Util.path_conversion("assets/models/face_2x2.stl"),
 
-        # Create list of triangle objects from mesh
+        # Step 1: Create list of triangle objects from mesh
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
         print("Found " + str(len(triangles)) + " triangle(s).")
 
-        # Group triangles by their normals
+        # Step 2: Group triangles by their normals
         normal_groups = MeshTriangulation.make_normal_groups(triangles)
         print("Found " + str(len(normal_groups)) + " normal group(s).")
 
@@ -37,7 +38,7 @@ class TestMeshTriangulation(unittest.TestCase):
         faces = MeshTriangulation.make_face_groups(normal_groups)
         print("Found " + str(len(faces)) + " face(s).")
 
-        # Get only outline edges for each face
+        # Step 3: Get only outline edges for each face
         face_outlines = MeshTriangulation.make_face_boundaries(faces)
         for i in range(len(face_outlines)):
             print("Face #" + str(i) + ": Found " + str(len(face_outlines[i].edge_list))
@@ -50,26 +51,27 @@ class TestMeshTriangulation(unittest.TestCase):
                   + " edges in simplified outline.")
 
         # Split each outline by connected parts
-        separate_outlines = MeshTriangulation.split_boundaries(simple_outlines)
-        for i in range(len(separate_outlines)):
-            num_outlines = len(separate_outlines[i])
+        boundaries = MeshTriangulation.split_boundaries(simple_outlines)
+        for i in range(len(boundaries)):
+            num_outlines = len(boundaries[i])
             print("Face #" + str(i) + ": Found " + str(num_outlines)
                   + " separate outline(s)")
             for j in range(num_outlines):
                 print("\tOutline #" + str(j) + ": Found "
-                      + str(len(separate_outlines[i][j].edge_list))
+                      + str(len(boundaries[i][j].edge_list))
                       + " edges.")
 
-        ordered_separate_outlines = MeshTriangulation.find_outside_boundary(separate_outlines)
+        #ordered_separate_outlines = MeshTriangulation.find_outside_boundary(separate_outlines)
 
         t = -1
         print(f"Length of output_step_3_part_2: " + str(
-            len(ordered_separate_outlines)))
+            len(boundaries)))
 
-        for i in range(len(ordered_separate_outlines)):
-            bucket = ordered_separate_outlines[i]
+        for i in range(len(boundaries)):
+            bucket = boundaries[i]
             # print(f"Outer Boundary Index: " + str(output_step_3_part_3[i]))
             colors = ['g', 'b', 'k', 'y', 'r']
+
             for boundary in bucket:
                 t += 1
                 if t > 4:

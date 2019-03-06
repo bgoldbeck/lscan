@@ -82,3 +82,11 @@ class UniqueEdgeList:
         for edge in self.edge_list:
             edge.display()
 
+    def get_neighbor_indices_for_edge(self, edge: Edge):
+        result = []
+        for i in range(len(self.edge_list)):
+            if Edge.has_shared_vertex(edge, self.edge_list[i]):
+                result.append(i)
+        return result
+
+

@@ -144,49 +144,66 @@ def make_simple_outlines(grouped_edges):
     edges that were parallel are joined together.
     """
     output = []
-    k = -1
     for outline_edge_group in grouped_edges:
-        make_simple_boundary(outline_edge_group)
-        k += 1
-        output.append(UniqueEdgeList())
-        output[k] = outline_edge_group
+        edge_list = UniqueEdgeList()
+        output.append(make_simple_boundary(edge_list, outline_edge_group))
+
     return output
 
-def make_simple_boundary(outline_edge_group: UniqueEdgeList):
+def make_simple_boundary(outline_edge_group: UniqueEdgeList, all_edges: UniqueEdgeList):
     """
     Step 3 recursive
     :param outline_edge_group: A list of edges, grouped by connectivity between edges.
     :return: ???
     """
-    for edge_outer in outline_edge_group.edge_list:
-        for edge_inner in outline_edge_group.edge_list:
-            if not Edge.same_edge(edge_inner, edge_outer):
-                shared_vertex = Edge.has_shared_vertex(edge_inner, edge_outer)
-                parallel = Edge.are_parallel_or_anti_parallel(edge_inner, edge_outer)
+    if len(all_edges.edge_list) == 0:
+        return outline_edge_group
+
+    for edge in all_edges.edge_list:
+
+        neighbors = all_edges.get_neighbor_indices_for_edge(edge)
+
+        # Loop against all neighboring edges, gobble up the neighbors.
+        for neighbor in neighbors:
+            neighbor_edge = all_edges.edge_list[neighbor]
+
+            if not Edge.same_edge(edge, neighbor_edge):
+                shared_vertex = Edge.has_shared_vertex(edge, neighbor_edge)
+                parallel = Edge.are_parallel_or_anti_parallel(edge, neighbor_edge)
+
                 if shared_vertex is not None and parallel:
+
                     # Case 1.
-                    start_vertex = [edge_inner.x1, edge_inner.y1, edge_inner.z1]
+                    start_vertex = [neighbor_edge.x1, neighbor_edge.y1, neighbor_edge.z1]
 
                     # Case 2.
-                    if (edge_inner.x1 == shared_vertex[0] and
-                            edge_inner.y1 == shared_vertex[1] and
-                            edge_inner.z1 == shared_vertex[2]):
-                        start_vertex = [edge_inner.x2, edge_inner.y2, edge_inner.z2]
+                    if (neighbor_edge.x1 == shared_vertex[0] and
+                            neighbor_edge.y1 == shared_vertex[1] and
+                            neighbor_edge.z1 == shared_vertex[2]):
+                        start_vertex = [neighbor_edge.x2, neighbor_edge.y2, neighbor_edge.z2]
 
                     # Case 3.
-                    end_vertex = [edge_outer.x1, edge_outer.y1, edge_outer.z1]
+                    end_vertex = [edge.x1, edge.y1, edge.z1]
 
                     # Case 4.
-                    if (edge_outer.x1 == shared_vertex[0] and
-                            edge_outer.y1 == shared_vertex[1] and
-                            edge_outer.z1 == shared_vertex[2]):
-                        end_vertex = [edge_outer.x2, edge_outer.y2, edge_outer.z2]
-                    outline_edge_group.edge_list.remove(edge_outer)
-                    outline_edge_group.edge_list.remove(edge_inner)
-                    outline_edge_group.add(
+                    if (edge.x1 == shared_vertex[0] and
+                            edge.y1 == shared_vertex[1] and
+                            edge.z1 == shared_vertex[2]):
+                        end_vertex = [edge.x2, edge.y2, edge.z2]
+
+                    all_edges.remove(edge)
+                    all_edges.remove(neighbor_edge)
+                    all_edges.add(
                         Edge(start_vertex[0], start_vertex[1], start_vertex[2],  # Edge Start
                              end_vertex[0], end_vertex[1], end_vertex[2]))  # Edge end
-                    make_simple_boundary(outline_edge_group)
+                    return make_simple_boundary(outline_edge_group, all_edges)
+
+    if len(all_edges.edge_list) > 0:
+        outline_edge_group.add(all_edges.edge_list[0])
+        all_edges.edge_list.pop(0)
+
+    return make_simple_boundary(outline_edge_group, all_edges)
+
 
 
 def split_boundaries(grouped_edges):
@@ -208,7 +225,7 @@ def split_boundaries(grouped_edges):
 
             buckets.append(unique_edge_lists)
 
-    return buckets
+    return find_outside_boundary(buckets)
 
 def split_boundary(unique_edge_lists: [], all_edges: UniqueEdgeList, i: int):
     """
