@@ -15,6 +15,9 @@ from src.model_conversion.unique_edge_list import UniqueEdgeList
 from src.model_conversion.triangle import Triangle
 from src.util import Util
 from src.model_conversion.face import Face
+import numpy as np
+import triangle as tr
+
 
 
 # Group by normals into N groups
@@ -136,7 +139,7 @@ def make_face_boundaries(faces: []):
 
     return output
 
-def make_simple_outlines(grouped_edges):
+def make_simple_boundaries(grouped_edges):
     """
     #Step 3
     :param grouped_edges: A list of list of edges, grouped by connectivity between edges.
@@ -286,3 +289,173 @@ def find_outside_boundary(buckets):
             bucket[outer_boundary_index], bucket[0] = bucket[0], bucket[outer_boundary_index]
 
     return buckets
+
+def buckets_to_dicts(buckets):
+    """
+    Convert the output from previous steps into a form that can be used by
+    triangulation library.
+
+    :param buckets: List of lists of lists.... of edges
+    :return:List of face dictionaries. Each dict has 'segments' (edges),
+    'vertices', and 'holes' keys.
+    """
+
+
+
+    # Need to transform current edges into list of indices referencing vertex list
+    faces = []
+
+    for face in buckets:
+        # Dictionary where keys are unique vertices, values = index of vert list
+        vert_dict = {}
+
+        new_face = {} #dict with edge, vert, and hole lists
+        vert_list = [] #all unique verts in this face
+        edge_list = [] #all edges in this face.
+        # Each edge is of form [a,b] where a and b are index of vert_list
+        hole_list = [] #1 interior point for every hole on this face
+
+        for b in range(len(face)): #each boundary
+            boundary_edges = [] #edges for current boundary
+
+            for edge in face[b].edge_list:
+                v1 = (edge.x1, edge.y1, edge.z1)
+                v2 = (edge.x2, edge.y2, edge.z2)
+                #if verts arent in dictionary, add them to both vert list and dict
+                #key value will be index of that vert in the vert list
+                if v1 not in vert_dict:
+                    vert_dict[v1] = len(vert_list)
+                    vert_list.append(v1)
+                if v2 not in vert_dict:
+                    vert_dict[v2] = len(vert_list)
+                    vert_list.append(v2)
+
+                boundary_edges.append([vert_dict[v1], vert_dict[v2]])
+
+            if b > 0: # This boundary is a hole
+                # Get an interior point by triangulating and finding centroid
+                hole = {"vertices": np.asarray(vert_list),
+                        "segments": np.asarray(boundary_edges)}
+
+                tri_hole = triangulate(hole)
+                hole_coord = find_inner_point(tri_hole)
+                hole_list.append(hole_coord)
+
+            edge_list += boundary_edges #add boundary edges to all face edges
+
+        new_face["segments"] = np.asarray(edge_list)
+        new_face["holes"] = np.asarray(hole_list)
+        new_face["vertices"] = np.asarray(vert_list)
+        faces.append(new_face)
+
+    #for face in faces:
+        #print(face)
+
+    return faces
+
+def triangulate(face):
+    """
+    Does triangulation of face in 3D. Does 2D projection, triangulates, and
+    returns points to 3D
+
+    :param face: Dictionary representing face outline. Each dict has
+    'segments' (edges), 'vertices', and 'holes' keys.
+    :return: Dictionary representing triangulated face. Has keys 'vertices'
+    with xyz coordinates, and 'triangles', a list of 3 tuples referencing vertex
+    indices
+    """
+
+    has_holes = False
+    if "holes" in face and len(face['holes']) > 0:
+        has_holes = True
+
+    # Take 3 points from vertex list
+    # Since all points should lie on a plane, triangle v1,v2,v3 lies on same plane
+    v1 = face['vertices'][0]
+    v2 = face['vertices'][1]
+    v3 = face['vertices'][2]
+
+    face_normal = np.cross(v2 - v1, v3 - v1)
+    face_normal /= face_normal.sum()
+    print("UNIT NORMAL IS: " + str(face_normal))
+
+    # Identity matrices
+    rot_matrix = np.identity(3)
+    rev_matrix = np.identity(3)
+
+    # If plane is straight up/down, need to rotate it for projection
+    if (abs(face_normal[2]) < 0.1):
+        if abs(face_normal[0]) < abs(face_normal[1]):
+            # Checks which normal component (x/y) is lesser, and rotates 90 deg on that axis
+            # This causes least distortion for projection
+            rot_matrix = np.array([[1.0, 0.0, 0.0],
+                                   [0.0, 0.0, -1.0],
+                                   [0.0, 1.0, 0.0]])
+
+            rev_matrix = np.array([[1.0, 0.0, 0.0],
+                                   [0.0, 0.0, 1.0],
+                                   [0.0, -1.0, 0.0]])
+            print("Will rotate 90 degrees on x")
+        else:
+            rot_matrix = np.array([[0.0, 0.0, 1.0],
+                                   [0.0, 1.0, 0.0],
+                                   [-1.0, 0.0, 0.0]])
+
+            rev_matrix = np.array([[0.0, 0.0, -1.0],
+                                   [0.0, 1.0, 0.0],
+                                   [1.0, 0.0, 0.0]])
+            print("Will rotate 90 degrees on y")
+
+
+    # Do rotation (this is none, if plane is not upright)
+    face_verts_xyz = face['vertices']
+    face_verts_xyz = np.dot(face_verts_xyz, rot_matrix)
+    if has_holes:
+        hole_verts_xyz = face['holes']
+        hole_verts_xyz = np.dot(hole_verts_xyz, rot_matrix)
+
+
+    # Make planar straight line graph, only take xy coords of vertices
+    pslg = {'vertices': face_verts_xyz[:,:2],
+            'segments': face['segments']}
+
+    if has_holes:
+        pslg['holes'] = face['holes'][:, :2]
+
+    triangulation = tr.triangulate(pslg, opts='p')
+
+
+    #print(pslg['vertices'])
+    #print(triangulation)
+    tr.compare(plt, pslg, triangulation)
+
+    #plt.show()
+
+    # Reverse rotation if any
+    face_verts_xyz = np.dot(face_verts_xyz, rev_matrix)
+
+    return {'vertices': face_verts_xyz,
+            'triangles': triangulation['triangles']}
+
+def find_inner_point(triangulation):
+    """
+    Finds a point inside a mesh surface (not on a boundary)
+    :param triangulation: Dictionary containing list of vertices, and triangles
+    referencing those vertices
+    :return: [x,y,z] coordinate representing a hole
+    """
+
+    tri_coords = []
+
+    for i in range(len(triangulation['triangles'][0])):
+        index = triangulation['triangles'][0][i]
+        tri_coords.append(triangulation['vertices'][index])
+
+
+    tri_coords = np.asarray(tri_coords)
+    centroid = tri_coords.mean(axis=0)
+    print("TRI COORDS:")
+    print(tri_coords)
+    print("CENTROID:")
+    print(centroid)
+    return centroid
