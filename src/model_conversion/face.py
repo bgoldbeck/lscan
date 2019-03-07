@@ -82,6 +82,14 @@ class Face:
             result.add(triangle.edges[2])
         return result
 
+    def display_face(self):
+        """
+        Display all triangle of this face.
+        """
+        print("This face contain these triangle(s): \n")
+        for triangle in self.triangles:
+            triangle.display()
+
     @staticmethod
     def set_difference(group_1, group_2):
         """

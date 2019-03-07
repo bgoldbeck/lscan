@@ -76,6 +76,16 @@ class Triangle:
         """
         return self.edges[2]
 
+    def display_triangle(self):
+        """
+        Display the triangle information
+        """
+        print("Triangle: ")
+        print("Normal: " + str(self.normal) + "\n")
+        print("Edges: \n")
+        for edge in self.edges:
+            edge.display()
+
     @staticmethod
     def are_neighbors(t1, t2):
         """Determine if two triangles have a shared edge.
