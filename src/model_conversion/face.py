@@ -88,7 +88,7 @@ class Face:
         """
         print("This face contain these triangle(s): \n")
         for triangle in self.triangles:
-            triangle.display()
+            triangle.display_triangle()
 
     @staticmethod
     def set_difference(group_1, group_2):
