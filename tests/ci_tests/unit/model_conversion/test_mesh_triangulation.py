@@ -22,9 +22,8 @@ class TestMeshTriangulation(unittest.TestCase):
 
     def test_mesh_tris(self):
         # Load mesh
-        mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl"),
-                              calculate_normals=False)
-        #mesh = Mesh.from_file(Util.path_conversion("assets/models/face_2x2.stl"),
+        #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl"), calculate_normals=True)
+        mesh = Mesh.from_file(Util.path_conversion("assets/models/face_3x3.stl"), calculate_normals=True)
 
         # Step 1: Create list of triangle objects from mesh
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
