@@ -70,12 +70,23 @@ class EdgeTest(unittest.TestCase):
         self.assertFalse(shared_vertex3)
         self.assertTrue(shared_vertex4)
 
+    def test_EdgeIsParallel(self):
+        test_edge1 = Edge(0, 0, 0, 1, 1, 1.005)
+        test_edge_parallel = Edge(1, 1, 1, 2, 2, 2)
+        tolerance = 0.01
+        test_edge_anti_parallel = Edge(0, 0, 0, -1, -1, -1)
+
+        self.assertTrue(Edge.are_parallel(test_edge1, test_edge_parallel, tolerance))
+        self.assertFalse(Edge.are_parallel(test_edge1, test_edge_anti_parallel, tolerance))
+
     # TODO
     def test_EdgeIsParallelOrAntiparallel(self):
-        test_edge1 = Edge(0, 0, 0, 1, 1,1)
+        test_edge1 = Edge(0, 0, 0, 1, 1, 1.005)
         test_edge_parallel = Edge(1, 1, 1, 2, 2, 2)
-        test_edge_anti_parallel = Edge(2, 2, 2, 1, 1, 1)
+        tolerance = 0.01 # implemented inside
+        test_edge_anti_parallel = Edge(0, 0, 0, -1, -1, -1)
 
-        pass
+        self.assertTrue(Edge.are_parallel_or_anti_parallel(test_edge1, test_edge_parallel))
+        self.assertTrue(Edge.are_parallel_or_anti_parallel(test_edge1, test_edge_anti_parallel))
 
 

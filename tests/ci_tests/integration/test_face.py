@@ -12,16 +12,17 @@ import unittest
 from stl import Mesh
 from src.util import Util
 from src.model_conversion.face import *
+from src.model_conversion.mesh_triangulation import get_unit_normal
 
 
 class TestFace(unittest.TestCase):
 
     def setUp(self):
-        mesh = Mesh.from_file(Util.path_conversion("tests/test_models/2_holes.stl"), calculate_normals=False)
+        mesh = Mesh.from_file(Util.path_conversion("tests/test_models/2_holes.stl"))
         mesh_triangles = []  # array of Triangles
         self.triangles_count = 0
         for data in mesh.data:
-            normal = data[0]
+            normal = get_unit_normal(data[0])
             vertex_1 = data[1][0]
             vertex_2 = data[1][1]
             vertex_3 = data[1][2]

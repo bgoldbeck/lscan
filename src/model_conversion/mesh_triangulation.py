@@ -66,7 +66,7 @@ def make_normal_groups(triangles: []):
     :return: List of List of Triangles
     """
     triangles_groups = []
-    origin = (0, 0, 0)
+    origin = (0.0, 0.0, 0.0)
     group_match = False
     for triangle in triangles:
         for group in triangles_groups:
@@ -74,7 +74,7 @@ def make_normal_groups(triangles: []):
             triangle_normal = triangle.normal
             origin_group_normal_edge = Edge(origin[0], origin[1], origin[2], group_normal[0], group_normal[1], group_normal[2])
             origin_triangle_normal_edge = Edge(origin[0], origin[1], origin[2], triangle_normal[0], triangle_normal[1], triangle_normal[2])
-            if Edge.are_parallel_or_anti_parallel(origin_group_normal_edge, origin_triangle_normal_edge):
+            if Edge.are_parallel(origin_group_normal_edge, origin_triangle_normal_edge, tolerance=0.01):
                 group_match = True
                 group.append(triangle)
                 break

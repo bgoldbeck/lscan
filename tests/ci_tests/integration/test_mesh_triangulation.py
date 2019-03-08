@@ -23,7 +23,7 @@ class TestMeshTriangulation(unittest.TestCase):
 
     @staticmethod
     def build_mesh_triangulation_data(file_path):
-        mesh = Mesh.from_file(Util.path_conversion(file_path), calculate_normals=False)
+        mesh = Mesh.from_file(Util.path_conversion(file_path))
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
         normal_groups = MeshTriangulation.make_normal_groups(triangles)
         faces = MeshTriangulation.make_face_groups(normal_groups)
@@ -46,8 +46,8 @@ class TestMeshTriangulation(unittest.TestCase):
     def test_mesh_triangulation(self):
         file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
         # Load mesh
-        #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl"), calculate_normals=True)
-        mesh = Mesh.from_file(Util.path_conversion(file_path), calculate_normals=True)
+        #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl")
+        mesh = Mesh.from_file(Util.path_conversion(file_path))
 
         # Step 1: Create list of triangle objects from mesh
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
@@ -110,7 +110,7 @@ class TestMeshTriangulation(unittest.TestCase):
 
     def test_simple_plane_triangles(self):
         file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
-        mesh = Mesh.from_file(Util.path_conversion(file_path), calculate_normals=True)
+        mesh = Mesh.from_file(Util.path_conversion(file_path))
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
         self.assertTrue(len(triangles) == 180)
 
@@ -140,7 +140,7 @@ class TestMeshTriangulation(unittest.TestCase):
         """# test script
 
         # start_time = time.time()
-        mesh = Mesh.from_file(Util.path_conversion("assets/models/2_holes.stl"), calculate_normals=False)
+        mesh = Mesh.from_file(Util.path_conversion("assets/models/2_holes.stl"))
         mesh_triangulation = MeshTriangulation(mesh)
         # group = mesh_trianglulation.group_triangles_triangulation()
         # end_time = time.time()
