@@ -130,11 +130,13 @@ class Edge:
         :return: True, if two edges are either parallel or anti-parallel.
         """
         dot = Edge.dot(a, b)
-        ratio = dot / (a.length() * b.length())
-        radians = np.arccos(np.round(ratio, 7))
+        ratio = np.round(dot / (a.length() * b.length()), 5)
+        radians = np.arccos(ratio)
         angle = math.degrees(radians)
+        tolerance = 1.0
 
-        return angle == 0.0 or angle == 180.0
+        return (-tolerance <= angle <= tolerance or
+                (180-tolerance) <= angle <= (tolerance+180))
 
     def display(self):
         print("x1: " + str(self.x1) + ", y1: " + str(self.y1) + ", z1: " + str(self.z1) +

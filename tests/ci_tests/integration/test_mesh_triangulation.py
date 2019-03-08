@@ -19,11 +19,35 @@ from src.model_conversion.triangle import Triangle
 
 
 class TestMeshTriangulation(unittest.TestCase):
+    model_folder = "tests/test_models/"
 
-    def test_mesh_tris(self):
+    @staticmethod
+    def build_mesh_triangulation_data(file_path):
+        mesh = Mesh.from_file(Util.path_conversion(file_path), calculate_normals=False)
+        triangles = MeshTriangulation.get_mesh_triangles(mesh)
+        normal_groups = MeshTriangulation.make_normal_groups(triangles)
+        faces = MeshTriangulation.make_face_groups(normal_groups)
+        face_boundaries = MeshTriangulation.make_face_boundaries(faces)
+        simple_boundaries = MeshTriangulation.make_simple_boundaries(face_boundaries)
+        separate_boundaries = MeshTriangulation.split_boundaries(simple_boundaries)
+        ordered_separate_boundaries = MeshTriangulation.find_outside_boundary(separate_boundaries)
+        triangulated_faces = MeshTriangulation.buckets_to_dicts(ordered_separate_boundaries)
+        mesh_dict = {
+            "input_mesh": mesh,
+            "triangles": triangles,
+            "normal_groups": normal_groups,
+            "faces": faces,
+            "separate_boundaries": separate_boundaries,
+            "ordered_separate_boundaries": ordered_separate_boundaries,
+            "triangulated_faces": triangulated_faces}
+
+        return mesh_dict
+
+    def test_mesh_triangulation(self):
+        file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
         # Load mesh
         #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl"), calculate_normals=True)
-        mesh = Mesh.from_file(Util.path_conversion("assets/models/face_3x3.stl"), calculate_normals=True)
+        mesh = Mesh.from_file(Util.path_conversion(file_path), calculate_normals=True)
 
         # Step 1: Create list of triangle objects from mesh
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
@@ -84,8 +108,28 @@ class TestMeshTriangulation(unittest.TestCase):
                              color=colors[t])
             #plt.show()
 
+    def test_simple_plane_triangles(self):
+        file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
+        mesh = Mesh.from_file(Util.path_conversion(file_path), calculate_normals=True)
+        triangles = MeshTriangulation.get_mesh_triangles(mesh)
+        self.assertTrue(len(triangles) == 180)
 
+    def test_simple_plane_normal_groups(self):
+        file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
+        mesh_dict = TestMeshTriangulation.build_mesh_triangulation_data(file_path)
+        self.assertTrue(len(mesh_dict["normal_groups"]) == 1)
 
+    def test_simple_plane_faces(self):
+        file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
+        mesh_dict = TestMeshTriangulation.build_mesh_triangulation_data(file_path)
+        self.assertTrue(len(mesh_dict["faces"]) == 1)
+
+    def test_simple_plane_boundaries(self):
+        file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
+        mesh_dict = TestMeshTriangulation.build_mesh_triangulation_data(file_path)
+        ordered_separate_boundaries = mesh_dict["ordered_separate_boundaries"]
+        self.assertTrue(len(ordered_separate_boundaries) == 1)
+        self.assertTrue(len(ordered_separate_boundaries[0][0].edge_list) == 4)
 
         # faces = self.group_triangles_triangulation()
         # Step 2

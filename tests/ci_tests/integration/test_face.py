@@ -17,7 +17,7 @@ from src.model_conversion.face import *
 class TestFace(unittest.TestCase):
 
     def setUp(self):
-        mesh = Mesh.from_file(Util.path_conversion("assets/models/2_holes.stl"), calculate_normals=False)
+        mesh = Mesh.from_file(Util.path_conversion("tests/test_models/2_holes.stl"), calculate_normals=False)
         mesh_triangles = []  # array of Triangles
         self.triangles_count = 0
         for data in mesh.data:
