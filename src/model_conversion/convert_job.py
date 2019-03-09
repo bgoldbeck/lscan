@@ -28,7 +28,6 @@ class ConvertJob(BaseJob):
         self.name = "mesh to LDraw conversion"
         self.update_status("Starting " + self.name + ".")
 
-
     def do_job(self):
         self.is_running.wait()
         # Setting output model as input LDraw object
