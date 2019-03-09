@@ -122,6 +122,23 @@ class Edge:
         return result
 
     @staticmethod
+    def are_parallel(a, b, tolerance):
+        """Determine if two edges are parallel with tolerance angle
+        Two edges are parallel if, Angle in in the range [-tolerance, +tolerance]
+
+        :param a: The first edge.
+        :param b: The second edge.
+        :param tolerance: Tolerance angle
+        :return: True, if two edges are either parallel.
+        """
+        dot = Edge.dot(a, b)
+        ratio = np.round(dot / (a.length() * b.length()), 5)
+        radians = np.arccos(ratio)
+        angle = math.degrees(radians)
+
+        return -tolerance <= angle <= tolerance
+
+    @staticmethod
     def are_parallel_or_anti_parallel(a, b):
         """Determine if two edges are parallel or anti-parallel.
 
@@ -130,11 +147,13 @@ class Edge:
         :return: True, if two edges are either parallel or anti-parallel.
         """
         dot = Edge.dot(a, b)
-        ratio = dot / (a.length() * b.length())
-        radians = np.arccos(np.round(ratio, 7))
+        ratio = np.round(dot / (a.length() * b.length()), 5)
+        radians = np.arccos(ratio)
         angle = math.degrees(radians)
+        tolerance = 1.0
 
-        return angle == 0.0 or angle == 180.0
+        return (-tolerance <= angle <= tolerance or
+                (180-tolerance) <= angle <= (tolerance+180))
 
     def display(self):
         print("x1: " + str(self.x1) + ", y1: " + str(self.y1) + ", z1: " + str(self.z1) +

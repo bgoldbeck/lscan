@@ -8,7 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import matplotlib.pyplot as plt
-import time
+import math
 from stl import Mesh
 from src.model_conversion.edge import Edge
 from src.model_conversion.unique_edge_list import UniqueEdgeList
@@ -17,7 +17,6 @@ from src.util import Util
 from src.model_conversion.face import Face
 import numpy as np
 import triangle as tr
-
 
 
 # Group by normals into N groups
@@ -34,7 +33,7 @@ def get_mesh_triangles(mesh: Mesh):
     """
     mesh_triangles = []  # array of Triangles
     for data in mesh.data:
-        normal = data[0].round(5)
+        normal = get_unit_normal(data[0])  # data[0] contains normal value eg: [0, 0, 4]
         vertex_1 = data[1][0]
         vertex_2 = data[1][1]
         vertex_3 = data[1][2]
@@ -45,6 +44,21 @@ def get_mesh_triangles(mesh: Mesh):
     return mesh_triangles
 
 
+def get_unit_normal(normal):
+    """
+    Calculate the unit normal of a normal.
+    Eg: Unit normal of [0, 0, 4] is [0, 0, 1]
+    :param normal:
+    :return: List of normal vertices
+    """
+    squared_length = 0
+    for vertex in normal:
+        squared_length += vertex ** 2
+    length = math.sqrt(squared_length)
+    unit_normal = list(map(lambda x: x / length, normal))
+    return unit_normal
+
+
 def make_normal_groups(triangles: []):
     """
     Group triangles by normal
@@ -52,10 +66,15 @@ def make_normal_groups(triangles: []):
     :return: List of List of Triangles
     """
     triangles_groups = []
+    origin = (0.0, 0.0, 0.0)
     group_match = False
     for triangle in triangles:
         for group in triangles_groups:
-            if (group[0].normal == triangle.normal).all():
+            group_normal = group[0].normal  # Normal of first triangle in the group
+            triangle_normal = triangle.normal
+            origin_group_normal_edge = Edge(origin[0], origin[1], origin[2], group_normal[0], group_normal[1], group_normal[2])
+            origin_triangle_normal_edge = Edge(origin[0], origin[1], origin[2], triangle_normal[0], triangle_normal[1], triangle_normal[2])
+            if Edge.are_parallel(origin_group_normal_edge, origin_triangle_normal_edge, tolerance=0.01):
                 group_match = True
                 group.append(triangle)
                 break
@@ -64,7 +83,8 @@ def make_normal_groups(triangles: []):
         group_match = False
     return triangles_groups
 
-def make_face(triangle:Triangle, group_triangles: [], bucket: Face):
+
+def make_face(triangle: Triangle, group_triangles: [], bucket: Face):
     """
     For a given triangle recursively finds all the neighbor triangles
     :param triangle: Find neighbors of this triangle
@@ -88,6 +108,7 @@ def make_face(triangle:Triangle, group_triangles: [], bucket: Face):
 
     return bucket
 
+
 def make_face_groups(normal_groups: []):
     """
     Regroup triangle groups into groups of triangles that are connected.
@@ -106,6 +127,7 @@ def make_face_groups(normal_groups: []):
             group = Face.set_difference(group, bucket.triangles)  # Finding remaining triangles to find neighbors
             all_faces.append(bucket)
     return all_faces
+
 
 def make_face_boundaries(faces: []):
     """Step 2. Remove shared edges.
@@ -139,6 +161,7 @@ def make_face_boundaries(faces: []):
 
     return output
 
+
 def make_simple_boundaries(grouped_edges):
     """
     #Step 3
@@ -152,6 +175,7 @@ def make_simple_boundaries(grouped_edges):
         output.append(make_simple_boundary(edge_list, outline_edge_group))
 
     return output
+
 
 def make_simple_boundary(outline_edge_group: UniqueEdgeList, all_edges: UniqueEdgeList):
     """
@@ -208,7 +232,6 @@ def make_simple_boundary(outline_edge_group: UniqueEdgeList, all_edges: UniqueEd
     return make_simple_boundary(outline_edge_group, all_edges)
 
 
-
 def split_boundaries(grouped_edges):
     """
     Step 3 part 2
@@ -229,6 +252,7 @@ def split_boundaries(grouped_edges):
             buckets.append(unique_edge_lists)
 
     return find_outside_boundary(buckets)
+
 
 def split_boundary(unique_edge_lists: [], all_edges: UniqueEdgeList, i: int):
     """
@@ -290,6 +314,7 @@ def find_outside_boundary(buckets):
 
     return buckets
 
+
 def buckets_to_dicts(buckets):
     """
     Convert the output from previous steps into a form that can be used by
@@ -299,8 +324,6 @@ def buckets_to_dicts(buckets):
     :return:List of face dictionaries. Each dict has 'segments' (edges),
     'vertices', and 'holes' keys.
     """
-
-
 
     # Need to transform current edges into list of indices referencing vertex list
     faces = []
@@ -352,6 +375,7 @@ def buckets_to_dicts(buckets):
         #print(face)
 
     return faces
+
 
 def triangulate(face):
     """
@@ -436,6 +460,7 @@ def triangulate(face):
 
     return {'vertices': face_verts_xyz,
             'triangles': triangulation['triangles']}
+
 
 def find_inner_point(triangulation):
     """
