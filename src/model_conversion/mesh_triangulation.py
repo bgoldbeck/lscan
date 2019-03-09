@@ -420,7 +420,7 @@ def triangulate(face):
             'segments': face['segments']}
 
     if has_holes:
-        pslg['holes'] = face['holes'][:, :2]
+        pslg['holes'] = hole_verts_xyz[:, :2] #WOW
 
     triangulation = tr.triangulate(pslg, opts='p')
 
@@ -429,7 +429,7 @@ def triangulate(face):
     #print(triangulation)
     tr.compare(plt, pslg, triangulation)
 
-    #plt.show()
+    plt.show()
 
     # Reverse rotation if any
     face_verts_xyz = np.dot(face_verts_xyz, rev_matrix)
