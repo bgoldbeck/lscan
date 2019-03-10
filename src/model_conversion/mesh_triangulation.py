@@ -214,20 +214,20 @@ def make_simple_boundary(outline_edge_group: UniqueEdgeList, all_edges: UniqueEd
     :param outline_edge_group: A list of edges, grouped by connectivity between edges.
     :return: ???
     """
-    if len(all_edges.edge_list) == 0:
-        return outline_edge_group
+    while len(all_edges.edge_list) > 0:
+        current_edge = all_edges.edge_list[0]
 
-    for edge in all_edges.edge_list:
-
-        neighbors = all_edges.get_neighbor_indices_for_edge(edge)
+        work = False
+        neighbors = all_edges.get_neighbor_indices_for_edge(current_edge)
+        new_edge = None
 
         # Loop against all neighboring edges, gobble up the neighbors.
         for neighbor in neighbors:
             neighbor_edge = all_edges.edge_list[neighbor]
 
-            if not Edge.same_edge(edge, neighbor_edge):
-                shared_vertex = Edge.has_shared_vertex(edge, neighbor_edge)
-                parallel = Edge.are_parallel_or_anti_parallel(edge, neighbor_edge)
+            if not Edge.same_edge(current_edge, neighbor_edge):
+                shared_vertex = Edge.has_shared_vertex(current_edge, neighbor_edge)
+                parallel = Edge.are_parallel_or_anti_parallel(current_edge, neighbor_edge)
 
                 if shared_vertex is not None and parallel:
 
@@ -241,26 +241,29 @@ def make_simple_boundary(outline_edge_group: UniqueEdgeList, all_edges: UniqueEd
                         start_vertex = [neighbor_edge.x2, neighbor_edge.y2, neighbor_edge.z2]
 
                     # Case 3.
-                    end_vertex = [edge.x1, edge.y1, edge.z1]
+                    end_vertex = [current_edge.x1, current_edge.y1, current_edge.z1]
 
                     # Case 4.
-                    if (edge.x1 == shared_vertex[0] and
-                            edge.y1 == shared_vertex[1] and
-                            edge.z1 == shared_vertex[2]):
-                        end_vertex = [edge.x2, edge.y2, edge.z2]
+                    if (current_edge.x1 == shared_vertex[0] and
+                            current_edge.y1 == shared_vertex[1] and
+                            current_edge.z1 == shared_vertex[2]):
+                        end_vertex = [current_edge.x2, current_edge.y2, current_edge.z2]
 
-                    all_edges.remove(edge)
+                    new_edge = Edge(start_vertex[0], start_vertex[1], start_vertex[2],  # Edge Start
+                                    end_vertex[0], end_vertex[1], end_vertex[2])  # Edge end
+
+                    all_edges.remove(current_edge)
                     all_edges.remove(neighbor_edge)
-                    all_edges.add(
-                        Edge(start_vertex[0], start_vertex[1], start_vertex[2],  # Edge Start
-                             end_vertex[0], end_vertex[1], end_vertex[2]))  # Edge end
-                    return make_simple_boundary(outline_edge_group, all_edges)
+                    all_edges.add(new_edge)
 
-    if len(all_edges.edge_list) > 0:
-        outline_edge_group.add(all_edges.edge_list[0])
-        all_edges.edge_list.pop(0)
+                    work = True
+                    break
 
-    return make_simple_boundary(outline_edge_group, all_edges)
+        if not work and len(all_edges.edge_list) > 0:
+            outline_edge_group.add(current_edge)
+            all_edges.remove(current_edge)
+
+    return outline_edge_group
 
 
 def split_boundaries(grouped_edges):
@@ -291,27 +294,36 @@ def split_boundary(unique_edge_lists: [], all_edges: UniqueEdgeList, i: int):
     :param all_edges:
     :return:
     """
-    if len(all_edges.edge_list) == 0:
-        return unique_edge_lists
+    i = 0
+    j = 0
 
-    # Remove all_edges from list that exist in bucket.
-    for e in unique_edge_lists[i].edge_list:
-        all_edges.remove(e)
+    while len(all_edges.edge_list) > 0:
+        current_edge_in_bucket = unique_edge_lists[i].edge_list[j]
+        work = False
 
-    for e in all_edges.edge_list:
-        for current_edge in unique_edge_lists[i].edge_list:
-            if (not Edge.same_edge(e, current_edge)) and \
-                    (Edge.has_shared_vertex(e, current_edge) is not None):
+        for e in all_edges.edge_list:
+            if (not Edge.same_edge(e, current_edge_in_bucket)) and \
+                    (Edge.has_shared_vertex(e, current_edge_in_bucket) is not None):
                 if unique_edge_lists[i].add(e):
-                    return split_boundary(unique_edge_lists, all_edges, i)
+                    work = True
 
-    if len(all_edges.edge_list) > 0:
-        new_edge_list = UniqueEdgeList()
-        new_edge_list.add(all_edges.edge_list[0])
-        unique_edge_lists.append(new_edge_list)
+        # Remove all_edges from list that exist in bucket.
+        for e in unique_edge_lists[i].edge_list:
+            all_edges.remove(e)
 
-        return split_boundary(unique_edge_lists, all_edges, i + 1)
-    return split_boundary(unique_edge_lists, all_edges, i)
+        if work is False:
+            if len(all_edges.edge_list) > 0:
+                new_edge_list = UniqueEdgeList()
+                new_edge_list.add(all_edges.edge_list[0])
+                all_edges.edge_list.pop(0)
+                unique_edge_lists.append(new_edge_list)
+                i += 1
+                j = 0
+        else:
+
+            j += 1
+
+    return unique_edge_lists
 
 
 def find_outside_boundary(buckets):

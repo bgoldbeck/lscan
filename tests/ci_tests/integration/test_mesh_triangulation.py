@@ -44,7 +44,7 @@ class TestMeshTriangulation(unittest.TestCase):
         return mesh_dict
 
     def test_mesh_triangulation(self):
-        file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
+        file_path = self.model_folder + "plane_on_xy_8k_tris.stl"
         # Load mesh
         #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl")
         mesh = Mesh.from_file(Util.path_conversion(file_path))
