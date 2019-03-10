@@ -86,6 +86,29 @@ class Triangle:
         for edge in self.edges:
             edge.display()
 
+    def get_vertices(self):
+        """
+        Get vertices of a triangle.
+        :return: 3 vertices
+        """
+        list_ver_edge_1 = self.edges[0].get_vertices()
+        list_ver_edge_2 = self.edges[1].get_vertices()
+        list_ver_edge_3 = self.edges[2].get_vertices()
+        list_ver = []
+        if not list_ver_edge_1[0] in list_ver:
+            list_ver.append(list_ver_edge_1[0])
+        if not list_ver_edge_1[1] in list_ver:
+            list_ver.append(list_ver_edge_1[1])
+        if not list_ver_edge_2[0] in list_ver:
+            list_ver.append(list_ver_edge_2[0])
+        if not list_ver_edge_2[1] in list_ver:
+            list_ver.append(list_ver_edge_2[1])
+        if not list_ver_edge_3[0] in list_ver:
+            list_ver.append(list_ver_edge_3[0])
+        if not list_ver_edge_3[1] in list_ver:
+            list_ver.append(list_ver_edge_3[1])
+        return list_ver
+
     @staticmethod
     def are_neighbors(t1, t2):
         """Determine if two triangles have a shared edge.
@@ -103,6 +126,21 @@ class Triangle:
                     # We just need one shared edge to be true.
                     result = True
         return result
+
+    @staticmethod
+    def are_neighbors_improved(t1, t2):
+        """Determine if two triangles have a shared edge.
+
+        :param t1: The first triangle.
+        :param t2: The second triangle.
+        :return: True, if the triangles had a shared edge.
+        """
+        if t1.has_edge(t2.edges[0]):
+            return True
+        if t1.has_edge(t2.edges[1]):
+            return True
+        if t1.has_edge(t2.edges[2]):
+            return True
 
     @staticmethod
     def are_equal(t1, t2):

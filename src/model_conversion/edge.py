@@ -46,6 +46,45 @@ class Edge:
             np.power(dy, 2.0) +
             np.power(dz, 2.0), .5)
 
+    def get_vertices(self):
+        """
+        Give a list of vertices
+        :return: 2 vertices of the edge.
+        """
+        list_vertices = []
+        list_vertices.append([self.x1, self.y1, self.z1])
+        list_vertices.append([self.x2, self.y2, self.z2])
+        return list_vertices
+
+    @staticmethod
+    def shortest_distance(edge_1, edge_2):
+        """
+
+        :param edge_1:
+        :param edge_2:
+        :return: the distance between two edges
+        """
+        shortest_distance = 0
+        # TODO: find the distant
+        return shortest_distance
+
+    @staticmethod
+    def co_linear(edge_1, edge_2, tolerance_angel, tolerance_distance):
+        """
+        Check if 2 edges is co-linear.
+        Instead of checking if 4 point is in same line, if both edges are parallel
+        and the distance between them is 0 (has some tolerance), they are co-linear.
+        :param edge_1:
+        :param edge_2:
+        :param tolerance_angel:
+        :param tolerance_distance:
+        :return:
+        """
+        if Edge.are_parallel(edge_1, edge_2, tolerance_angel):
+            if Edge.shortest_distance(edge_1, edge_2) <= tolerance_distance:
+                return True
+        return False
+
     @staticmethod
     def dot(a, b):
         """Compute the dot product between two edges.

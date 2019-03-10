@@ -58,7 +58,8 @@ class TestMeshTriangulation(unittest.TestCase):
         print("Found " + str(len(normal_groups)) + " normal group(s).")
 
         # Group normal groups into faces (by connected parts)
-        faces = MeshTriangulation.make_face_groups(normal_groups)
+        faces = MeshTriangulation.make_face_groups_loop(normal_groups)
+        # faces = MeshTriangulation.make_face_groups(normal_groups)
         print("Found " + str(len(faces)) + " face(s).")
 
         # Step 3: Get only outline edges for each face

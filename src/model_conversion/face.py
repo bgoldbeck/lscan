@@ -64,6 +64,17 @@ class Face:
                 return True
         return False
 
+    def has_neighbor_improved(self, test_triangle: Triangle):
+        """
+        Checks if given triangle has a neighbor in the triangle group
+        :param test_triangle: Triangle
+        :return: True or False
+        """
+        for triangle in self.triangles:
+            if Triangle.are_neighbors_improved(triangle, test_triangle):
+                return True
+        return False
+
     def get_normal(self):
         """
         Returns the normal value
@@ -90,6 +101,13 @@ class Face:
         print("This face contain these triangle(s): \n")
         for triangle in self.triangles:
             triangle.display_triangle()
+
+    def get_triangles(self):
+        """
+
+        :return: A list of triangle that this face hold.
+        """
+        return self.triangles
 
     @staticmethod
     def set_difference(group_1, group_2):

@@ -129,6 +129,37 @@ def make_face_groups(normal_groups: []):
     return all_faces
 
 
+def make_face_groups_loop(normal_groups):
+    """
+    Take the list of normal groups as input. Return a list of faces.
+    :param normal_groups:
+    :return: a list of faces
+    """
+    list_faces = []
+    while normal_groups:
+        n_g = normal_groups.pop()
+        while n_g:
+            triangle = n_g.pop()
+            f = Face([triangle])
+            # Get all neighbor:
+            flag = True
+            while flag:
+                flag = False
+                for e_triangle in n_g:
+                    if f.has_neighbor_improved(e_triangle):
+                        f.add_triangle(e_triangle)
+                        n_g.remove(e_triangle)
+                        flag = True
+            """
+            triangle_list = f.get_triangles()
+            for e_triangle in triangle_list:
+                if e_triangle in n_g:
+                    n_g.remove(e_triangle)
+            """
+            list_faces.append(f)
+    return list_faces
+
+
 def make_face_boundaries(faces: []):
     """Step 2. Remove shared edges.
     :param faces: List of faces.
