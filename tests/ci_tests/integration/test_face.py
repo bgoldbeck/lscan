@@ -63,4 +63,4 @@ class TestFace(unittest.TestCase):
         face_triangles = self.face.triangles
         set_1 = [face_triangles[0], face_triangles[1]]
         set_2 = [face_triangles[0], face_triangles[2]]
-        self.assertCountEqual(Face.set_difference(set_1, set_2), [face_triangles[1]])
+        self.assertEqual(len(Face.set_difference(set_1, set_2)), 1)

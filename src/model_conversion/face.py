@@ -53,6 +53,23 @@ class Face:
         """
         self.triangles.append(triangle)
 
+    def remove_triangle(self, triangle_to_remove: Triangle):
+        """
+
+        :param triangle_to_remove: The triangle to attempt to remove.
+        :return:
+        """
+        index_to_remove = -1
+
+        for i in range(len(self.triangles)):
+            if Triangle.are_equal(self.triangles[i], triangle_to_remove):
+                index_to_remove = i
+                break
+        if index_to_remove != -1:
+            self.triangles.pop(i)
+
+        return index_to_remove != -1
+
     def has_neighbor(self, test_triangle: Triangle):
         """
         Checks if given triangle has a neighbor in the triangle group
@@ -117,4 +134,15 @@ class Face:
         :param group_2: List of triangles
         :return: list of triangles
         """
-        return list(set(group_1) - set(group_2))
+
+        triangles = []
+        for triangle_a in group_1:
+            found = False
+            for triangle_b in group_2:
+                if Triangle.are_equal(triangle_a, triangle_b):
+                    found = True
+                    break
+            if not found:
+                triangles.append(triangle_a)
+
+        return triangles

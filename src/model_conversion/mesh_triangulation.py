@@ -96,15 +96,20 @@ def make_face(triangle: Triangle, group_triangles: [], bucket: Face):
     if not group_triangles:
         return bucket
 
-    edges = triangle.edges # Edges of the triangle
-
     # Find a triangle with matching edges and add to the bucket
-    for edge in edges:
-        matching_triangle_index = Triangle.match_triangle_index(edge, group_triangles)
-        if matching_triangle_index is not None:
-            matching_triangle = group_triangles.pop(matching_triangle_index)
-            bucket.add_triangle(matching_triangle)
-            bucket = make_face(matching_triangle, group_triangles, bucket)
+
+    matching_triangle_indices = Triangle.match_triangle_triangle_indices(triangle, group_triangles)
+
+    added_triangles = []
+    for matching_triangle_index in matching_triangle_indices:
+        new_triangle = group_triangles[matching_triangle_index]
+        added_triangles.append(new_triangle)
+        bucket.add_triangle(new_triangle)
+
+    f = Face(group_triangles)
+
+    for triangle_added in added_triangles:
+        f.remove_triangle(triangle_added)
 
     return bucket
 
@@ -122,9 +127,9 @@ def make_face_groups(normal_groups: []):
         # Recursively add all neighboring triangles to that bucket
         while group:
             triangle = group.pop(0)
-            bucket = Face([triangle])
-            bucket = make_face(triangle, group, bucket)  # Recursively find neighbor of a triangle
-            group = Face.set_difference(group, bucket.triangles)  # Finding remaining triangles to find neighbors
+            bucket = make_face(triangle, group, Face([triangle]))  # Recursively find neighbor of a triangle
+            set_diff = Face.set_difference(group, bucket.triangles)  # Finding remaining triangles to find neighbors
+            group = set_diff
             all_faces.append(bucket)
     return all_faces
 
@@ -173,21 +178,27 @@ def make_face_boundaries(faces: []):
     k = -1
     for face in faces:
         shared_edges = UniqueEdgeList()
+        all_edges_in_face = face.get_edges()
+
         # len(face.triangles) should return the # of triangles in the face.
-        for m in range(len(face.triangles)):
-            for n in range(len(face.triangles)):
-                if m is not n:
-                    for i in range(3):
-                        for j in range(3):
-                            # Compare an edge in triangle "m" vs the 3 other edges in
-                            # triangle "n"
-                            if Edge.are_overlapping_edges(face.triangles[m].edges[i],
-                                                          face.triangles[n].edges[j]):
-                                shared_edges.add(face.triangles[m].edges[i])
+        while len(face.triangles) > 0:
+            for m in range(len(face.triangles)):
+                for n in range(len(face.triangles)):
+                    if m is not n:
+                        #print(str(m) + ":" + str(n))
+                        for i in range(3):
+                            for j in range(3):
+                                # Compare an edge in triangle "m" vs the 3 other edges in
+                                # triangle "n"
+                                if Edge.are_overlapping_edges(face.triangles[m].edges[i],
+                                                              face.triangles[n].edges[j]):
+                                    shared_edges.add(face.triangles[m].edges[i])
+
+                face.triangles.pop(m)
+                break
 
         k += 1
         output.append(UniqueEdgeList())
-        all_edges_in_face = face.get_edges()
         output[k] = UniqueEdgeList.set_difference(all_edges_in_face, shared_edges)
 
     return output
@@ -496,7 +507,7 @@ def triangulate(face):
     #print(triangulation)
     tr.compare(plt, pslg, triangulation)
 
-    plt.show()
+    #plt.show()
 
     # Reverse rotation if any
     face_verts_xyz = np.dot(face_verts_xyz, rev_matrix)

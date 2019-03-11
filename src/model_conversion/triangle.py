@@ -144,23 +144,49 @@ class Triangle:
 
     @staticmethod
     def are_equal(t1, t2):
-        """
-        Determine if two triangles are equal
+        """Determine if two triangles are equal
+
         :param t1: Triangle
         :param t2: Triangle
         :return: True if all edges overlaps
         """
-        pass
+        if t1 is None or t2 is None:
+            raise TypeError
+
+        result = True
+        for edge in t1.edges:
+            if len(Triangle.match_triangle_indices(edge, [t2])) is 0:
+                result = False
+        return result
 
     @staticmethod
-    def match_triangle_index(edge: Edge, triangles):
+    def match_triangle_indices(edge: Edge, triangles):
         """
         Checks if an any triangle has a matching edge or not
         :param edge: An Edge to check for matching traingle
         :param triangles: List of Triangles
         :return: An index of matching triangle or None
         """
+        triangle_indices = []
         for index, triangle in enumerate(triangles):
             if triangle.has_edge(edge):
-                return index
-        return None
+                triangle_indices.append(index)
+
+        return triangle_indices
+
+    @staticmethod
+    def match_triangle_triangle_indices(triangle, triangles):
+        """
+        Checks if an any triangle has a matching edge or not
+        :param triangle: A Triangle to check for matching triangles.
+        :param triangles: List of Triangles
+        :return: An index [] of matching triangles.
+        """
+        triangle_indices = []
+        for index, triangle in enumerate(triangles):
+            for edge in triangle.edges:
+                if triangle.has_edge(edge):
+                    if index not in triangle_indices:
+                        triangle_indices.append(index)
+
+        return triangle_indices

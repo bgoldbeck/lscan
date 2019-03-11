@@ -45,6 +45,7 @@ class TestMeshTriangulation(unittest.TestCase):
 
     def test_mesh_triangulation(self):
         file_path = self.model_folder + "plane_on_xy_8k_tris.stl"
+        #file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
         # Load mesh
         #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl")
         mesh = Mesh.from_file(Util.path_conversion(file_path))
@@ -58,9 +59,11 @@ class TestMeshTriangulation(unittest.TestCase):
         print("Found " + str(len(normal_groups)) + " normal group(s).")
 
         # Group normal groups into faces (by connected parts)
-        faces = MeshTriangulation.make_face_groups_loop(normal_groups)
+        faces = MeshTriangulation.make_face_groups(normal_groups)
         # faces = MeshTriangulation.make_face_groups(normal_groups)
         print("Found " + str(len(faces)) + " face(s).")
+        for i in range(len(faces)):
+            print("\tFor face #" + str(i) + ": " + str(len(faces[i].triangles)) + " triangles(s).")
 
         # Step 3: Get only outline edges for each face
         face_boundaries = MeshTriangulation.make_face_boundaries(faces)
