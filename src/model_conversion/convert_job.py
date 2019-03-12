@@ -93,3 +93,10 @@ class ConvertJob(BaseJob):
 
         self.is_done.set()  # Set this so thread manager knows job is done
 
+    def get_work(self):
+        """
+        Get the output data string
+        :return: String
+        """
+        return ModelShipper.output_data_text
+

@@ -24,7 +24,7 @@ class ThreadManager:
         """Initialize class members
 
         """
-        self.interval = 50 # how many ms between queue checks
+        self.INTERVAL = 50  # how many ms between queue checks
         self.feedback_log = queue.Queue()  # holds messages for log
         self.worker_thread = None
 
