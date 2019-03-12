@@ -175,6 +175,7 @@ def make_face_boundaries(faces: []):
     # have some edge connecting them.
     # faces.count() should return the number of planes on an object IE: A cube has 6 faces.
     output = []
+    normals = []
     k = -1
     for face in faces:
         shared_edges = UniqueEdgeList()
@@ -198,10 +199,11 @@ def make_face_boundaries(faces: []):
                 break
 
         k += 1
+        normals.append(face.get_normal())
         output.append(UniqueEdgeList())
         output[k] = UniqueEdgeList.set_difference(all_edges_in_face, shared_edges)
 
-    return output
+    return output, normals
 
 
 def make_simple_boundaries(grouped_edges):
@@ -455,7 +457,6 @@ def triangulate(face):
 
     face_normal = np.cross(v2 - v1, v3 - v1)
     face_normal /= face_normal.sum()
-    print("UNIT NORMAL IS: " + str(face_normal))
 
     # Identity matrices
     rot_matrix = np.identity(3)
@@ -533,8 +534,46 @@ def find_inner_point(triangulation):
 
     tri_coords = np.asarray(tri_coords)
     centroid = tri_coords.mean(axis=0)
-    print("TRI COORDS:")
-    print(tri_coords)
-    print("CENTROID:")
-    print(centroid)
     return centroid
+
+def triangulation_to_mesh(triangulations, normals):
+    """
+
+    :param triangulation:
+    :return:
+    """
+    meshes = []
+    for i in range(len(triangulations)):
+        flip = False
+        tri_count = len(triangulations[i]['triangles'])  # Number of triangles
+
+        # load triangulation data into a mesh format (list of triangles)
+        out_data = np.zeros(tri_count, dtype=Mesh.dtype)
+        for tri_num in range(tri_count):
+            new_tri = []
+            for vert in triangulations[i]['triangles'][tri_num]:
+                new_tri.append(triangulations[i]['vertices'][vert])
+
+            round_norm = np.around(normals[i], decimals=5)
+            print("UNIT NORMAL IS: " + str(round_norm))
+            if(round_norm[0] < 0 or round_norm[1] > 0 or round_norm[2] < 0):
+                print("need to flip")
+                flip = True
+
+            new_tri = np.asarray(new_tri)
+            if flip:
+               # print("before flip:")
+              #  print(new_tri)
+                #new_tri = np.flip(new_tri, axis=0)
+               # print("after flip:")
+              #  print(new_tri)
+                pass
+
+            out_data['vectors'][tri_num] = new_tri
+
+        # create mesh object from triangle data
+        meshes.append(Mesh(np.asarray(out_data.copy())))
+
+    for i in range(len(meshes)):
+        print("Saving model #" + str(i))
+        meshes[i].save('C:\\Users\\melon\\Documents\\Programming\\Python\\lscan\\tests\\test_models\\fuck\\' + str(i) + '.stl')

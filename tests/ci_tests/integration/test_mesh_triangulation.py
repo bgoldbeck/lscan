@@ -14,8 +14,7 @@ from src.util import Util
 import matplotlib.pyplot as plt
 from src.model_conversion.edge import Edge
 import src.model_conversion.mesh_triangulation as MeshTriangulation
-from src.model_conversion.face import Face
-from src.model_conversion.triangle import Triangle
+import numpy as np
 
 
 class TestMeshTriangulation(unittest.TestCase):
@@ -44,7 +43,7 @@ class TestMeshTriangulation(unittest.TestCase):
         return mesh_dict
 
     def test_mesh_triangulation(self):
-        file_path = self.model_folder + "plane_on_xy_8k_tris.stl"
+        file_path = self.model_folder + "cube_rot.stl"
         #file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
         # Load mesh
         #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl")
@@ -66,7 +65,7 @@ class TestMeshTriangulation(unittest.TestCase):
             print("\tFor face #" + str(i) + ": " + str(len(faces[i].triangles)) + " triangles(s).")
 
         # Step 3: Get only outline edges for each face
-        face_boundaries = MeshTriangulation.make_face_boundaries(faces)
+        face_boundaries, face_normals = MeshTriangulation.make_face_boundaries(faces)
         for i in range(len(face_boundaries)):
             print("Face #" + str(i) + ": Found " + str(len(face_boundaries[i].edge_list))
                   + " edges in outline.")
@@ -92,8 +91,12 @@ class TestMeshTriangulation(unittest.TestCase):
         ordered_separate_boundaries = MeshTriangulation.find_outside_boundary(separate_boundaries)
 
         triangulated_faces = MeshTriangulation.buckets_to_dicts(ordered_separate_boundaries)
+
+        triangulations = []
         for face in triangulated_faces:
-            MeshTriangulation.triangulate(face)
+            triangulations.append(MeshTriangulation.triangulate(face))
+
+        MeshTriangulation.triangulation_to_mesh(triangulations, face_normals)
 
         t = -1
         #print(f"Length of output_step_3_part_2: " + str(len(boundaries)))
