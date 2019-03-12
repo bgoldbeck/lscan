@@ -576,4 +576,4 @@ def triangulation_to_mesh(triangulations, normals):
 
     for i in range(len(meshes)):
         print("Saving model #" + str(i))
-        meshes[i].save('C:\\Users\\melon\\Documents\\Programming\\Python\\lscan\\tests\\test_models\\fuck\\' + str(i) + '.stl')
+        meshes[i].save('tests\\test_models\\out\\' + str(i) + '.stl')
