@@ -7,9 +7,8 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import wx, os
+import wx, os, logging
 from src.ui.application_state import ApplicationState
-from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
 from src.util import Util
 from src.threading.thread_manager import *
@@ -29,7 +28,8 @@ class UIDriver:
     application_state = None
     root_frame = None
     thread_manager = None
-    timer_5_sec = None
+    timer_start = None
+    TIME_INTERVAL = 5
 
     def __init__(self, root):
         """Default constructor for the UIDriver object.
@@ -48,7 +48,7 @@ class UIDriver:
             # Automatically go right into WAITING_INPUT state.
             UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
 
-            UIDriver.timer_5_sec = time.time()
+            UIDriver.timer_start = time.time()
 
     @staticmethod
     def get_all_ui_behaviors(root, behaviors):
@@ -134,10 +134,8 @@ class UIDriver:
         try:
             with open(str(file_path), "r", encoding=enc) as file:
                 text = file.read()
-        except PermissionError as perr:
-            pass
-        except FileNotFoundError as ferr:
-            pass
+        except (PermissionError, FileNotFoundError) as error:
+            logging.error(f"Failed to open the STL file : {error}")
 
         return text
 
@@ -156,17 +154,17 @@ class UIDriver:
             ui_behavior.update(dt)
 
         now = time.time()
-        #If job is running, and 5 seconds have passed, log job status
-        if now - UIDriver.timer_5_sec >= 5:
+        # If job is running, and 5 seconds have passed, log job status
+        if now - UIDriver.timer_start >= UIDriver.TIME_INTERVAL:
             if UIDriver.thread_manager.get_worker_state() == WorkerState.RUNNING:
                 status = UIDriver.thread_manager.get_job_status()
-                if status == None:
-                    status = "Job status unknown." # Shouldn't happen...
+                if status is None:
+                    status = "Job status unknown."  # Shouldn't happen...
                 UIDriver.fire_event(
                     UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE,
                               LogMessage(LogType.INFORMATION, status)))
 
-            UIDriver.timer_5_sec = now # Reset timer start point
+            UIDriver.timer_start = now  # Reset timer start point
 
         if UIDriver.thread_manager.has_message_available():
             msg = UIDriver.thread_manager.get_message()

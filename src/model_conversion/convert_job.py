@@ -8,15 +8,11 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 
+import copy
 from src.threading.base_job import BaseJob
 from src.log_messages.log_type import LogType
-from src.log_messages.log_message import LogMessage
 from src.log_messages.output_model_message import OutputModelMessage
-from src.model_conversion.ldraw_model import LDrawModel
 from src.model_conversion.model_shipper import ModelShipper
-from stl import Mesh
-import numpy
-import copy
 
 
 class ConvertJob(BaseJob):
@@ -31,8 +27,8 @@ class ConvertJob(BaseJob):
     def do_job(self):
         self.is_running.wait()
         # Setting output model as input LDraw object
-        model = None # LDraw model
-        mesh = None # mesh in LDraw model
+        model = None  # LDraw model
+        mesh = None  # mesh in LDraw model
         children = None
         if not self.is_killed:
             ModelShipper.output_model = copy.deepcopy(ModelShipper.input_model)
@@ -86,13 +82,14 @@ class ConvertJob(BaseJob):
                                                       + " " + str(mesh.v0[j][2])
                                                       + "\n")
         self.is_running.wait()
-        if not self.is_killed: # Job completed (not killed)
+        if not self.is_killed:  # Job completed (not killed)
             self.update_status("Finished " + self.name + ".")
             self.put_feedback(OutputModelMessage(LogType.INFORMATION,
                                                  "Conversion Complete. Ready to Save.",
                                                  ModelShipper.output_model))
-        else: # Job was killed
-            #do any cleanup before exiting
+        else:  # Job was killed
+            # do any cleanup before exiting
             self.update_status("Cancelled during " + self.name + ".")
 
         self.is_done.set()  # Set this so thread manager knows job is done
+
