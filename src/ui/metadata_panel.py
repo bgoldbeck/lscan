@@ -438,7 +438,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         output_text = self.ldraw_name_input.GetValue()
         if len(output_text) <= 0:
             self.ldraw_name_input.SetValue("Browse output -->")
-            self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
+            if len(self.ldraw_name_input.GetValue()) > 0:
+                self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
             UIDriver.fire_event(
                 UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.ERROR,
