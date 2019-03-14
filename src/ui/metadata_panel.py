@@ -191,6 +191,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Bind input field change events
         self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input_on_kill_focus)
+        self.stl_path_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_input_on_gain_focus)
         self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output_on_kill_focus)
         self.ldraw_name_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_placeholder_on_gain_focus)
         self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author_on_kill_focus)
@@ -317,6 +318,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 LogMessage(LogType.IGNORE, "")))
 
         dialog.Destroy()
+
+    def text_ctrl_input_on_gain_focus(self, event):
+        """ Return the path to the original.
+        :param event:
+        :return:
+        """
+        if self.stl_path_text:
+            self.stl_path_input.SetValue(self.stl_path_text)
+
+        event.Skip()
 
     def text_ctrl_input_on_kill_focus(self, event):
         """Get the path for STL input file from user typing into TextCtrl element.
