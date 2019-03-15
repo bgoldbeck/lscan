@@ -173,20 +173,3 @@ class Triangle:
                 triangle_indices.append(index)
 
         return triangle_indices
-
-    @staticmethod
-    def match_triangle_triangle_indices(triangle, triangles):
-        """
-        Checks if an any triangle has a matching edge or not
-        :param triangle: A Triangle to check for matching triangles.
-        :param triangles: List of Triangles
-        :return: An index [] of matching triangles.
-        """
-        triangle_indices = []
-        for index, triangle in enumerate(triangles):
-            for edge in triangle.edges:
-                if triangle.has_edge(edge):
-                    if index not in triangle_indices:
-                        triangle_indices.append(index)
-
-        return triangle_indices
