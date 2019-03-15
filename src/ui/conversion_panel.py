@@ -20,6 +20,7 @@ from src.model_conversion.model_shipper import ModelShipper
 from src.ui.button import Button
 from src.settings_manager import SettingsManager
 import json
+from src.util import Util
 
 
 class ConversionPanel(wx.Panel, IUIBehavior):
@@ -135,14 +136,14 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             part_dir = file_settings["part_dir"]
             part_name = file_settings["part_name"]
 
-        with open(part_dir + "\\" + part_name, "w") as text_file:
+        file_path = Util.path_conversion(part_dir + "/" + part_name)
+        with open(file_path, "w") as text_file:
             text_file.write(ModelShipper.get_metadata() + ModelShipper.output_data_text)
         self.save_button.Enable()
         UIDriver.fire_event(
             UserEvent(UserEventType.LOG_INFO,
                       LogMessage(LogType.INFORMATION,
-                                 "File was saved to '" + part_dir + "\\" +
-                                 part_name + "'.")))
+                                 "File was saved to '" + file_path + "'.")))
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the ConversionPanel.
