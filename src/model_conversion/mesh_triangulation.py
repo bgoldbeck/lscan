@@ -416,6 +416,7 @@ def triangulate(face):
         if abs(face_normal[0]) < abs(face_normal[1]):
             # Checks which normal component (x/y) is lesser, and rotates 90 deg on that axis
             # This causes least distortion for projection
+            # rotating 90 degrees x
             rot_matrix = np.array([[1.0, 0.0, 0.0],
                                    [0.0, 0.0, -1.0],
                                    [0.0, 1.0, 0.0]])
@@ -423,8 +424,8 @@ def triangulate(face):
             rev_matrix = np.array([[1.0, 0.0, 0.0],
                                    [0.0, 0.0, 1.0],
                                    [0.0, -1.0, 0.0]])
-            print("Will rotate 90 degrees on x")
         else:
+            # rotating 90 degrees y
             rot_matrix = np.array([[0.0, 0.0, 1.0],
                                    [0.0, 1.0, 0.0],
                                    [-1.0, 0.0, 0.0]])
@@ -432,8 +433,6 @@ def triangulate(face):
             rev_matrix = np.array([[0.0, 0.0, -1.0],
                                    [0.0, 1.0, 0.0],
                                    [1.0, 0.0, 0.0]])
-            print("Will rotate 90 degrees on y")
-
 
     # Do rotation (this is none, if plane is not upright)
     face_verts_xyz = face['vertices']
@@ -522,10 +521,8 @@ def triangulation_to_mesh(triangulations, normals):
 
             out_data['vectors'][tri_num] = new_tri
 
-        # create mesh object from triangle data
-        new_mesh = Mesh(np.asarray(out_data.copy()))
-        meshes.append(new_mesh)
+        meshes.append(out_data)
 
-    #for i in range(len(meshes)):
-        #print("Saving model #" + str(i))
-        #meshes[i].save('C:\\Users\\melon\\Documents\\Programming\\Python\\lscan\\tests\\test_models\\fuck\\' + str(i) + '.stl')
+    meshes = np.concatenate(meshes) #combine all mesh vertices to one object
+    new_mesh = Mesh(meshes.copy())  # create mesh object from triangle data
+    return new_mesh

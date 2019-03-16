@@ -45,7 +45,7 @@ class TestMeshTriangulation(unittest.TestCase):
         return mesh_dict
 
     def test_mesh_triangulation(self):
-        file_path = self.model_folder + "cube.stl"
+        file_path = self.model_folder + "3001_dense.stl"
         #file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
         # Load mesh
         #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl")
@@ -128,47 +128,3 @@ class TestMeshTriangulation(unittest.TestCase):
         # self._step_2(output_from_step_1)
         # Step 3
         # Step 4
-
-        """# test script
-
-        # start_time = time.time()
-        mesh = Mesh.from_file(Util.path_conversion("assets/models/2_holes.stl"))
-        mesh_triangulation = MeshTriangulation(mesh)
-        # group = mesh_trianglulation.group_triangles_triangulation()
-        # end_time = time.time()
-
-        # print(len(group))
-        print(f"Triangles count: {len(mesh.normals)}")
-        # print(end_time - start_time)
-
-        output_step_1 = mesh_triangulation.group_triangles_triangulation()
-
-        output_step_2 = mesh_triangulation.make_face_boundaries(output_step_1)
-
-        output_step_3 = mesh_triangulation.make_simple_boundaries(output_step_2)
-
-        output_step_3_part_2 = mesh_triangulation.split_boundaries(output_step_3)
-
-        output_step_3_part_3 = mesh_triangulation.find_outside_boundary(output_step_3_part_2)
-
-        # output_step_3_part_3: Contains a list of "buckets", where each bucket contains a list of
-        # UniqueEdgeLists. Inside each "bucket", the boundary at index zero is the outer most boundary.
-
-        print(f"Triangles count: {len(mesh.normals)}")
-
-        t = -1
-        print(f"Length of output_step_3_part_2: " + str(len(output_step_3_part_3)))
-
-        for i in range(len(output_step_3_part_3)):
-            bucket = output_step_3_part_3[i]
-            print(f"Length of bucket: " + str(len(bucket)))
-            #print(f"Outer Boundary Index: " + str(output_step_3_part_3[i]))
-            colors = ['g', 'b', 'k', 'y', 'r']
-            for boundary in bucket:
-                t += 1
-                if t > 4:
-                    t = 0
-                print(f"col index: " + str(t))
-                for edge in boundary.edge_list:
-                    plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o", color=colors[t])
-            plt.show()"""
