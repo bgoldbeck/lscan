@@ -444,7 +444,6 @@ def triangulate(face):
     with xyz coordinates, and 'triangles', a list of 3 tuples referencing vertex
     indices
     """
-
     has_holes = False
     if "holes" in face and len(face['holes']) > 0:
         has_holes = True
@@ -456,14 +455,14 @@ def triangulate(face):
     v3 = face['vertices'][2]
 
     face_normal = np.cross(v2 - v1, v3 - v1)
-    face_normal /= face_normal.sum()
+    new_normal = face_normal / np.sqrt(face_normal.dot(face_normal))
 
     # Identity matrices
     rot_matrix = np.identity(3)
     rev_matrix = np.identity(3)
 
     # If plane is straight up/down, need to rotate it for projection
-    if (abs(face_normal[2]) < 0.1):
+    if (abs(face_normal[2]) < .1):
         if abs(face_normal[0]) < abs(face_normal[1]):
             # Checks which normal component (x/y) is lesser, and rotates 90 deg on that axis
             # This causes least distortion for projection
@@ -506,7 +505,7 @@ def triangulate(face):
 
     #print(pslg['vertices'])
     #print(triangulation)
-    tr.compare(plt, pslg, triangulation)
+    #tr.compare(plt, pslg, triangulation)
 
     #plt.show()
 
@@ -550,30 +549,33 @@ def triangulation_to_mesh(triangulations, normals):
         # load triangulation data into a mesh format (list of triangles)
         out_data = np.zeros(tri_count, dtype=Mesh.dtype)
         for tri_num in range(tri_count):
+
+            # Make new tri and load in the 3 vertices
             new_tri = []
             for vert in triangulations[i]['triangles'][tri_num]:
                 new_tri.append(triangulations[i]['vertices'][vert])
 
-            round_norm = np.around(normals[i], decimals=5)
-            print("UNIT NORMAL IS: " + str(round_norm))
-            if(round_norm[0] < 0 or round_norm[1] > 0 or round_norm[2] < 0):
-                print("need to flip")
-                flip = True
+            # Calculate normal of new tri
+            new_normal = np.cross(new_tri[1] - new_tri[0], new_tri[2] - new_tri[0])
+            new_normal = new_normal / np.sqrt(new_normal.dot(new_normal))
+            flipped_normal = -1*new_normal
+
+            # Check if the normal is different than original face normal
+            new_dif = np.sum(abs(normals[i] - new_normal))
+            flipped_dif = np.sum(abs(normals[i] - flipped_normal))
 
             new_tri = np.asarray(new_tri)
-            if flip:
-               # print("before flip:")
-              #  print(new_tri)
-                #new_tri = np.flip(new_tri, axis=0)
-               # print("after flip:")
-              #  print(new_tri)
-                pass
+
+            if flipped_dif < new_dif:
+                # Reverse order of vertices to flip tri normal
+                new_tri = np.flip(new_tri, axis=0)
 
             out_data['vectors'][tri_num] = new_tri
 
         # create mesh object from triangle data
-        meshes.append(Mesh(np.asarray(out_data.copy())))
+        new_mesh = Mesh(np.asarray(out_data.copy()))
+        meshes.append(new_mesh)
 
-    for i in range(len(meshes)):
-        print("Saving model #" + str(i))
-        meshes[i].save('tests\\test_models\\out\\' + str(i) + '.stl')
+    #for i in range(len(meshes)):
+        #print("Saving model #" + str(i))
+        #meshes[i].save('C:\\Users\\melon\\Documents\\Programming\\Python\\lscan\\tests\\test_models\\fuck\\' + str(i) + '.stl')

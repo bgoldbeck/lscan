@@ -43,7 +43,7 @@ class TestMeshTriangulation(unittest.TestCase):
         return mesh_dict
 
     def test_mesh_triangulation(self):
-        file_path = self.model_folder + "cube_rot.stl"
+        file_path = self.model_folder + "cube.stl"
         #file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
         # Load mesh
         #mesh = Mesh.from_file(Util.path_conversion("assets/models/cube_3_hole.stl")
@@ -51,41 +51,41 @@ class TestMeshTriangulation(unittest.TestCase):
 
         # Step 1: Create list of triangle objects from mesh
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
-        print("Found " + str(len(triangles)) + " triangle(s).")
+       # print("Found " + str(len(triangles)) + " triangle(s).")
 
         # Step 2: Group triangles by their normals
         normal_groups = MeshTriangulation.make_normal_groups(triangles)
-        print("Found " + str(len(normal_groups)) + " normal group(s).")
+       # print("Found " + str(len(normal_groups)) + " normal group(s).")
 
         # Group normal groups into faces (by connected parts)
-        faces = MeshTriangulation.make_face_groups(normal_groups)
+        faces = MeshTriangulation.make_face_groups_loop(normal_groups)
         # faces = MeshTriangulation.make_face_groups(normal_groups)
-        print("Found " + str(len(faces)) + " face(s).")
-        for i in range(len(faces)):
-            print("\tFor face #" + str(i) + ": " + str(len(faces[i].triangles)) + " triangles(s).")
+      #  print("Found " + str(len(faces)) + " face(s).")
+      #  for i in range(len(faces)):
+        #    print("\tFor face #" + str(i) + ": " + str(len(faces[i].triangles)) + " triangles(s).")
 
         # Step 3: Get only outline edges for each face
         face_boundaries, face_normals = MeshTriangulation.make_face_boundaries(faces)
-        for i in range(len(face_boundaries)):
-            print("Face #" + str(i) + ": Found " + str(len(face_boundaries[i].edge_list))
-                  + " edges in outline.")
+      #  for i in range(len(face_boundaries)):
+       #     print("Face #" + str(i) + ": Found " + str(len(face_boundaries[i].edge_list))
+       #           + " edges in outline.")
 
         # Simplify outline edges for each face (remove redundant vertices)
         simple_boundaries = MeshTriangulation.make_simple_boundaries(face_boundaries)
-        for i in range(len(simple_boundaries)):
-            print("Face #" + str(i) + ": Found " + str(len(simple_boundaries[i].edge_list))
-                  + " edges in simplified outline.")
+       # for i in range(len(simple_boundaries)):
+       #     print("Face #" + str(i) + ": Found " + str(len(simple_boundaries[i].edge_list))
+        #          + " edges in simplified outline.")
 
         # Split each outline by connected parts
         separate_boundaries = MeshTriangulation.split_boundaries(simple_boundaries)
-        for i in range(len(separate_boundaries)):
-            num_outlines = len(separate_boundaries[i])
-            print("Face #" + str(i) + ": Found " + str(num_outlines)
-                  + " separate outline(s)")
-            for j in range(num_outlines):
-                print("\tOutline #" + str(j) + ": Found "
-                      + str(len(separate_boundaries[i][j].edge_list))
-                      + " edges.")
+        #for i in range(len(separate_boundaries)):
+        #    num_outlines = len(separate_boundaries[i])
+         #   print("Face #" + str(i) + ": Found " + str(num_outlines)
+         #         + " separate outline(s)")
+          #  for j in range(num_outlines):
+          #      print("\tOutline #" + str(j) + ": Found "
+           #           + str(len(separate_boundaries[i][j].edge_list))
+            #          + " edges.")
 
         # Rearranges edges in each face so that outer
         ordered_separate_boundaries = MeshTriangulation.find_outside_boundary(separate_boundaries)
@@ -97,23 +97,6 @@ class TestMeshTriangulation(unittest.TestCase):
             triangulations.append(MeshTriangulation.triangulate(face))
 
         MeshTriangulation.triangulation_to_mesh(triangulations, face_normals)
-
-        t = -1
-        #print(f"Length of output_step_3_part_2: " + str(len(boundaries)))
-
-        for i in range(len(ordered_separate_boundaries)):
-            bucket = ordered_separate_boundaries[i]
-            # print(f"Outer Boundary Index: " + str(output_step_3_part_3[i]))
-            colors = ['g', 'b', 'k', 'y', 'r']
-
-            for boundary in bucket:
-                t += 1
-                if t > 4:
-                    t = 0
-                for edge in boundary.edge_list:
-                    plt.plot([edge.x1, edge.x2], [edge.y1, edge.y2], marker="o",
-                             color=colors[t])
-            #plt.show()
 
     def test_simple_plane_triangles(self):
         file_path = self.model_folder + "simple_plane_on_xy_180_tris.stl"
