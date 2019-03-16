@@ -1,15 +1,18 @@
 # LScan
 
+![LScan Logo](assets/images/lscan_256x256.bmp)
+
 
 Travis CI [![Build Status](https://travis-ci.org/bgoldbeck/lscan.svg?branch=master)](https://travis-ci.org/bgoldbeck/lscan)
 
 
-
-
-
 ## What is this repository for? ##
 
+The LScan project is a standalone piece of software that will be used to convert 3D STL files of Lego parts to a valid 
+[LDraw](https://www.ldraw.org/) parts definition file. It is written in Python.
+
 * This repository contains the 2018-2019 capstone team project for computer science with professor Bart Massey.
+* Find the documentation here: https://bgoldbeck.github.io/lscan/docs/index.html
 
 ## Dependencies ##
 - [Python3](https://docs.python.org/3.6/)
@@ -36,38 +39,6 @@ Before setting up this project, download latest version of Python3
 
 
 Follow the following steps to setup **LScan**
-### Mac OS ###
-
-Open terminal and follow these steps.
-
-1. From the terminal clone LScan repo
-
-    `$ git clone https://github.com/bgoldbeck/lscan.git`
-
-2. Change directory to **lscan**
-
-    `$ cd lscan`
-
-3. Install dependencies
-
-    `$ pip install -r requirements.txt`
-    
-    
-### Windows OS ###
-
-Open Git Bash and follow these steps.
-
-1. Clone LScan repo
-
-    `$ git clone https://github.com/bgoldbeck/lscan.git`
-
-2. Change directory to **lscan**
-
-    `$ cd lscan`
-
-3. Install dependencies
-
-    `$ pip install -r requirements.txt`
 
 
 We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this project. If you use pycharm you can skip step 2 and step 3. You can use PyCharm's settings to setup the environment.
@@ -77,7 +48,8 @@ We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this p
 
 2. Add Python interpreter.
 
-    - Click `File` -> `Settings` -> `Project Interpreter`
+    - Click `File` -> `Settings` -> `Project Interpreter` - in Windows OS
+    - Click `Pycharm`-> `Preferences` -> `Project Interpreter` - in Mac OS
     - Click :gear: and click `Add...`
     ![Add interpreter](assets/images/dev_setup/add_interpreter.png) 
     - Add base interpreter and click `OK`
@@ -95,8 +67,56 @@ We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this p
 
 5. Development environment is complete once LScan runs without any issues.
    ![LScan](assets/images/dev_setup/lscan.PNG)
+  
+## Setup Without PyCharm ##  
+Follow these steps if you are not using PyCharm.
+ 
+### Mac OS ###
+Open terminal and follow these steps.
+
+1. From the terminal clone LScan repo
+
+    `$ git clone https://github.com/bgoldbeck/lscan.git`
+
+2. Change directory to **lscan**
+
+    `$ cd lscan`
+
+3. Install dependencies
+
+    `$ pip install -r requirements.txt`
+
+### Windows OS ###
+
+Open Git Bash and follow these steps.
+
+1. Clone LScan repo
+
+    `$ git clone https://github.com/bgoldbeck/lscan.git`
+
+2. Change directory to **lscan**
+
+    `$ cd lscan`
+
+3. Install dependencies
+
+    `$ pip install -r requirements.txt`
+    
+
 ## How to Use LScan ###
-... Program flow
+Follow these steps to convert a valid STL model files to LDraw format.
+
+1. Click `Browse Input` to choose a STL file.
+2. Click `Browse Output` to choose an output name.
+3. Enter your name in `Set Author` text box.
+4. Enter a license text in `Set License` text box.
+5. Click `Convert to LDraw` button to start conversion.
+5. Click `Save Conversion` button to save the LDraw file.
+
+![Using LScan](assets/images/using_lscan.gif)
+
+The converted file is in LDraw `.dat` format. To view the LDraw model, visit https://www.ldraw.org/documentation/help/getting-started.html
+and download a CAD software for your operating system. Click [LDView](http://ldview.sourceforge.net/) to download a popular LDraw model viewer. 
 
 ## Bug Tracker ##
 https://github.com/bgoldbeck/lscan/issues
