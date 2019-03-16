@@ -84,56 +84,6 @@ def make_normal_groups(triangles: []):
     return triangles_groups
 
 
-def make_face(triangle: Triangle, group_triangles: [], bucket: Face):
-    """
-    For a given triangle recursively finds all the neighbor triangles
-    :param triangle: Find neighbors of this triangle
-    :param group_triangles: List of remaining triangles in the group
-    :param bucket: A Face object to hold neighbor triangles
-    :return: A bucket(Face object) which contains list of neighbor triangles
-    """
-    # Base Case : group_triangles == [] , group_triangles == None
-    if not group_triangles:
-        return bucket
-
-    # Find a triangle with matching edges and add to the bucket
-
-    matching_triangle_indices = Triangle.match_triangle_triangle_indices(triangle, group_triangles)
-
-    added_triangles = []
-    for matching_triangle_index in matching_triangle_indices:
-        new_triangle = group_triangles[matching_triangle_index]
-        added_triangles.append(new_triangle)
-        bucket.add_triangle(new_triangle)
-
-    f = Face(group_triangles)
-
-    for triangle_added in added_triangles:
-        f.remove_triangle(triangle_added)
-
-    return bucket
-
-
-def make_face_groups(normal_groups: []):
-    """
-    Regroup triangle groups into groups of triangles that are connected.
-    (This is equivalent to grouping into faces)
-    :param triangles_groups: List of TriangleGroups
-    :return: List of faces
-    """
-    all_faces = []  # List of faces
-    for group in normal_groups:
-        # Create a bucket of a Face with first triangle in the group
-        # Recursively add all neighboring triangles to that bucket
-        while group:
-            triangle = group.pop(0)
-            bucket = make_face(triangle, group, Face([triangle]))  # Recursively find neighbor of a triangle
-            set_diff = Face.set_difference(group, bucket.triangles)  # Finding remaining triangles to find neighbors
-            group = set_diff
-            all_faces.append(bucket)
-    return all_faces
-
-
 def make_face_groups_loop(normal_groups):
     """
     Take the list of normal groups as input. Return a list of faces.

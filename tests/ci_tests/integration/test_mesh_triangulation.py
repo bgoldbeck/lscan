@@ -9,6 +9,7 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import unittest
 import math
+import copy
 from stl import Mesh
 from src.util import Util
 import matplotlib.pyplot as plt
@@ -25,8 +26,9 @@ class TestMeshTriangulation(unittest.TestCase):
         mesh = Mesh.from_file(Util.path_conversion(file_path))
         triangles = MeshTriangulation.get_mesh_triangles(mesh)
         normal_groups = MeshTriangulation.make_normal_groups(triangles)
-        faces = MeshTriangulation.make_face_groups(normal_groups)
-        face_boundaries = MeshTriangulation.make_face_boundaries(faces)
+        normal_groups_copy = copy.deepcopy(normal_groups)
+        faces = MeshTriangulation.make_face_groups_loop(normal_groups_copy)
+        face_boundaries, normals = MeshTriangulation.make_face_boundaries(faces)
         simple_boundaries = MeshTriangulation.make_simple_boundaries(face_boundaries)
         separate_boundaries = MeshTriangulation.split_boundaries(simple_boundaries)
         ordered_separate_boundaries = MeshTriangulation.find_outside_boundary(separate_boundaries)
