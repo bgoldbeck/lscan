@@ -12,6 +12,7 @@ import unittest
 from stl import Mesh
 from src.util import Util
 from src.model_conversion.face import *
+from src.model_conversion.edge import Edge
 from src.model_conversion.mesh_triangulation import get_unit_normal
 
 

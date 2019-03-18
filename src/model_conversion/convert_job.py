@@ -10,13 +10,8 @@
 
 from src.threading.base_job import BaseJob
 from src.log_messages.log_type import LogType
-from src.log_messages.log_message import LogMessage
 from src.log_messages.output_model_message import OutputModelMessage
-from src.model_conversion.ldraw_model import LDrawModel
 from src.model_conversion.model_shipper import ModelShipper
-from stl import Mesh
-import numpy
-import copy
 
 
 class ConvertJob(BaseJob):
@@ -26,6 +21,7 @@ class ConvertJob(BaseJob):
     def __init__(self, feedback_log):
         super().__init__(feedback_log)
         self.name = "mesh to LDraw conversion"
+        self.update_status("Starting " + self.name + ".")
 
     def do_job(self):
         self.update_status("Starting " + self.name + ".")
@@ -90,8 +86,9 @@ class ConvertJob(BaseJob):
             self.put_feedback(OutputModelMessage(LogType.INFORMATION,
                                                  "Conversion Complete. Ready to Save.",
                                                  ModelShipper.output_model))
-        else: # Job was killed
-            #do any cleanup before exiting
+        else:  # Job was killed
+            #  do any cleanup before exiting
             self.update_status("Cancelled during " + self.name + ".")
 
         self.is_done.set()  # Set this so thread manager knows job is done
+

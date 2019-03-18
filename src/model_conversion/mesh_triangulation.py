@@ -7,23 +7,14 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import matplotlib.pyplot as plt
 import math
+import numpy as np
+import triangle as tr
 from stl import Mesh
 from src.model_conversion.edge import Edge
 from src.model_conversion.unique_edge_list import UniqueEdgeList
 from src.model_conversion.triangle import Triangle
-from src.util import Util
 from src.model_conversion.face import Face
-import numpy as np
-import triangle as tr
-
-
-# Group by normals into N groups
-# For each group:recursively find neighbors for all edges
-# Copy mesh data array of triangles
-# Create a new array to track normals
-# Create a new array to store groups
 
 
 def get_mesh_triangles(mesh: Mesh):
@@ -136,7 +127,6 @@ def make_face_boundaries(faces: []):
             for m in range(len(face.triangles)):
                 for n in range(len(face.triangles)):
                     if m is not n:
-                        #print(str(m) + ":" + str(n))
                         for i in range(3):
                             for j in range(3):
                                 # Compare an edge in triangle "m" vs the 3 other edges in
@@ -175,6 +165,7 @@ def make_simple_boundary(outline_edge_group: UniqueEdgeList, all_edges: UniqueEd
     """
     Step 3 recursive
     :param outline_edge_group: A list of edges, grouped by connectivity between edges.
+    :param all_edges:
     :return: ???
     """
     while len(all_edges.edge_list) > 0:
@@ -182,7 +173,6 @@ def make_simple_boundary(outline_edge_group: UniqueEdgeList, all_edges: UniqueEd
 
         work = False
         neighbors = all_edges.get_neighbor_indices_for_edge(current_edge)
-        new_edge = None
 
         # Loop against all neighboring edges, gobble up the neighbors.
         for neighbor in neighbors:
@@ -254,7 +244,9 @@ def split_boundaries(grouped_edges):
 def split_boundary(unique_edge_lists: [], all_edges: UniqueEdgeList, i: int):
     """
     Step 3 part 2 recursive
+    :param unique_edge_lists:
     :param all_edges:
+    :param i:
     :return:
     """
     i = 0
@@ -292,7 +284,7 @@ def split_boundary(unique_edge_lists: [], all_edges: UniqueEdgeList, i: int):
 def find_outside_boundary(buckets):
     """
     find_outside_boundary (put outside outline at index 0)
-    :param grouped_edges:
+    :param buckets:
     :return:
     """
     # output_step_3_part_3: Contains a list of "buckets", where each bucket contains a list of
@@ -338,20 +330,20 @@ def buckets_to_dicts(buckets):
         # Dictionary where keys are unique vertices, values = index of vert list
         vert_dict = {}
 
-        new_face = {} #dict with edge, vert, and hole lists
-        vert_list = [] #all unique verts in this face
-        edge_list = [] #all edges in this face.
+        new_face = {}  # dict with edge, vert, and hole lists
+        vert_list = []  # all unique verts in this face
+        edge_list = []  # all edges in this face.
         # Each edge is of form [a,b] where a and b are index of vert_list
-        hole_list = [] #1 interior point for every hole on this face
+        hole_list = []  # 1 interior point for every hole on this face
 
-        for b in range(len(face)): #each boundary
-            boundary_edges = [] #edges for current boundary
+        for b in range(len(face)):  # each boundary
+            boundary_edges = []  # edges for current boundary
 
             for edge in face[b].edge_list:
                 v1 = (edge.x1, edge.y1, edge.z1)
                 v2 = (edge.x2, edge.y2, edge.z2)
-                #if verts arent in dictionary, add them to both vert list and dict
-                #key value will be index of that vert in the vert list
+                # if verts aren't in dictionary, add them to both vert list and dict
+                # key value will be index of that vert in the vert list
                 if v1 not in vert_dict:
                     vert_dict[v1] = len(vert_list)
                     vert_list.append(v1)
@@ -361,7 +353,7 @@ def buckets_to_dicts(buckets):
 
                 boundary_edges.append([vert_dict[v1], vert_dict[v2]])
 
-            if b > 0: # This boundary is a hole
+            if b > 0:  # This boundary is a hole
                 # Get an interior point by triangulating and finding centroid
                 hole = {"vertices": np.asarray(vert_list),
                         "segments": np.asarray(boundary_edges)}
@@ -370,15 +362,12 @@ def buckets_to_dicts(buckets):
                 hole_coord = find_inner_point(tri_hole)
                 hole_list.append(hole_coord)
 
-            edge_list += boundary_edges #add boundary edges to all face edges
+            edge_list += boundary_edges  # add boundary edges to all face edges
 
         new_face["segments"] = np.asarray(edge_list)
         new_face["holes"] = np.asarray(hole_list)
         new_face["vertices"] = np.asarray(vert_list)
         faces.append(new_face)
-
-    #for face in faces:
-        #print(face)
 
     return faces
 
@@ -412,7 +401,7 @@ def triangulate(face):
     rev_matrix = np.identity(3)
 
     # If plane is straight up/down, need to rotate it for projection
-    if (abs(face_normal[2]) < .1):
+    if abs(face_normal[2]) < .1:
         if abs(face_normal[0]) < abs(face_normal[1]):
             # Checks which normal component (x/y) is lesser, and rotates 90 deg on that axis
             # This causes least distortion for projection
@@ -441,7 +430,6 @@ def triangulate(face):
         hole_verts_xyz = face['holes']
         hole_verts_xyz = np.dot(hole_verts_xyz, rot_matrix)
 
-
     # Make planar straight line graph, only take xy coords of vertices
     pslg = {'vertices': face_verts_xyz[:,:2],
             'segments': face['segments']}
@@ -450,13 +438,6 @@ def triangulate(face):
         pslg['holes'] = hole_verts_xyz[:, :2] #WOW
 
     triangulation = tr.triangulate(pslg, opts='p')
-
-
-    #print(pslg['vertices'])
-    #print(triangulation)
-    #tr.compare(plt, pslg, triangulation)
-
-    #plt.show()
 
     # Reverse rotation if any
     face_verts_xyz = np.dot(face_verts_xyz, rev_matrix)
@@ -479,20 +460,20 @@ def find_inner_point(triangulation):
         index = triangulation['triangles'][0][i]
         tri_coords.append(triangulation['vertices'][index])
 
-
     tri_coords = np.asarray(tri_coords)
     centroid = tri_coords.mean(axis=0)
     return centroid
 
+
 def triangulation_to_mesh(triangulations, normals):
     """
 
-    :param triangulation:
+    :param triangulations:
+    :param normals:
     :return:
     """
     meshes = []
     for i in range(len(triangulations)):
-        flip = False
         tri_count = len(triangulations[i]['triangles'])  # Number of triangles
 
         # load triangulation data into a mesh format (list of triangles)
@@ -523,6 +504,6 @@ def triangulation_to_mesh(triangulations, normals):
 
         meshes.append(out_data)
 
-    meshes = np.concatenate(meshes) #combine all mesh vertices to one object
-    new_mesh = Mesh(meshes.copy())  # create mesh object from triangle data
+    meshes = np.concatenate(meshes)  # combine all mesh vertices to one object
+    new_mesh = Mesh(meshes.copy())   # create mesh object from triangle data
     return new_mesh

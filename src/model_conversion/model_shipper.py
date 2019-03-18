@@ -9,12 +9,12 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
-import logging
-from stl import Mesh
-from src.settings_manager import SettingsManager
 import json
 import numpy
 import warnings
+import logging
+from stl import Mesh
+from src.settings_manager import SettingsManager
 
 
 class ModelShipper:
@@ -66,8 +66,9 @@ class ModelShipper:
             author = file_settings["author"]
             license = file_settings["license"]
 
-        metadata_text = "0 " + "LScan auto generated part " + part_name + "\n"
+        metadata_text = "0 " + "LScan auto generated part " + part_name + ".dat\n"
         metadata_text += "0 " + "Name: " + file_name + "\n"
         metadata_text += "0 " + "Author: " + author + "\n"
         metadata_text += "0 " + "!LICENSE " + license + "\n"
         return metadata_text
+

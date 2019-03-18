@@ -7,19 +7,19 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
+
 import unittest
 import os
-import numpy
 import unittest
-from src.model_conversion.model_shipper import *
-from pyrr import *
+import numpy
+from src.model_conversion.model_shipper import ModelShipper
+from pyrr import Vector3
 from src.util import Util
-from stl import Mesh
 path = Util.path_conversion("tests/test_models/cube.stl")
 from src.model_conversion.ldraw_model import LDrawModel
 
 
-class ModelShipperTest(unittest.TestCase):
+class TestModelShipper(unittest.TestCase):
 
     def setUp(self):
         ModelShipper.input_model = ModelShipper.load_stl_model(path)

@@ -14,14 +14,12 @@ import src.model_conversion.mesh_triangulation as MeshTriangulation
 from src.model_conversion.ldraw_model import LDrawModel
 
 
-
 class SimplifyJob(BaseJob):
     """This job simplifies the mesh
     """
     def __init__(self, feedback_log):
         super().__init__(feedback_log)
         self.name = "mesh simplification"
-
 
     def do_job(self):
         self.update_status("Starting " + self.name + ".")
@@ -80,7 +78,6 @@ class SimplifyJob(BaseJob):
             triangulated_faces = MeshTriangulation.buckets_to_dicts(
                 ordered_separate_boundaries)
 
-
         # Triangulate each face
         triangulations = []
         for face in triangulated_faces:
@@ -102,8 +99,8 @@ class SimplifyJob(BaseJob):
         if not self.is_killed: # Job completed (not killed)
             self.update_status("Finished " + self.name + ".")
 
-        else: # Job was killed
-            #do any cleanup before exiting
+        else:  # Job was killed
+            # do any cleanup before exiting
             self.update_status("Cancelled during " + self.name + ".")
 
         self.is_done.set()  # Set this so thread manager knows job is done

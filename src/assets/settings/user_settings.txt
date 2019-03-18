@@ -1,5 +1,0 @@
-C:\Users\bgold\Documents\lscan\assets\models
-untitled.dat
-C:\Users\bgold\Documents\lscan\src\assets\parts
-First Last
-Redistributable under CCAL version 2.0 : see CAreadme.txt

@@ -12,11 +12,10 @@
 
 import numpy
 import unittest
-from stl import Mesh
 from src.util import Util
 from src.model_conversion.model_shipper import ModelShipper
 
-path = Util.path_conversion("assets/models/cube.stl")
+path = Util.path_conversion("tests/test_models/cube.stl")
 
 
 class ModelShipperTest(unittest.TestCase):
@@ -31,12 +30,6 @@ class ModelShipperTest(unittest.TestCase):
         ModelShipper.output_metadata_text = None
 
     def test_get_input_model(self):
-        pass
-        #self.assertEqual(len(ModelShipper.input_model), len(ModelShipper.get_input_model()))
-        #self.assertTrue(numpy.array_equal(ModelShipper.input_model.data, ModelShipper.get_input_model().data))
+        self.assertEqual(len(ModelShipper.input_model), len(ModelShipper.get_input_model()))
+        self.assertTrue(numpy.array_equal(ModelShipper.input_model.data, ModelShipper.get_input_model().data))
 
-    def test_update_metadata(self):
-        pass
-        #test_file_info =  "0 LScan auto generated part file_name\n0 Name: file_name\n0 Author: author\n0 !LICENSE license_info\n"
-        #ModelShipper.update_metadata("author", "file_name", "license_info")
-        #self.assertEqual(test_file_info, ModelShipper.output_metadata_text)
